@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name" translatable="false">EasyCargo</string>
+    <string name="format_kg" translatable="false">kg</string>
+    <string name="format_euro" translatable="false">€</string>
+
+    <string name="cd_add_new_route">Adaugă o rută nouă</string>
+    <string name="label_created_at">Creat la</string>
+    <string name="label_empty_routes">Nu ai nicio cursă activă. Apasă pe + pentru a începe.</string>
+
+    <string name="dialog_route_title">Rută numarul</string>
+    <string name="label_route_name">Nume Cursă</string>
+    <string name="hint_route_examples">Ex: \'Tur Italia 21.01\' sau \'Retur Moldova\'</string>
+    <string name="action_cancel">Anulează</string>
+    <string name="action_create">Creează</string>
+    <string name="detail_label_total_pay">Total de plată:</string>
+    <string name="dialog_route_title_hint">Cursa</string>
+
+
+    <string name="search_placeholder">Caută Nume, Telefon sau Tichet</string>
+    <string name="cd_search_icon">Caută</string>
+    <string name="label_status_delivered">PREDAT</string>
+    <string name="label_status_pending">ÎN AȘTEPTARE</string>
+
+    <string name="stats_label_parcels">Total Colete</string>
+    <string name="stats_label_money">Total Bani</string>
+    <string name="stats_label_delivered">Colete Livrate</string>
+
+    <string name="title_add_parcel">Adaugă Colet Nou</string>
+    <string name="label_full_name">Nume și Prenume</string>
+    <string name="label_phone">Telefon</string>
+
+    <string name="label_weight">Kg Total</string>
+    <string name="label_price_per_kg">Preț/Kg (€)</string>
+    <string name="label_package_count">Nr. Pachete</string>
+
+    <string name="btn_generate_ticket">GENEREAZĂ TICHET</string>
+    <string name="msg_parcel_added_success">Coletul a fost salvat!</string>
+    <string name="error_validation_fields">Te rog completează</string>
+
+    <string name="detail_label_name">Nume complet:</string>
+    <string name="detail_label_phone">Telefon:</string>
+    <string name="detail_label_weight">Greutate:</string>
+    <string name="detail_label_pieces">Bucăți:</string>
+    <string name="detail_label_price">Preț/Kg:</string>
+    <string name="btn_mark_delivered">MARCHEAZĂ CA LIVRAT</string>
+    <string name="btn_mark_undelivered">MARCHEAZĂ CA NELIVRAT</string>
+    <string name="action_close">Închide</string>
+    <string name="msg_empty_search">Nu am găsit niciun colet. Verifică termenul căutat sau adaugă un colet nou apasând butonul +.</string>
+</resources>
