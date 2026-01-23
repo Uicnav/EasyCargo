@@ -54,6 +54,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vantechinformatics.easycargo.data.ParcelEntity
+import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.data.RouteStats
 import com.vantechinformatics.easycargo.format
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
@@ -90,7 +91,7 @@ fun RouteDetailsScreen(
         )
     )
 
-    var selectedParcel by remember { mutableStateOf<ParcelEntity?>(null) }
+    var selectedParcel by remember { mutableStateOf<ParcelUi?>(null) }
     var showAddDialog by remember { mutableStateOf(false) }
 
     // Focus Manager ca să ascundem tastatura
@@ -260,7 +261,7 @@ fun EmptyResultMessage(text: String) {
 
 @Preview
 @Composable
-fun ParcelListItem(parcel: ParcelEntity, onClick: () -> Unit) {
+fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)
             .clickable { onClick() },

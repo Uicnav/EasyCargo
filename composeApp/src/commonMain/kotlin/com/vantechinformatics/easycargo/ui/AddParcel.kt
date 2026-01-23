@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.vantechinformatics.easycargo.data.ParcelEntity
+import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.format
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import easycargo.composeapp.generated.resources.Res
@@ -47,7 +48,7 @@ fun AddParcelDialog(
     routeId: Long,
     viewModel: ParcelViewModel,
     onDismiss: () -> Unit,
-    onParcelAdded: (ParcelEntity) -> Unit
+    onParcelAdded: (ParcelUi) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 

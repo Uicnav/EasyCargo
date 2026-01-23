@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.vantechinformatics.easycargo.data.ParcelEntity
+import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.action_close
@@ -50,7 +51,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ParcelDetailsDialog(
-    parcel: ParcelEntity, viewModel: ParcelViewModel, onDismiss: () -> Unit
+    parcel: ParcelUi, viewModel: ParcelViewModel, onDismiss: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
