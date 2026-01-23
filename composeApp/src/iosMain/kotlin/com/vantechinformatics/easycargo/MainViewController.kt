@@ -9,4 +9,5 @@ fun MainViewController() = ComposeUIViewController {
     val appDatabase = remember {
         getRoomDatabase(getDatabaseBuilder())
     }
-    App(appDatabase.appDao()) }
+    App(appDatabase)
+}

@@ -1,7 +1,8 @@
-package com.vantechinformatics.easycargo
+package com.vantechinformatics.easycargo.ui
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -11,10 +12,8 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -39,10 +38,12 @@ import androidx.compose.ui.unit.dp
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.are_you_sure
 import easycargo.composeapp.generated.resources.confirm_delete
+import easycargo.composeapp.generated.resources.ic_delete_white
 import easycargo.composeapp.generated.resources.no
 import easycargo.composeapp.generated.resources.yes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 
@@ -73,10 +74,9 @@ fun GameCard(
             modifier = Modifier.matchParentSize().clip(shape = CardDefaults.shape)
                 .background(Color.Red).padding(end = 16.dp), contentAlignment = Alignment.CenterEnd
         ) {
-            Icon(
-                imageVector = Icons.Default.Remove,
+            Image(
+                painter = painterResource(Res.drawable.ic_delete_white),
                 contentDescription = null,
-                modifier = Modifier.width(44.dp)
             )
         }
 

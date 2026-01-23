@@ -1,4 +1,4 @@
-package com.vantechinformatics.easycargo
+package com.vantechinformatics.easycargo.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,8 +30,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.vantechinformatics.easycargo.data.AppDao
 import com.vantechinformatics.easycargo.data.ParcelEntity
+import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.action_close
 import easycargo.composeapp.generated.resources.btn_mark_delivered
@@ -50,7 +50,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ParcelDetailsDialog(
-    parcel: ParcelEntity, dao: AppDao, onDismiss: () -> Unit
+    parcel: ParcelEntity, viewModel: ParcelViewModel, onDismiss: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -116,7 +116,7 @@ fun ParcelDetailsDialog(
                         onClick = {
                             scope.launch {
                                 val newStatus = !isDelivered.value
-                                dao.updateParcelStatus(parcel.id, newStatus)
+                                viewModel.updateParcelStatus(parcel.id, newStatus)
                                 isDelivered.value = newStatus // Actualizăm UI local
                                 // Nu închidem dialogul ca să vadă utilizatorul că s-a schimbat
                             }

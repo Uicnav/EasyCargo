@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val appDatabase = getRoomDatabase(getDatabaseBuilder(applicationContext))
         setContent {
-            App(appDatabase.appDao())
+            App(appDatabase)
         }
     }
 }

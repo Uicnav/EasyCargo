@@ -27,18 +27,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.vantechinformatics.easycargo.data.AppDao
+import com.vantechinformatics.easycargo.data.AppDatabase
 import com.vantechinformatics.easycargo.data.RouteEntity
+import com.vantechinformatics.easycargo.ui.AddRouteDialog
+import com.vantechinformatics.easycargo.ui.EmptyResultMessage
+import com.vantechinformatics.easycargo.ui.GameCard
+import com.vantechinformatics.easycargo.ui.RouteDetailsScreen
+import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
+import com.vantechinformatics.easycargo.ui.viewmodel.RouteViewModel
 import com.vantechinformatics.easycargo.utils.LocalNavHostController
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.app_name
@@ -46,8 +52,6 @@ import easycargo.composeapp.generated.resources.background_app
 import easycargo.composeapp.generated.resources.cd_add_new_route
 import easycargo.composeapp.generated.resources.label_created_at
 import easycargo.composeapp.generated.resources.label_empty_routes
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -62,7 +66,7 @@ data class RouteDetailsScreenDest(val idRoute: Long)
 
 @Composable
 @Preview
-fun App(dao: AppDao) {
+fun App(appDatabase: AppDatabase) {
     MaterialTheme {
         remember { SnackbarHostState() }
         val navController = rememberNavController()
@@ -84,13 +88,16 @@ fun App(dao: AppDao) {
                     modifier = Modifier.fillMaxSize().padding(8.dp)
                 ) {
                     composable<HomeDest> {
-                        HomeScreen(dao) {
+                        val viewModel = viewModel { RouteViewModel(appDatabase.routeDao()) }
+
+                        HomeScreen(viewModel) {
                             navController.navigate(RouteDetailsScreenDest(it))
                         }
                     }
                     composable<RouteDetailsScreenDest> {
                         val args = it.toRoute<RouteDetailsScreenDest>()
-                        RouteDetailsScreen(routeId = args.idRoute, dao = dao) {
+                        val viewModel = ParcelViewModel(appDatabase.parcelDao())
+                        RouteDetailsScreen(routeId = args.idRoute, viewModel = viewModel) {
 
                         }
                     }
@@ -108,13 +115,13 @@ fun App(dao: AppDao) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    dao: AppDao, onNavigateToRoute: (Long) -> Unit // Callback de navigare
+    viewModel: RouteViewModel, onNavigateToRoute: (Long) -> Unit // Callback de navigare
 ) {
-    val scope = rememberCoroutineScope()
     var showAddDialog by remember { mutableStateOf(false) }
 
+    val routesState = viewModel.allRoutes.collectAsState(initial = emptyList())
+
     // Aici îți iei lista de rute din DB (Flow)
-    val routesState = dao.getAllRoutes().collectAsState(initial = emptyList())
 
     Scaffold(topBar = {
         TopAppBar(
@@ -139,9 +146,7 @@ fun HomeScreen(
             } else {
                 items(routesState.value) { route ->
                     GameCard(onDelete = {
-                        scope.launch {
-                            dao.deleteRouteComplete(routeId = route.routeId)
-                        }
+                        viewModel.deleteRouteComplete(routeId = route.routeId)
                     }) {
                         RouteCard(
                             route = route, onClick = { onNavigateToRoute(route.routeId) })
@@ -155,7 +160,7 @@ fun HomeScreen(
         // --- AICI ESTE MAGIA ---
         if (showAddDialog) {
             AddRouteDialog(
-                dao = dao,
+                viewModel = viewModel,
                 onDismiss = { showAddDialog = false },
                 onRouteCreated = { newRouteId ->
                     showAddDialog = false

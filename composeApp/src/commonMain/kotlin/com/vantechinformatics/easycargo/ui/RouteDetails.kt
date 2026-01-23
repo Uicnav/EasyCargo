@@ -1,4 +1,4 @@
-package com.vantechinformatics.easycargo
+package com.vantechinformatics.easycargo.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -53,9 +53,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.vantechinformatics.easycargo.data.AppDao
 import com.vantechinformatics.easycargo.data.ParcelEntity
 import com.vantechinformatics.easycargo.data.RouteStats
+import com.vantechinformatics.easycargo.format
+import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import com.vantechinformatics.easycargo.utils.LocalNavHostController
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.format_euro
@@ -72,17 +73,18 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RouteDetailsScreen(
-    routeId: Long, dao: AppDao, onBack: () -> Unit
+    routeId: Long, viewModel: ParcelViewModel, onBack: () -> Unit
 ) {
     // STATE PENTRU CĂUTARE
     var searchQuery by remember { mutableStateOf("") }
 
     // Lista se actualizează automat când 'searchQuery' se schimbă
     // Dacă searchQuery e gol (""), SQL-ul returnează tot (LIKE '%%')
-    val parcelsState = dao.searchParcels(routeId, searchQuery).collectAsState(initial = emptyList())
+    val parcelsState =
+        viewModel.searchParcels(routeId, searchQuery).collectAsState(initial = emptyList())
 
     // Statistici (rămân neschimbate)
-    val statsState = dao.getRouteStats(routeId).collectAsState(
+    val statsState = viewModel.getRouteStats(routeId).collectAsState(
         initial = RouteStats(
             totalParcels = 0, deliveredParcels = 0, totalMoney = 0.0
         )
@@ -202,7 +204,6 @@ fun RouteDetailsScreen(
             }
 
 
-
             Spacer(modifier = Modifier.height(16.dp))
 
             // --- LISTA DE COLETE ---
@@ -214,10 +215,16 @@ fun RouteDetailsScreen(
                         EmptyResultMessage(text = stringResource(Res.string.msg_empty_search))
                     }
                 } else {
+
                     items(parcelsState.value) { parcel ->
-                        ParcelListItem(
-                            parcel = parcel, onClick = { selectedParcel = parcel })
+                        GameCard(onDelete = {
+                            viewModel.deleteParcelsById(parcel.id)
+                        }) {
+                            ParcelListItem(
+                                parcel = parcel, onClick = { selectedParcel = parcel })
+                        }
                     }
+
                 }
             }
         }
@@ -226,7 +233,7 @@ fun RouteDetailsScreen(
         if (showAddDialog) {
             // Aici ar trebui să fie AddParcelScreen (dacă e ecran full) sau AddParcelDialog (dacă e pop-up)
             // Pentru consistență cu exemplul anterior, folosim Dialog:
-            AddParcelDialog(routeId, dao, onDismiss = {
+            AddParcelDialog(routeId, viewModel=viewModel, onDismiss = {
                 showAddDialog = false
             }, onParcelAdded = {
                 selectedParcel = it
@@ -234,7 +241,7 @@ fun RouteDetailsScreen(
         }
 
         selectedParcel?.let { parcel ->
-            ParcelDetailsDialog(parcel, dao) { selectedParcel = null }
+            ParcelDetailsDialog(parcel, viewModel) { selectedParcel = null }
         }
     }
 }
@@ -245,9 +252,7 @@ fun EmptyResultMessage(text: String) {
         modifier = Modifier.padding(16.dp).fillMaxWidth(),
     ) {
         Text(
-            text =text,
-            modifier = Modifier.padding(16.dp),
-            textAlign = TextAlign.Center
+            text = text, modifier = Modifier.padding(16.dp), textAlign = TextAlign.Center
 
         )
     }

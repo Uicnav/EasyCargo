@@ -1,4 +1,4 @@
-package com.vantechinformatics.easycargo
+package com.vantechinformatics.easycargo.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,8 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.vantechinformatics.easycargo.data.AppDao
 import com.vantechinformatics.easycargo.data.ParcelEntity
+import com.vantechinformatics.easycargo.format
+import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.btn_generate_ticket
 import easycargo.composeapp.generated.resources.detail_label_total_pay
@@ -43,7 +44,10 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun AddParcelDialog(
-    routeId: Long, dao: AppDao, onDismiss: () -> Unit, onParcelAdded: (ParcelEntity) -> Unit
+    routeId: Long,
+    viewModel: ParcelViewModel,
+    onDismiss: () -> Unit,
+    onParcelAdded: (ParcelEntity) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -158,7 +162,7 @@ fun AddParcelDialog(
                         if (firstNameLastName.isNotBlank()) {
                             isNameError = false
                             scope.launch {
-                                val parcel = dao.addParcel(
+                                val parcel = viewModel.addParcel(
                                     routeId = routeId,
                                     firstNameLastName = firstNameLastName,
                                     phone = phone,

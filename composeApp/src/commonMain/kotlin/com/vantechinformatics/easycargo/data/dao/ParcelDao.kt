@@ -1,19 +1,16 @@
-package com.vantechinformatics.easycargo.data
+package com.vantechinformatics.easycargo.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import com.vantechinformatics.easycargo.data.ParcelEntity
+import com.vantechinformatics.easycargo.data.RouteEntity
+import com.vantechinformatics.easycargo.data.RouteStats
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface AppDao {
-    // ... insertRoute rămâne la fel ...
-    @Insert
-    suspend fun insertRoute(route: RouteEntity): Long
-
-    @Query("SELECT * FROM routes ORDER BY createdAt DESC")
-    fun getAllRoutes(): Flow<List<RouteEntity>>
+interface ParcelDao {
 
     // 1. STATISTICI RUTĂ: Numără coletele și adună banii
     @Query(
@@ -109,19 +106,8 @@ interface AppDao {
         return newParcel
     }
 
-    @Query("DELETE FROM parcels WHERE routeId = :routeId")
-    suspend fun deleteParcelsForRoute(routeId: Long)
 
-    // 2. Șterge ruta propriu-zisă (Pas ajutător)
-    @Query("DELETE FROM routes WHERE routeId = :routeId")
-    suspend fun deleteRouteById(routeId: Long)
 
-    // 3. FUNCȚIA PRINCIPALĂ (pe aceasta o apelezi din ViewModel)
-    @Transaction
-    suspend fun deleteRouteComplete(routeId: Long) {
-        // Mai întâi ștergem conținutul (coletele)
-        deleteParcelsForRoute(routeId)
-        // Apoi ștergem containerul (ruta)
-        deleteRouteById(routeId)
-    }
+    @Query("DELETE FROM parcels WHERE id = :id")
+    suspend fun deleteParcelsById(id: Long)
 }

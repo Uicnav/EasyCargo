@@ -5,6 +5,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.vantechinformatics.easycargo.data.dao.ParcelDao
+import com.vantechinformatics.easycargo.data.dao.RouteDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
@@ -19,8 +21,8 @@ import kotlinx.coroutines.IO
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase(), DB {
     //PLAYERS 2
-    abstract fun appDao(): AppDao
-
+    abstract fun routeDao(): RouteDao
+    abstract fun parcelDao(): ParcelDao
 
     override fun clearAllTables() {}
 }
