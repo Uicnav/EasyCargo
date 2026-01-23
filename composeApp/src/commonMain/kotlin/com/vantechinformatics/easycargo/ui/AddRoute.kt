@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.vantechinformatics.easycargo.data.RouteEntity
+import com.vantechinformatics.easycargo.data.RouteUi
 import com.vantechinformatics.easycargo.ui.viewmodel.RouteViewModel
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.action_cancel
@@ -100,9 +101,9 @@ fun AddRouteDialog(
                                 // Lansăm coroutina pentru salvare
                                 scope.launch {
                                     val newId = viewModel.insertRoute(
-                                        RouteEntity(
+                                        RouteUi(
                                             name = routeName,
-                                            isActive = true
+                                            isActive = true,
                                         )
                                     )
                                     onRouteCreated(newId)

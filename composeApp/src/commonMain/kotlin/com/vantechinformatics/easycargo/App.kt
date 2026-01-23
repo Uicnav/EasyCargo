@@ -39,6 +39,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.vantechinformatics.easycargo.data.AppDatabase
 import com.vantechinformatics.easycargo.data.RouteEntity
+import com.vantechinformatics.easycargo.data.RouteUi
 import com.vantechinformatics.easycargo.ui.AddRouteDialog
 import com.vantechinformatics.easycargo.ui.EmptyResultMessage
 import com.vantechinformatics.easycargo.ui.GameCard
@@ -172,7 +173,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun RouteCard(route: RouteEntity, onClick: () -> Unit) {
+fun RouteCard(route: RouteUi, onClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().padding(8.dp).clickable { onClick() },
     ) {

@@ -15,7 +15,7 @@ import kotlinx.coroutines.IO
  */
 @Database(
     entities = [RouteEntity::class, ParcelEntity::class],
-    version = 99,
+    version = 100,
     exportSchema = false
 )
 @ConstructedBy(AppDatabaseConstructor::class)

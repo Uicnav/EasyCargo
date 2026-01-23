@@ -14,12 +14,10 @@ import com.vantechinformatics.easycargo.utils.getCurrentTime
     )]
 )
 data class ParcelEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val routeId: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0, val routeId: Long,
 
     val displayId: Int,          // Identificatorul vizual: 100, 101, 102...
-    val firstNameLastName: String,
-    val phone: String,
+    val firstNameLastName: String, val phone: String,
 
     val weight: Double,          // Kg
     val pricePerKg: Double,      // Preț pe Kg
@@ -49,21 +47,13 @@ data class ParcelEntity(
 }
 
 data class ParcelUi(
-    val id: Long = 0,
-    val routeId: Long,
+    val id: Long = 0, val routeId: Long,
 
-    val displayId: Int,
-    val firstNameLastName: String,
-    val phone: String,
+    val displayId: Int, val firstNameLastName: String, val phone: String,
 
-    val weight: Double,
-    val pricePerKg: Double,
-    val totalSum: Double,
-    val pieceCount: Int,
+    val weight: Double, val pricePerKg: Double, val totalSum: Double, val pieceCount: Int,
 
-    val isDelivered: Boolean,
-    val addedAt: Long,
-    var showOnlyInfo: Boolean = false
+    val isDelivered: Boolean, val addedAt: Long, var showOnlyInfo: Boolean = false
 ) {
     // Completed toEntity function to map all fields
     fun toEntity(): ParcelEntity {
@@ -85,10 +75,21 @@ data class ParcelUi(
 
 // O clasă ajutătoare pentru a citi statisticile rutei
 data class RouteStats(
-    val totalParcels: Int,
-    val deliveredParcels: Int,
-    val totalMoney: Double
+    val totalParcels: Int, val deliveredParcels: Int, val totalMoney: Double
 )
+
+@Entity(tableName = "routes")
+data class RouteUi(
+    val routeId: Long = 0, val name: String,        // Ex: "Tur 18.01.2026"
+    val createdAt: Long = getCurrentTime(),     // Timestamp
+    val isActive: Boolean = true
+) {
+    fun toEntity(): RouteEntity {
+        return RouteEntity(
+            routeId = routeId, name = name, createdAt = createdAt, isActive = isActive
+        )
+    }
+}
 
 @Entity(tableName = "routes")
 data class RouteEntity(
@@ -96,4 +97,11 @@ data class RouteEntity(
     val name: String,        // Ex: "Tur 18.01.2026"
     val createdAt: Long = getCurrentTime(),     // Timestamp
     val isActive: Boolean = true
-)
+) {
+    // Transformă Entitatea de DB în Model de UI
+    fun toUiModel(): RouteUi {
+        return RouteUi(
+            routeId = routeId, name = name, createdAt = createdAt, isActive = isActive
+        )
+    }
+}
