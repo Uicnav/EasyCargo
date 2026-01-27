@@ -57,6 +57,9 @@ kotlin {
 
                 implementation(libs.alarmee)
 
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.cio)
+
             }
         }
 

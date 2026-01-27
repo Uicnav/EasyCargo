@@ -26,7 +26,8 @@ data class ParcelEntity(
 
     val isDelivered: Boolean = false, // Status: Livrat sau Nu
     val isVisible: Boolean,
-    val addedAt: Long = getCurrentTime()
+    val addedAt: Long = getCurrentTime(),
+    val city: String
 ) {
     // Corrected toUiModel function
     fun toUiModel(): ParcelUi {
@@ -43,7 +44,8 @@ data class ParcelEntity(
             isDelivered = isDelivered,
             addedAt = addedAt,
             isVisible = isVisible,
-            showOnlyInfo = false // Default state when loading from DB
+            showOnlyInfo = false,
+            city = city
         )
     }
 }
@@ -55,7 +57,7 @@ data class ParcelUi(
 
     val weight: Double, val pricePerKg: Double, val totalSum: Double, val pieceCount: Int,
 
-    val isDelivered: Boolean, val addedAt: Long, var showOnlyInfo: Boolean = false, var isVisible: Boolean = true
+    val isDelivered: Boolean, val addedAt: Long, var showOnlyInfo: Boolean = false, var isVisible: Boolean = true,val city: String
 ) {
     // Completed toEntity function to map all fields
     fun toEntity(): ParcelEntity {
@@ -71,7 +73,8 @@ data class ParcelUi(
             pieceCount = pieceCount,
             isDelivered = isDelivered,
             addedAt = addedAt,
-            isVisible = isVisible
+            isVisible = isVisible,
+            city = city
         )
     }
 }

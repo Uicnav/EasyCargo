@@ -62,7 +62,8 @@ interface ParcelDao {
         phone: String,
         weight: Double,
         priceKg: Double,
-        pieces: Int
+        pieces: Int,
+        city: String
     ): ParcelEntity {
         // 1. CALCULĂM "BAZA" (Prefixul)
         // Ruta 5  -> 5000
@@ -100,7 +101,8 @@ interface ParcelDao {
             totalSum = weight * priceKg,
             pieceCount = pieces,
             isDelivered = false,
-            isVisible = true
+            isVisible = true,
+            city = city
         )
 
         insertParcel(newParcel)

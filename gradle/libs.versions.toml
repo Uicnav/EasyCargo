@@ -20,6 +20,7 @@ kotlinxCoroutinesPlayServices = "1.10.2"
 ksp = "2.2.21-2.0.4"        # <-- AICI e fixul
 
 kotlinxDatetime = "0.7.1"
+ktorClientCio = "3.4.0"
 lifecycleViewmodelCompose = "2.9.6"
 navigationCompose = "2.9.1"
 navigationRuntimeKtx = "2.9.6"
@@ -63,6 +64,8 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorClientCio" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCio" }
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 

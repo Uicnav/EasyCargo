@@ -9,10 +9,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -30,7 +35,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.vantechinformatics.easycargo.data.ParcelEntity
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import easycargo.composeapp.generated.resources.Res
@@ -40,6 +44,7 @@ import easycargo.composeapp.generated.resources.btn_mark_undelivered
 import easycargo.composeapp.generated.resources.detail_label_name
 import easycargo.composeapp.generated.resources.detail_label_phone
 import easycargo.composeapp.generated.resources.detail_label_pieces
+import easycargo.composeapp.generated.resources.detail_label_total_pay
 import easycargo.composeapp.generated.resources.detail_label_weight
 import easycargo.composeapp.generated.resources.format_euro
 import easycargo.composeapp.generated.resources.format_kg
@@ -54,6 +59,7 @@ fun ParcelDetailsDialog(
     parcel: ParcelUi, viewModel: ParcelViewModel, onDismiss: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
+    val uriHandler = LocalUriHandler.current // Pentru deschidere Hărți
 
     // Putem schimba statusul direct de aici
     val isDelivered = remember { mutableStateOf(parcel.isDelivered) }
@@ -62,7 +68,7 @@ fun ParcelDetailsDialog(
         Card(shape = RoundedCornerShape(16.dp), modifier = Modifier.padding(16.dp)) {
             Column(modifier = Modifier.padding(24.dp)) {
 
-                // Header cu ID
+                // 1. Header cu ID și Status
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     ParcelIdDisplay(displayId = parcel.displayId)
                     Spacer(Modifier.weight(1f))
@@ -83,10 +89,47 @@ fun ParcelDetailsDialog(
 
                 Spacer(Modifier.height(24.dp))
 
-                // Informații Detaliate
+                // 2. Informații Detaliate (Nume, Telefon)
                 DetailRow(stringResource(Res.string.detail_label_name), parcel.firstNameLastName)
                 DetailRow(stringResource(Res.string.detail_label_phone), parcel.phone)
+
+                // --- 3. LOCALITATE (NOU) ---
+                if (parcel.city.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Localitate:",
+                            color = Color.Gray,
+                            modifier = Modifier.width(100.dp)
+                        )
+                        Text(
+                            text = parcel.city,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        // Buton Navigare Rapidă
+                        IconButton(
+                            onClick = {
+                                // Deschide Google Maps cu navigație spre oraș
+                                val mapUrl = "http://maps.google.com/maps?daddr=${parcel.city}"
+                                uriHandler.openUri(mapUrl)
+                            }, modifier = Modifier.height(24.dp).width(24.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Navighează",
+                                tint = Color(0xFF2E7D32) // Verde închis
+                            )
+                        }
+                    }
+                }
+
                 Divider(Modifier.padding(vertical = 8.dp))
+
+                // 4. Detalii Logistice (Kg, Bucăți, Preț)
                 DetailRow(
                     stringResource(Res.string.detail_label_weight),
                     parcel.weight.toString() + " " + stringResource(Res.string.format_kg)
@@ -97,9 +140,27 @@ fun ParcelDetailsDialog(
                     parcel.pricePerKg.toString() + " " + stringResource(Res.string.format_euro)
                 )
 
+                // Total Calculat
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        stringResource(Res.string.detail_label_total_pay),
+                        color = Color.Gray,
+                        modifier = Modifier.width(100.dp)
+                    )
+                    // Calculăm Totalul: Greutate * Preț (formatat la 2 zecimale)
+                    val totalToPay = parcel.weight * parcel.pricePerKg
+                    Text(
+                        text = "$totalToPay ${stringResource(Res.string.format_euro)}",
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
                 Spacer(Modifier.height(16.dp))
 
-                // Total Mare
+                // 5. Total Mare (Jos)
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("TOTAL:", style = MaterialTheme.typography.bodySmall)
                     Text(
@@ -111,15 +172,18 @@ fun ParcelDetailsDialog(
 
                 Spacer(Modifier.height(32.dp))
 
-                // Buton Livrare
+                // 6. Butoane Acțiune (Livrare / Închide)
                 if (!parcel.showOnlyInfo) {
                     Button(
                         onClick = {
                             scope.launch {
                                 val newStatus = !isDelivered.value
-                                viewModel.updateParcelStatus(parcel.id, newStatus, isVisible = parcel.isVisible)
-                                isDelivered.value = newStatus // Actualizăm UI local
-                                // Nu închidem dialogul ca să vadă utilizatorul că s-a schimbat
+                                viewModel.updateParcelStatus(
+                                    parcel.id,
+                                    newStatus,
+                                    isVisible = parcel.isVisible
+                                )
+                                isDelivered.value = newStatus
                             }
                         }, colors = ButtonDefaults.buttonColors(
                             contentColor = if (isDelivered.value) Color.Gray else Color(0xFF4CAF50)
@@ -144,32 +208,22 @@ fun ParcelDetailsDialog(
 
 @Composable
 fun ParcelIdDisplay(displayId: Int) {
-    // 1. Logica Matematică
     val routePart = displayId / 1000
     val parcelPart = displayId % 1000
-
-    // Formatăm coletul să aibă mereu 3 cifre (ex: 5 -> 005)
-    // Nota: padStart e standard Kotlin
     val parcelString = parcelPart.toString().padStart(3, '0')
 
     Text(
         text = buildAnnotatedString {
-            // Partea de Rută (Bold și Colorat)
             withStyle(
                 style = SpanStyle(
-                    fontWeight = FontWeight.ExtraBold, color = Color(0xFF1565C0), // Albastru închis
-                    fontSize = 18.sp
+                    fontWeight = FontWeight.ExtraBold, color = Color(0xFF1565C0), fontSize = 18.sp
                 )
             ) {
                 append("R$routePart")
             }
-
-            // Separator
             withStyle(style = SpanStyle(color = Color.Gray)) {
                 append("-")
             }
-
-            // Partea de Colet (Mai mare, Negru)
             withStyle(
                 style = SpanStyle(
                     fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 22.sp

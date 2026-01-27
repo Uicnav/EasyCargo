@@ -47,10 +47,12 @@ class ParcelViewModel(private val dao: ParcelDao) : ViewModel() {
         phone: String,
         weight: Double,
         priceKg: Double,
-        pieces: Int
+        pieces: Int,
+        city: String
     ): ParcelUi {
 
-        return dao.addParcel(id, firstNameLastName, phone, weight, priceKg, pieces).toUiModel()
+        return dao.addParcel(id, firstNameLastName, phone, weight, priceKg, pieces, city)
+            .toUiModel()
     }
 
     fun updateParcelStatus(parcelId: Long, isDelivered: Boolean, isVisible: Boolean) {

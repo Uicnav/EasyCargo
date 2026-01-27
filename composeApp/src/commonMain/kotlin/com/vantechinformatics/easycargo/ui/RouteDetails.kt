@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -305,7 +306,6 @@ fun EmptyResultMessage(text: String) {
         )
     }
 }
-
 @Preview
 @Composable
 fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
@@ -333,13 +333,36 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
 
             // INFORMAȚII CENTRALE
             Column(modifier = Modifier.weight(1f).background(Color.Transparent)) {
+                // 1. Numele Clientului
                 Text(
                     text = parcel.firstNameLastName,
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.SemiBold
                 )
 
-                // Afișăm telefonul și suma
+                // 2. LOCALITATEA (Dacă există) - NOU ADĂUGAT
+                if (parcel.city.isNotEmpty()) {
+                    Spacer(Modifier.height(2.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = "Locație",
+                            modifier = Modifier.size(12.dp),
+                            tint = Color(0xFF1976D2) // Albastru discret
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = parcel.city,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.DarkGray
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(2.dp))
+
+                // 3. Telefonul
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         Icons.Default.Phone,
@@ -357,6 +380,7 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
 
                 Spacer(Modifier.height(4.dp))
 
+                // 4. Prețul
                 Text(
                     text = "${parcel.totalSum.format(2)} €",
                     style = MaterialTheme.typography.bodySmall,
@@ -365,7 +389,7 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
                 )
             }
 
-            // ICONIȚA DE LIVRAT
+            // ICONIȚA DE LIVRAT (Dreapta)
             if (parcel.isDelivered) {
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
