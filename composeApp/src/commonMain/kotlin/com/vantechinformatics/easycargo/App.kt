@@ -27,6 +27,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -151,8 +152,7 @@ fun HomeScreen(
     // Aici îți iei lista de rute din DB (Flow)
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
+        snackbarHost = { SnackbarHost(snackbarHostState) }, topBar = {
         TopAppBar(
             title = { Text(stringResource(Res.string.app_name)) },
             colors = TopAppBarDefaults.topAppBarColors(
@@ -162,7 +162,8 @@ fun HomeScreen(
     }, floatingActionButton = {
         FloatingActionButton(onClick = { showAddDialog = true }) {
             Icon(
-                Icons.Default.Add, contentDescription = stringResource(Res.string.cd_add_new_route)
+                Icons.Default.Add,
+                contentDescription = stringResource(Res.string.cd_add_new_route)
             )
         }
     }, containerColor = Color.Transparent) { padding ->
@@ -176,6 +177,11 @@ fun HomeScreen(
             }
 
             is RouteUiState.Success -> {
+                DisposableEffect(Unit) {
+                    onDispose {
+                        viewModel.deleteRouteToDelete()
+                    }
+                }
                 LazyColumn(modifier = Modifier.padding(padding)) {
 
                     if (state.data.isEmpty()) {

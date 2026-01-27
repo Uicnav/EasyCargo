@@ -164,7 +164,7 @@ fun AddParcelDialog(
                             isNameError = false
                             scope.launch {
                                 val parcel = viewModel.addParcel(
-                                    routeId = routeId,
+                                    id = routeId,
                                     firstNameLastName = firstNameLastName,
                                     phone = phone,
                                     weight = weightInput.toDoubleOrNull() ?: 0.0,

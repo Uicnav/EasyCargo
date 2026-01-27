@@ -2,7 +2,6 @@ package com.vantechinformatics.easycargo.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vantechinformatics.easycargo.data.ParcelEntity
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.data.RouteStats
 import com.vantechinformatics.easycargo.data.dao.ParcelDao
@@ -13,17 +12,26 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class ParcelViewModel(private val dao: ParcelDao) : ViewModel() {
+
+    var parcelToDelete: ParcelUi? = null
+
     fun searchParcels(routeId: Long, searchQuery: String): Flow<List<ParcelUi>> {
         return dao.searchParcels(routeId, searchQuery).map { parcelEntities ->
             // Transform each ParcelEntity in the list to a ParcelUi
-            parcelEntities.map { entity ->
+            parcelEntities.filter { parcelEntity -> parcelEntity.isVisible }.map { entity ->
                 entity.toUiModel()
             }
         }
     }
 
-    fun getRouteStats(routeId: Long): Flow<RouteStats> {
-        return dao.getRouteStats(routeId)
+    fun prepareDeleteParcel(parcel: ParcelUi) {
+        parcelToDelete = parcel
+        updateParcelStatus(parcel.id, parcel.isDelivered, false)
+    }
+
+
+    fun getRouteStats(id: Long): Flow<RouteStats> {
+        return dao.getRouteStats(id)
     }
 
     fun deleteParcelsById(parceId: Long) {
@@ -34,20 +42,34 @@ class ParcelViewModel(private val dao: ParcelDao) : ViewModel() {
     }
 
     suspend fun addParcel(
-        routeId: Long,
+        id: Long,
         firstNameLastName: String,
         phone: String,
         weight: Double,
         priceKg: Double,
         pieces: Int
     ): ParcelUi {
-        return dao.addParcel(routeId, firstNameLastName, phone, weight, priceKg, pieces).toUiModel()
+
+        return dao.addParcel(id, firstNameLastName, phone, weight, priceKg, pieces).toUiModel()
     }
 
-    fun updateParcelStatus(parcelId: Long, isDelivered: Boolean) {
-        viewModelScope.launch {
-            dao.updateParcelStatus(parcelId, isDelivered)
+    fun updateParcelStatus(parcelId: Long, isDelivered: Boolean, isVisible: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.updateParcelStatus(parcelId, isDelivered, isVisible)
 
         }
+    }
+
+    fun undoDeleteParcel() {
+        parcelToDelete?.let { parcel ->
+            updateParcelStatus(parcel.id, parcel.isDelivered, true)
+        }
+    }
+
+    fun deleteParcelToDelete() {
+        parcelToDelete?.let {
+            deleteParcelsById(it.id)
+        }
+        parcelToDelete = null
     }
 }

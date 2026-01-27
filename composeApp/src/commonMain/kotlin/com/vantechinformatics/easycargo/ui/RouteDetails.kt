@@ -35,15 +35,18 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,12 +56,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.vantechinformatics.easycargo.data.ParcelEntity
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.data.RouteStats
 import com.vantechinformatics.easycargo.format
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
+import com.vantechinformatics.easycargo.undoDeleteRouteSnackbar
 import com.vantechinformatics.easycargo.utils.LocalNavHostController
+import com.vantechinformatics.easycargo.utils.LocalSnackbarHostState
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.format_euro
 import easycargo.composeapp.generated.resources.msg_empty_search
@@ -66,6 +70,7 @@ import easycargo.composeapp.generated.resources.search_placeholder
 import easycargo.composeapp.generated.resources.stats_label_delivered
 import easycargo.composeapp.generated.resources.stats_label_money
 import easycargo.composeapp.generated.resources.stats_label_parcels
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -97,7 +102,17 @@ fun RouteDetailsScreen(
     // Focus Manager ca să ascundem tastatura
     val focusManager = LocalFocusManager.current
     val navController = LocalNavHostController.current
-    Scaffold(topBar = {
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = LocalSnackbarHostState.current
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.deleteParcelToDelete()
+        }
+    }
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
         TopAppBar(
             title = { Text("#${routeId}") }, navigationIcon = {
             IconButton(onClick = {
@@ -205,6 +220,8 @@ fun RouteDetailsScreen(
             }
 
 
+
+
             Spacer(modifier = Modifier.height(16.dp))
 
             // --- LISTA DE COLETE ---
@@ -219,7 +236,16 @@ fun RouteDetailsScreen(
 
                     items(parcelsState.value) { parcel ->
                         GameCard(onDelete = {
-                            viewModel.deleteParcelsById(parcel.id)
+                            scope.launch {
+                                snackbarHostState.currentSnackbarData?.dismiss()
+                                viewModel.prepareDeleteParcel(parcel)
+                                snackbarHostState.undoDeleteRouteSnackbar(onActionPerformed = {
+                                    viewModel.undoDeleteParcel()
+
+                                }, onDismissed = {
+                                    viewModel.deleteParcelsById(parcel.id)
+                                })
+                            }
                         }) {
                             ParcelListItem(
                                 parcel = parcel, onClick = { selectedParcel = parcel })

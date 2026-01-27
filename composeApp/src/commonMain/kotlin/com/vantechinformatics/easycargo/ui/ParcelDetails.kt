@@ -117,7 +117,7 @@ fun ParcelDetailsDialog(
                         onClick = {
                             scope.launch {
                                 val newStatus = !isDelivered.value
-                                viewModel.updateParcelStatus(parcel.id, newStatus)
+                                viewModel.updateParcelStatus(parcel.id, newStatus, isVisible = parcel.isVisible)
                                 isDelivered.value = newStatus // Actualizăm UI local
                                 // Nu închidem dialogul ca să vadă utilizatorul că s-a schimbat
                             }

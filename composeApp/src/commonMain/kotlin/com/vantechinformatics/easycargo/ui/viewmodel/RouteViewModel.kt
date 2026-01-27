@@ -18,9 +18,11 @@ class RouteViewModel(private val dao: RouteDao) : ViewModel() {
     // The UI collects from this StateFlow to get its state updates
     val uiState: StateFlow<RouteUiState> = _uiState
     private var routeToDelete: RouteUi? = null
+
     init {
         getRoutes()
     }
+
     fun deleteRouteComplete(routeId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             dao.deleteRouteComplete(routeId = routeId)
@@ -42,6 +44,13 @@ class RouteViewModel(private val dao: RouteDao) : ViewModel() {
         }
     }
 
+    fun deleteRouteToDelete() {
+        routeToDelete?.let {
+            deleteRouteComplete(it.routeId)
+        }
+        routeToDelete = null
+    }
+
     private fun getRoutes() = viewModelScope.launch(Dispatchers.IO) {
 
         dao.getAllRoutes().map { routeEntities ->
@@ -56,13 +65,13 @@ class RouteViewModel(private val dao: RouteDao) : ViewModel() {
     }
 
     fun undoDeleteRoute(routeId: Long) {
-        routeToDelete?.let { routeToDelete->
+        routeToDelete?.let { routeToDelete ->
             if (routeToDelete.routeId == routeId) {
                 val currentList = _uiState.value as? RouteUiState.Success ?: return
                 val updatedList = currentList.data.map {
                     if (it.routeId == routeId) {
                         it.copy(isVisible = true)
-                    } else{
+                    } else {
                         it
                     }
                 }

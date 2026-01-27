@@ -20,7 +20,7 @@ interface ParcelDao {
             COALESCE(SUM(CASE WHEN isDelivered = 1 THEN 1 ELSE 0 END), 0) as deliveredParcels,
             COALESCE(SUM(totalSum), 0) as totalMoney 
         FROM parcels 
-        WHERE routeId = :routeId
+        WHERE routeId = :routeId AND isVisible = true
     """
     )
     fun getRouteStats(routeId: Long): Flow<RouteStats>
@@ -30,8 +30,8 @@ interface ParcelDao {
     fun getParcelsForRoute(routeId: Long): Flow<List<ParcelEntity>>
 
     // 3. SCHIMBĂ STATUS: Livrat <-> Nelivrat
-    @Query("UPDATE parcels SET isDelivered = :isDelivered WHERE id = :parcelId")
-    suspend fun updateParcelStatus(parcelId: Long, isDelivered: Boolean)
+    @Query("UPDATE parcels SET isDelivered = :isDelivered, isVisible = :isVisible WHERE id = :parcelId")
+    suspend fun updateParcelStatus(parcelId: Long, isDelivered: Boolean, isVisible: Boolean)
 
     // 4. INSERARE PROGRESIVĂ (100, 101...)
     @Query("SELECT MAX(displayId) FROM parcels WHERE routeId = :routeId")
@@ -100,6 +100,7 @@ interface ParcelDao {
             totalSum = weight * priceKg,
             pieceCount = pieces,
             isDelivered = false,
+            isVisible = true
         )
 
         insertParcel(newParcel)
