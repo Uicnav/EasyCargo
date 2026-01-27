@@ -82,7 +82,8 @@ data class RouteStats(
 data class RouteUi(
     val routeId: Long = 0, val name: String,        // Ex: "Tur 18.01.2026"
     val createdAt: Long = getCurrentTime(),     // Timestamp
-    val isActive: Boolean = true
+    val isActive: Boolean = true,
+    var isVisible: Boolean = true
 ) {
     fun toEntity(): RouteEntity {
         return RouteEntity(

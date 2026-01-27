@@ -46,4 +46,8 @@
     <string name="btn_mark_undelivered">MARCHEAZĂ CA NELIVRAT</string>
     <string name="action_close">Închide</string>
     <string name="msg_empty_search">Nu am găsit niciun colet. Verifică termenul căutat sau adaugă un colet nou apasând butonul +.</string>
+
+    <string name="route_deleted">Cursã eliminatǎ</string>
+    <string name="undo">Undo</string>
+
 </resources>
