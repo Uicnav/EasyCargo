@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -54,26 +53,26 @@ kotlin {
                 api(libs.datastore)
 
                 implementation(compose.materialIconsExtended)
-
                 implementation(libs.alarmee)
 
-                implementation(libs.ktor.client.core)
-                implementation(libs.ktor.client.cio)
-
+                // --- REPARATIE KTOR ---
+                // Folosim versiunea hardcodată 2.3.12 pentru a evita eroarea cu 3.4.0
+                implementation("io.ktor:ktor-client-core:2.3.12")
             }
         }
 
         val androidMain by getting {
             dependencies {
                 implementation(libs.review)
-                // Potrebbe essere necessaria anche la versione KTX
                 implementation(libs.review.ktx)
                 implementation(libs.compose.ui.tooling.preview)
                 implementation(libs.androidx.activity.compose)
                 implementation(libs.androidx.navigation.runtime.ktx)
                 implementation(libs.androidx.fragment.ktx)
                 implementation(libs.kotlinx.coroutines.play.services)
-                //implementation(libs.play.services.ads)
+
+                // Motorul pentru Android (Hardcodat 2.3.12)
+                implementation("io.ktor:ktor-client-cio:2.3.12")
             }
         }
 
@@ -84,6 +83,10 @@ kotlin {
             dependsOn(commonMain)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
+            dependencies {
+                // Motorul pentru iOS (Hardcodat 2.3.12)
+                implementation("io.ktor:ktor-client-darwin:2.3.12")
+            }
         }
     }
 }
@@ -108,39 +111,13 @@ android {
     }
     buildTypes {
         debug {
-            ndk {
-                abiFilters.clear()
-                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
-                debugSymbolLevel = "SYMBOL_TABLE"
-            }
-            packaging {
-                jniLibs {
-                    useLegacyPackaging = false
-                }
-                resources {
-                    excludes += "/META-INF/{AL2.0,LGPL2.1}"
-                }
-            }
             isMinifyEnabled = false
         }
         release {
             isMinifyEnabled = true
-            ndk {
-                abiFilters.clear()
-                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
-                debugSymbolLevel = "SYMBOL_TABLE"
-            }
-            packaging {
-                jniLibs {
-                    useLegacyPackaging = false
-                }
-                resources {
-                    excludes += "/META-INF/{AL2.0,LGPL2.1}"
-                }
-            }
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -155,10 +132,6 @@ room {
 dependencies {
     ksp(libs.room.compiler)
     add("kspAndroid", libs.room.compiler)
-
     debugImplementation(libs.compose.ui.tooling)
-
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
-
-

@@ -17,7 +17,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -41,6 +40,7 @@ import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.action_close
 import easycargo.composeapp.generated.resources.btn_mark_delivered
 import easycargo.composeapp.generated.resources.btn_mark_undelivered
+import easycargo.composeapp.generated.resources.city
 import easycargo.composeapp.generated.resources.detail_label_name
 import easycargo.composeapp.generated.resources.detail_label_phone
 import easycargo.composeapp.generated.resources.detail_label_pieces
@@ -100,7 +100,7 @@ fun ParcelDetailsDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Localitate:",
+                            text = stringResource(Res.string.city),
                             color = Color.Gray,
                             modifier = Modifier.width(100.dp)
                         )
@@ -158,17 +158,6 @@ fun ParcelDetailsDialog(
                     )
                 }
 
-                Spacer(Modifier.height(16.dp))
-
-                // 5. Total Mare (Jos)
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("TOTAL:", style = MaterialTheme.typography.bodySmall)
-                    Text(
-                        parcel.totalSum.toString() + " " + stringResource(Res.string.format_euro),
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
 
                 Spacer(Modifier.height(32.dp))
 
@@ -179,9 +168,7 @@ fun ParcelDetailsDialog(
                             scope.launch {
                                 val newStatus = !isDelivered.value
                                 viewModel.updateParcelStatus(
-                                    parcel.id,
-                                    newStatus,
-                                    isVisible = parcel.isVisible
+                                    parcel.id, newStatus, isVisible = parcel.isVisible
                                 )
                                 isDelivered.value = newStatus
                             }

@@ -2,33 +2,55 @@ package com.vantechinformatics.easycargo.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
+import com.vantechinformatics.easycargo.data.HttpClientEngineFactory
+import easycargo.composeapp.generated.resources.Res
+import easycargo.composeapp.generated.resources.city_label
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.parameter
+import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.stringResource
 
-// --- PARTEA 1: LOGICA DE REȚEA (Ktor + Regex Simplu) ---
-
-// Inițializăm clientul de internet o singură dată
-val httpClient = HttpClient(CIO)
-
+val httpClient = HttpClient(HttpClientEngineFactory().getHttpEngine())
 suspend fun searchCityOnline(query: String): List<String> {
     return withContext(Dispatchers.IO) {
         try {
@@ -68,8 +90,7 @@ suspend fun searchCityOnline(query: String): List<String> {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CityAutocompleteField(
-    selectedCity: String,
-    onCitySelected: (String) -> Unit
+    selectedCity: String, onCitySelected: (String) -> Unit
 ) {
     var query by remember { mutableStateOf(selectedCity) }
     var suggestions by remember { mutableStateOf(emptyList<String>()) }
@@ -89,56 +110,50 @@ fun CityAutocompleteField(
     Box(modifier = Modifier.fillMaxWidth().zIndex(1f)) {
         Column {
             OutlinedTextField(
-                value = query,
-                onValueChange = { newText ->
-                    query = newText
-                    onCitySelected(newText)
+                value = query, onValueChange = { newText ->
+                query = newText
+                onCitySelected(newText)
 
-                    if (newText.length > 2) {
-                        scope.launch {
-                            isLoading = true
-                            delay(800) // Debounce
-                            if (newText == query) {
-                                val results = searchCityOnline(newText)
-                                suggestions = results
-                                expanded = results.isNotEmpty()
-                                isLoading = false
-                            }
+                if (newText.length > 2) {
+                    scope.launch {
+                        isLoading = true
+                        delay(800) // Debounce
+                        if (newText == query) {
+                            val results = searchCityOnline(newText)
+                            suggestions = results
+                            expanded = results.isNotEmpty()
+                            isLoading = false
                         }
-                    } else {
+                    }
+                } else {
+                    expanded = false
+                    isLoading = false
+                }
+            }, label = { Text(stringResource(Res.string.city_label)) }, leadingIcon = {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Icon(Icons.Default.LocationOn, contentDescription = null)
+                }
+            }, trailingIcon = {
+                if (query.isNotEmpty()) {
+                    IconButton(onClick = {
+                        query = ""
+                        onCitySelected("")
                         expanded = false
-                        isLoading = false
+                    }) {
+                        Icon(Icons.Default.Clear, contentDescription = "Șterge")
                     }
-                },
-                label = { Text("Localitate / Oraș") },
-                leadingIcon = {
-                    if (isLoading) {
-                        CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-                    } else {
-                        Icon(Icons.Default.LocationOn, contentDescription = null)
-                    }
-                },
-                trailingIcon = {
-                    if (query.isNotEmpty()) {
-                        IconButton(onClick = {
-                            query = ""
-                            onCitySelected("")
-                            expanded = false
-                        }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Șterge")
-                        }
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                }
+            }, modifier = Modifier.fillMaxWidth(), singleLine = true
             )
 
             if (expanded) {
                 ElevatedCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 200.dp)
-                        .padding(top = 4.dp),
+                    modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp).padding(top = 4.dp),
                     elevation = CardDefaults.elevatedCardElevation(6.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                 ) {
@@ -146,15 +161,12 @@ fun CityAutocompleteField(
                         items(suggestions) { city ->
                             ListItem(
                                 headlineContent = { Text(city) },
-                                modifier = Modifier
-                                    .clickable {
+                                modifier = Modifier.clickable {
                                         query = city
                                         onCitySelected(city)
                                         expanded = false
                                         focusManager.clearFocus()
-                                    }
-                                    .background(MaterialTheme.colorScheme.surface)
-                            )
+                                    }.background(MaterialTheme.colorScheme.surface))
                             HorizontalDivider()
                         }
                     }

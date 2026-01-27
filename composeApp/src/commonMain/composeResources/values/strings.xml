@@ -3,13 +3,20 @@
     <string name="format_kg" translatable="false">kg</string>
     <string name="format_euro" translatable="false">€</string>
 
+    <string name="are_you_sure">Sunteți sigur?</string>
+
+    <string name="yes">Da</string>
+    <string name="no">Nu</string>
+    <string name="confirm_delete">Confirmați ştergerea</string>
+
+
     <string name="cd_add_new_route">Adaugă o rută nouă</string>
     <string name="label_created_at">Creat la</string>
     <string name="label_empty_routes">Nu ai nicio cursă activă. Apasă pe + pentru a începe.</string>
 
     <string name="dialog_route_title">Rută numarul</string>
     <string name="label_route_name">Nume Cursă</string>
-    <string name="hint_route_examples">Ex: \'Tur Italia 21.01\' sau \'Retur Moldova\'</string>
+    <string name="hint_route_examples">Ex: Tur Italia 21.01 sau Retur Moldova</string>
     <string name="action_cancel">Anulează</string>
     <string name="action_create">Creează</string>
     <string name="detail_label_total_pay">Total de plată:</string>
@@ -49,5 +56,7 @@
 
     <string name="route_deleted">Cursã eliminatǎ</string>
     <string name="undo">Undo</string>
+    <string name="city_label">Localitate / Oraș</string>
+    <string name="city">Localitate</string>
 
 </resources>

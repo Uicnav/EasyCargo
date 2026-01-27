@@ -29,6 +29,7 @@ import easycargo.composeapp.generated.resources.hint_route_examples
 import easycargo.composeapp.generated.resources.label_route_name
 import kotlinx.coroutines.launch
 import kotlinx.datetime.* // Necesită 'kotlinx-datetime' în libs.versions.toml
+import kotlinx.datetime.number
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -47,7 +48,7 @@ fun AddRouteDialog(
     // Dacă nu ai kotlinx-datetime, poți pune doar "Cursa Nouă"
     val defaultName = remember {
         val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        "$prefix ${today.dayOfMonth}.${today.monthNumber}.${today.year}"
+        "$prefix ${today.day}.${today.month.number}.${today.year}"
     }
 
     var routeName by remember { mutableStateOf(defaultName) }
