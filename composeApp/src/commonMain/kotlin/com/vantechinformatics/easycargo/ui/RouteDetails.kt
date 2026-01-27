@@ -1,5 +1,6 @@
 package com.vantechinformatics.easycargo.ui
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -50,12 +52,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.data.RouteStats
 import com.vantechinformatics.easycargo.format
@@ -67,9 +71,7 @@ import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.format_euro
 import easycargo.composeapp.generated.resources.msg_empty_search
 import easycargo.composeapp.generated.resources.search_placeholder
-import easycargo.composeapp.generated.resources.stats_label_delivered
 import easycargo.composeapp.generated.resources.stats_label_money
-import easycargo.composeapp.generated.resources.stats_label_parcels
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -110,9 +112,7 @@ fun RouteDetailsScreen(
             viewModel.deleteParcelToDelete()
         }
     }
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }, topBar = {
         TopAppBar(
             title = { Text("#${routeId}") }, navigationIcon = {
             IconButton(onClick = {
@@ -138,50 +138,23 @@ fun RouteDetailsScreen(
 
             // --- HEADER STATISTICI (Totaluri) ---
             Card(
-                modifier = Modifier.fillMaxWidth().padding(16.dp), shape = RoundedCornerShape(12.dp)
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)
             ) {
                 Column {
                     Row(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.padding(12.dp)
                     ) {
-                        Column(
-                            modifier = Modifier.weight(1F),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = stringResource(Res.string.stats_label_delivered),
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center
-                            )
-                            Text(
-                                "${statsState.value.deliveredParcels}",
-                                style = MaterialTheme.typography.bodySmall,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
-                            )
-                        }
 
-                        Column(
-                            modifier = Modifier.weight(1F),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                stringResource(Res.string.stats_label_parcels),
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center
-                            )
-                            Text(
-                                "${statsState.value.totalParcels}",
-                                style = MaterialTheme.typography.bodySmall,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-
+                        DeliveryProgressBar(
+                            deliveredCount = statsState.value.deliveredParcels,
+                            totalCount = statsState.value.totalParcels,
+                            modifier = Modifier.weight(1F)
+                        )
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.weight(1F)
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(start = 8.dp)
                         ) {
                             Text(
                                 stringResource(Res.string.stats_label_money),
@@ -199,9 +172,9 @@ fun RouteDetailsScreen(
                     OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
-                        label = { Text(stringResource(Res.string.search_placeholder)) },
+                        label = { Text(stringResource(Res.string.search_placeholder), fontSize = 12.sp) },
                         modifier = Modifier.background(Color.Transparent).fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(8.dp),
                         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                         trailingIcon = {
                             if (searchQuery.isNotEmpty()) {
@@ -260,7 +233,7 @@ fun RouteDetailsScreen(
         if (showAddDialog) {
             // Aici ar trebui să fie AddParcelScreen (dacă e ecran full) sau AddParcelDialog (dacă e pop-up)
             // Pentru consistență cu exemplul anterior, folosim Dialog:
-            AddParcelDialog(routeId, viewModel=viewModel, onDismiss = {
+            AddParcelDialog(routeId, viewModel = viewModel, onDismiss = {
                 showAddDialog = false
             }, onParcelAdded = {
                 selectedParcel = it
@@ -270,6 +243,54 @@ fun RouteDetailsScreen(
         selectedParcel?.let { parcel ->
             ParcelDetailsDialog(parcel, viewModel) { selectedParcel = null }
         }
+    }
+}
+
+@Composable
+fun DeliveryProgressBar(
+    deliveredCount: Int, totalCount: Int, modifier: Modifier = Modifier
+) {
+    // 1. Calculăm procentul (evităm împărțirea la 0)
+    val progressTarget = if (totalCount > 0) {
+        deliveredCount.toFloat() / totalCount.toFloat()
+    } else {
+        0f
+    }
+
+    // 2. Adăugăm o animație fină la încărcare
+    val animatedProgress by animateFloatAsState(
+        targetValue = progressTarget, label = "ProgressAnimation"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier.fillMaxWidth()
+    ) {
+        // Rândul cu Text: "Progres: 5/20" și "25%"
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Progres Livrare:",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray
+            )
+            Text(
+                text = "$deliveredCount / $totalCount",
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        // Bara propriu-zisă
+        LinearProgressIndicator(
+            progress = { animatedProgress },
+            modifier = Modifier.fillMaxWidth().height(10.dp) // O facem puțin mai groasă
+                .clip(RoundedCornerShape(5.dp)), // Colțuri rotunjite
+            color = if (progressTarget == 1f) Color(0xFF4CAF50) else MaterialTheme.colorScheme.primary, // Verde dacă e gata, Albastru altfel
+            trackColor = MaterialTheme.colorScheme.surfaceVariant, // Culoarea de fundal a barei
+        )
     }
 }
 
