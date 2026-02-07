@@ -66,5 +66,6 @@
     <string name="format_pieces">colete</string>
     <string name="language_selector_title">Selectează limba</string>
     <string name="language_system_default">Implicit sistem</string>
+    <string name="cd_share_parcel">Partajează detalii colet</string>
 
 </resources>

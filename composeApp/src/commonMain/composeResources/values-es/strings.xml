@@ -63,5 +63,6 @@
     <string name="format_pieces">paquetes</string>
     <string name="language_selector_title">Seleccionar idioma</string>
     <string name="language_system_default">Predeterminado del sistema</string>
+    <string name="cd_share_parcel">Compartir detalles del paquete</string>
 
 </resources>

@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.vantechinformatics.easycargo.data.createDataStore
 import com.vantechinformatics.easycargo.data.getDatabaseBuilder
 import com.vantechinformatics.easycargo.data.getRoomDatabase
+import com.vantechinformatics.easycargo.utils.initShareContext
 
 class MainActivity : AppCompatActivity() {
     private val dataStore by lazy { createDataStore(applicationContext) }
@@ -16,6 +17,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        initShareContext(applicationContext)
         val appDatabase = getRoomDatabase(getDatabaseBuilder(applicationContext))
         setContent {
             App(appDatabase, dataStore)

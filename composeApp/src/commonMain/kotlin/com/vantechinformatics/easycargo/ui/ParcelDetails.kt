@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -48,7 +49,9 @@ import androidx.compose.ui.window.DialogProperties
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.ui.theme.EasyCargoTheme
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
+import com.vantechinformatics.easycargo.utils.shareText
 import easycargo.composeapp.generated.resources.Res
+import easycargo.composeapp.generated.resources.cd_share_parcel
 import easycargo.composeapp.generated.resources.btn_mark_delivered
 import easycargo.composeapp.generated.resources.btn_mark_undelivered
 import easycargo.composeapp.generated.resources.city
@@ -112,6 +115,25 @@ fun ParcelDetailsDialog(
                                 RoundedCornerShape(16.dp)
                             ).padding(horizontal = 12.dp, vertical = 4.dp)
                     )
+                    Spacer(Modifier.width(4.dp))
+                    IconButton(onClick = {
+                        val routePart = parcel.displayId / 1000
+                        val parcelPart = (parcel.displayId % 1000).toString().padStart(3, '0')
+                        val total = parcel.weight * parcel.pricePerKg
+                        val status = if (isDelivered.value) statusText else statusText
+                        val shareMessage = buildString {
+                            appendLine("EasyCargo - R$routePart-$parcelPart")
+                            appendLine("${parcel.firstNameLastName}")
+                            if (parcel.phone.isNotEmpty()) appendLine(parcel.phone)
+                            if (parcel.city.isNotEmpty()) appendLine(parcel.city)
+                            appendLine("${parcel.weight} kg | ${parcel.pieceCount} pcs")
+                            appendLine("${parcel.pricePerKg} €/kg = $total €")
+                            append(status)
+                        }
+                        shareText(shareMessage)
+                    }, modifier = Modifier.size(32.dp)) {
+                        Icon(Icons.Default.Share, contentDescription = stringResource(Res.string.cd_share_parcel), tint = Color.White)
+                    }
                     Spacer(Modifier.width(4.dp))
                     IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
                         Icon(Icons.Default.Close, contentDescription = null, tint = Color.White)

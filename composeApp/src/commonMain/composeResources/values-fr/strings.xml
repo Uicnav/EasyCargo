@@ -63,5 +63,6 @@
     <string name="format_pieces">colis</string>
     <string name="language_selector_title">Choisir la langue</string>
     <string name="language_system_default">Par défaut du système</string>
+    <string name="cd_share_parcel">Partager les détails du colis</string>
 
 </resources>
