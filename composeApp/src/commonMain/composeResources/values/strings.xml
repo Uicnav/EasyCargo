@@ -64,5 +64,7 @@
     <string name="cd_clear">Șterge</string>
     <string name="format_piece">colet</string>
     <string name="format_pieces">colete</string>
+    <string name="language_selector_title">Selectează limba</string>
+    <string name="language_system_default">Implicit sistem</string>
 
 </resources>

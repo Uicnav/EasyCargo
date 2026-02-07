@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
@@ -133,6 +134,7 @@ fun AddParcelDialog(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
                 .border(1.dp, colors.glassBorder, RoundedCornerShape(16.dp))
+                .background(Color.Black)
                 .background(colors.glassSurface)
         ) {
             Column(
@@ -151,8 +153,8 @@ fun AddParcelDialog(
                         fontWeight = FontWeight.Bold,
                         color = colors.contentPrimary
                     )
-                    IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Close, contentDescription = null, tint = colors.textSecondary)
+                    IconButton(onClick = onDismiss) {
+                        Icon(Icons.Default.Close, contentDescription = null, tint = colors.contentPrimary)
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))

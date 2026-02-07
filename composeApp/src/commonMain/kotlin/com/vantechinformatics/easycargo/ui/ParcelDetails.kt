@@ -82,6 +82,7 @@ fun ParcelDetailsDialog(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(Color.Black)
                 .background(colors.glassSurface)
         ) {
             Column(
@@ -113,7 +114,7 @@ fun ParcelDetailsDialog(
                     )
                     Spacer(Modifier.width(4.dp))
                     IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Close, contentDescription = null, tint = colors.textSecondary)
+                        Icon(Icons.Default.Close, contentDescription = null, tint = Color.White)
                     }
                 }
 

@@ -61,5 +61,7 @@
     <string name="cd_clear">Clear</string>
     <string name="format_piece">parcel</string>
     <string name="format_pieces">parcels</string>
+    <string name="language_selector_title">Select Language</string>
+    <string name="language_system_default">System Default</string>
 
 </resources>

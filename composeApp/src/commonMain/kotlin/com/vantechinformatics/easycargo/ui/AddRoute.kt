@@ -65,11 +65,12 @@ fun AddRouteDialog(
     var routeName by remember { mutableStateOf(defaultName) }
     var isSaving by remember { mutableStateOf(false) }
 
-    Dialog(onDismissRequest = {}) {
+    Dialog(onDismissRequest = onDismiss) {
         Box(
             modifier = Modifier.padding(16.dp).fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
                 .border(1.dp, colors.glassBorder, RoundedCornerShape(16.dp))
+                .background(Color.Black)
                 .background(colors.glassSurface)
         ) {
             Column(
@@ -87,9 +88,6 @@ fun AddRouteDialog(
                         fontWeight = FontWeight.Bold,
                         color = colors.contentPrimary
                     )
-                    IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Close, contentDescription = null, tint = colors.textSecondary)
-                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))

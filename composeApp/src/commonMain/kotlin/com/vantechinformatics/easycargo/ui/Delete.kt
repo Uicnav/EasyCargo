@@ -175,7 +175,7 @@ fun ConfirmDeleteDialog(onConfirm: () -> Unit, onDismiss: () -> Unit, isHome: Bo
             }
         },
         shape = RoundedCornerShape(16.dp),
-        containerColor = colors.glassSurface,
+        containerColor = colors.glassSurface.copy(alpha = 1f),
         tonalElevation = 0.dp
     )
 }

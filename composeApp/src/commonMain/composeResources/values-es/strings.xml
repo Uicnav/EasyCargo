@@ -61,5 +61,7 @@
     <string name="cd_clear">Borrar</string>
     <string name="format_piece">paquete</string>
     <string name="format_pieces">paquetes</string>
+    <string name="language_selector_title">Seleccionar idioma</string>
+    <string name="language_system_default">Predeterminado del sistema</string>
 
 </resources>

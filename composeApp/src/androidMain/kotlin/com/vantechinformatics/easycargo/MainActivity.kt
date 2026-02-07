@@ -1,7 +1,7 @@
 package com.vantechinformatics.easycargo
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
@@ -10,7 +10,7 @@ import com.vantechinformatics.easycargo.data.createDataStore
 import com.vantechinformatics.easycargo.data.getDatabaseBuilder
 import com.vantechinformatics.easycargo.data.getRoomDatabase
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     private val dataStore by lazy { createDataStore(applicationContext) }
 
     override fun onCreate(savedInstanceState: Bundle?) {

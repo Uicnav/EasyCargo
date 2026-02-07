@@ -21,7 +21,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,11 +33,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -76,10 +81,14 @@ import com.vantechinformatics.easycargo.ui.theme.ThemeMode
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import com.vantechinformatics.easycargo.ui.viewmodel.RouteUiState
 import com.vantechinformatics.easycargo.ui.viewmodel.RouteViewModel
+import com.vantechinformatics.easycargo.utils.LANGUAGE_KEY
 import com.vantechinformatics.easycargo.utils.LocalDataStore
 import com.vantechinformatics.easycargo.utils.LocalNavHostController
 import com.vantechinformatics.easycargo.utils.LocalSnackbarHostState
+import com.vantechinformatics.easycargo.utils.SUPPORTED_LANGUAGES
+import com.vantechinformatics.easycargo.utils.setAppLocale
 import easycargo.composeapp.generated.resources.Res
+import easycargo.composeapp.generated.resources.action_close
 import easycargo.composeapp.generated.resources.app_name
 import easycargo.composeapp.generated.resources.cd_toggle_theme
 import easycargo.composeapp.generated.resources.background_app
@@ -87,6 +96,8 @@ import easycargo.composeapp.generated.resources.cd_add_new_route
 import easycargo.composeapp.generated.resources.format_euro
 import easycargo.composeapp.generated.resources.label_created_at
 import easycargo.composeapp.generated.resources.label_empty_routes
+import easycargo.composeapp.generated.resources.language_selector_title
+import easycargo.composeapp.generated.resources.language_system_default
 import easycargo.composeapp.generated.resources.route_deleted
 import easycargo.composeapp.generated.resources.stats_label_delivered
 import easycargo.composeapp.generated.resources.stats_label_money
@@ -117,6 +128,10 @@ fun App(appDatabase: AppDatabase, dataStore: DataStore<Preferences>) {
     }.collectAsState(initial = ThemeMode.DARK)
 
     val isDark = themeMode == ThemeMode.DARK
+
+    val currentLanguage by dataStore.data.map { prefs ->
+        prefs[LANGUAGE_KEY]
+    }.collectAsState(initial = null)
 
     EasyCargoTheme(darkTheme = isDark) {
         val colors = EasyCargoTheme.colors
@@ -167,6 +182,19 @@ fun App(appDatabase: AppDatabase, dataStore: DataStore<Preferences>) {
                                         prefs[THEME_MODE_KEY] = if (isDark) ThemeMode.LIGHT.name else ThemeMode.DARK.name
                                     }
                                 }
+                            },
+                            currentLanguage = currentLanguage,
+                            onLanguageSelected = { langCode ->
+                                scope.launch {
+                                    dataStore.edit { prefs ->
+                                        if (langCode == null) {
+                                            prefs.remove(LANGUAGE_KEY)
+                                        } else {
+                                            prefs[LANGUAGE_KEY] = langCode
+                                        }
+                                    }
+                                    setAppLocale(langCode ?: "")
+                                }
                             }
                         ) {
                             navController.navigate(RouteDetailsScreenDest(it))
@@ -199,10 +227,13 @@ fun HomeScreen(
     viewModel: RouteViewModel,
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit,
+    currentLanguage: String?,
+    onLanguageSelected: (String?) -> Unit,
     onNavigateToRoute: (Long) -> Unit
 ) {
     val colors = EasyCargoTheme.colors
     var showAddDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
     val routesState = viewModel.uiState.collectAsState()
     var isLoading by remember { mutableStateOf(false) }
     val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
@@ -220,6 +251,13 @@ fun HomeScreen(
                     )
                 },
                 actions = {
+                    IconButton(onClick = { showLanguageDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Language,
+                            contentDescription = stringResource(Res.string.language_selector_title),
+                            tint = colors.contentPrimary
+                        )
+                    }
                     IconButton(onClick = onToggleTheme) {
                         Icon(
                             imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
@@ -304,7 +342,95 @@ fun HomeScreen(
                     onNavigateToRoute(newRouteId)
                 })
         }
+
+        if (showLanguageDialog) {
+            LanguageSelectionDialog(
+                currentLanguage = currentLanguage,
+                onLanguageSelected = { langCode ->
+                    showLanguageDialog = false
+                    onLanguageSelected(langCode)
+                },
+                onDismiss = { showLanguageDialog = false }
+            )
+        }
     }
+}
+
+@Composable
+fun LanguageSelectionDialog(
+    currentLanguage: String?,
+    onLanguageSelected: (String?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val colors = EasyCargoTheme.colors
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                stringResource(Res.string.language_selector_title),
+                color = colors.contentPrimary
+            )
+        },
+        text = {
+            Column {
+                // System default option
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onLanguageSelected(null) }
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = currentLanguage == null,
+                        onClick = { onLanguageSelected(null) },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = MaterialTheme.colorScheme.primary,
+                            unselectedColor = colors.textSecondary
+                        )
+                    )
+                    Text(
+                        stringResource(Res.string.language_system_default),
+                        color = colors.contentPrimary,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+                // Language options
+                SUPPORTED_LANGUAGES.forEach { lang ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onLanguageSelected(lang.code) }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = currentLanguage == lang.code,
+                            onClick = { onLanguageSelected(lang.code) },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = MaterialTheme.colorScheme.primary,
+                                unselectedColor = colors.textSecondary
+                            )
+                        )
+                        Text(
+                            lang.displayName,
+                            color = colors.contentPrimary,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(
+                    stringResource(Res.string.action_close),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
+        containerColor = colors.glassSurface.copy(alpha = 1f)
+    )
 }
 
 @Composable

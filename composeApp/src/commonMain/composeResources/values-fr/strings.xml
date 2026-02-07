@@ -61,5 +61,7 @@
     <string name="cd_clear">Effacer</string>
     <string name="format_piece">colis</string>
     <string name="format_pieces">colis</string>
+    <string name="language_selector_title">Choisir la langue</string>
+    <string name="language_system_default">Par défaut du système</string>
 
 </resources>

@@ -67,6 +67,7 @@ kotlin {
                 implementation(libs.review.ktx)
                 implementation(libs.compose.ui.tooling.preview)
                 implementation(libs.androidx.activity.compose)
+                implementation(libs.androidx.appcompat)
                 implementation(libs.androidx.navigation.runtime.ktx)
                 implementation(libs.androidx.fragment.ktx)
                 implementation(libs.kotlinx.coroutines.play.services)
