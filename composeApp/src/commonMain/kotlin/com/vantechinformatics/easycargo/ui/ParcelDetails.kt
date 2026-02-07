@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
@@ -24,7 +27,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -32,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
@@ -43,6 +44,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.ui.theme.GlassBorder
 import com.vantechinformatics.easycargo.ui.theme.GlassSurface
@@ -52,7 +54,6 @@ import com.vantechinformatics.easycargo.ui.theme.TextMuted
 import com.vantechinformatics.easycargo.ui.theme.TextSecondary
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import easycargo.composeapp.generated.resources.Res
-import easycargo.composeapp.generated.resources.action_close
 import easycargo.composeapp.generated.resources.btn_mark_delivered
 import easycargo.composeapp.generated.resources.btn_mark_undelivered
 import easycargo.composeapp.generated.resources.city
@@ -78,14 +79,18 @@ fun ParcelDetailsDialog(
 
     val isDelivered = remember { mutableStateOf(parcel.isDelivered) }
 
-    Dialog(onDismissRequest = {}) {
+    Dialog(
+        onDismissRequest = {},
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
         Box(
-            modifier = Modifier.padding(16.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .border(1.dp, GlassBorder, RoundedCornerShape(16.dp))
+            modifier = Modifier
+                .fillMaxSize()
                 .background(GlassSurface)
         ) {
-            Column {
+            Column(
+                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+            ) {
                 // Glass header area with parcel ID + close button
                 Row(
                     modifier = Modifier.fillMaxWidth()
@@ -97,18 +102,18 @@ fun ParcelDetailsDialog(
                     Spacer(Modifier.weight(1f))
                     // Status chip
                     val statusColor = if (isDelivered.value) GreenLight else OrangeLight
-                    val statusText = if (isDelivered.value)
-                        stringResource(Res.string.label_status_delivered)
-                    else
-                        stringResource(Res.string.label_status_pending)
+                    val statusText =
+                        if (isDelivered.value) stringResource(Res.string.label_status_delivered)
+                        else stringResource(Res.string.label_status_pending)
                     Text(
                         text = statusText,
                         color = statusColor,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier
-                            .background(statusColor.copy(alpha = 0.15f), RoundedCornerShape(16.dp))
-                            .padding(horizontal = 12.dp, vertical = 4.dp)
+                        modifier = Modifier.background(
+                                statusColor.copy(alpha = 0.15f),
+                                RoundedCornerShape(16.dp)
+                            ).padding(horizontal = 12.dp, vertical = 4.dp)
                     )
                     Spacer(Modifier.width(4.dp))
                     IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
@@ -118,7 +123,10 @@ fun ParcelDetailsDialog(
 
                 Column(modifier = Modifier.padding(20.dp)) {
                     // Customer info
-                    DetailRow(stringResource(Res.string.detail_label_name), parcel.firstNameLastName)
+                    DetailRow(
+                        stringResource(Res.string.detail_label_name),
+                        parcel.firstNameLastName
+                    )
 
                     // Phone with call action
                     if (parcel.phone.isNotEmpty()) {
@@ -170,8 +178,7 @@ fun ParcelDetailsDialog(
                                 onClick = {
                                     val mapUrl = "http://maps.google.com/maps?daddr=${parcel.city}"
                                     uriHandler.openUri(mapUrl)
-                                },
-                                modifier = Modifier.height(32.dp).width(32.dp)
+                                }, modifier = Modifier.height(32.dp).width(32.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.LocationOn,
@@ -183,8 +190,7 @@ fun ParcelDetailsDialog(
                     }
 
                     HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        color = GlassBorder
+                        modifier = Modifier.padding(vertical = 8.dp), color = GlassBorder
                     )
 
                     // Logistics details
@@ -192,7 +198,10 @@ fun ParcelDetailsDialog(
                         stringResource(Res.string.detail_label_weight),
                         parcel.weight.toString() + " " + stringResource(Res.string.format_kg)
                     )
-                    DetailRow(stringResource(Res.string.detail_label_pieces), "${parcel.pieceCount}")
+                    DetailRow(
+                        stringResource(Res.string.detail_label_pieces),
+                        "${parcel.pieceCount}"
+                    )
                     DetailRow(
                         stringResource(Res.string.label_price_per_kg),
                         parcel.pricePerKg.toString() + " " + stringResource(Res.string.format_euro)
@@ -232,37 +241,18 @@ fun ParcelDetailsDialog(
                                 }
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isDelivered.value)
-                                    TextMuted
-                                else
-                                    GreenLight,
-                                contentColor = Color.White
+                                containerColor = if (isDelivered.value) TextMuted
+                                else GreenLight, contentColor = Color.White
                             ),
                             modifier = Modifier.fillMaxWidth().height(50.dp),
                             shape = RoundedCornerShape(12.dp)
                         ) {
                             Text(
-                                text = if (isDelivered.value)
-                                    stringResource(Res.string.btn_mark_undelivered)
-                                else
-                                    stringResource(Res.string.btn_mark_delivered),
+                                text = if (isDelivered.value) stringResource(Res.string.btn_mark_undelivered)
+                                else stringResource(Res.string.btn_mark_delivered),
                                 fontWeight = FontWeight.Bold
                             )
                         }
-                    }
-
-                    Spacer(Modifier.height(8.dp))
-
-                    OutlinedButton(
-                        onClick = onDismiss,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(1.dp, GlassBorder)
-                    ) {
-                        Text(
-                            stringResource(Res.string.action_close),
-                            color = TextSecondary
-                        )
                     }
                 }
             }

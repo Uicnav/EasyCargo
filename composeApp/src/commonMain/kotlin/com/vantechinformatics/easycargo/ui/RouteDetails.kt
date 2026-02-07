@@ -251,7 +251,7 @@ fun RouteDetailsScreen(
                         EmptyResultMessage(text = stringResource(Res.string.msg_empty_search))
                     }
                 } else {
-                    itemsIndexed(parcelsState.value) {index, parcel ->
+                    items(parcelsState.value) {parcel ->
                         GameCard(onDelete = {
                             scope.launch {
                                 snackbarHostState.currentSnackbarData?.dismiss()
