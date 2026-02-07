@@ -1,4 +1,4 @@
-TEAM_ID=
+TEAM_ID=B49B4ZD6WL
 
 PRODUCT_NAME=EasyCargo
 PRODUCT_BUNDLE_IDENTIFIER=com.vantechinformatics.easycargo.EasyCargo$(TEAM_ID)
