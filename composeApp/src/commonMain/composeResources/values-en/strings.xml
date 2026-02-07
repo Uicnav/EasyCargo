@@ -66,5 +66,6 @@
     <string name="cd_share_parcel">Share parcel details</string>
     <string name="title_edit_parcel">Edit Parcel</string>
     <string name="btn_save_changes">SAVE CHANGES</string>
+    <string name="cd_share_route">Share route</string>
 
 </resources>

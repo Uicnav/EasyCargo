@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -78,9 +79,20 @@ import easycargo.composeapp.generated.resources.format_euro
 import easycargo.composeapp.generated.resources.format_piece
 import easycargo.composeapp.generated.resources.format_pieces
 import easycargo.composeapp.generated.resources.msg_empty_search
+import easycargo.composeapp.generated.resources.cd_share_route
+import easycargo.composeapp.generated.resources.city
+import easycargo.composeapp.generated.resources.detail_label_name
+import easycargo.composeapp.generated.resources.detail_label_phone
+import easycargo.composeapp.generated.resources.detail_label_pieces
+import easycargo.composeapp.generated.resources.detail_label_price
+import easycargo.composeapp.generated.resources.detail_label_total_pay
+import easycargo.composeapp.generated.resources.detail_label_weight
+import easycargo.composeapp.generated.resources.label_status_delivered
+import easycargo.composeapp.generated.resources.label_status_pending
 import easycargo.composeapp.generated.resources.search_placeholder
 import easycargo.composeapp.generated.resources.stats_label_money
 import easycargo.composeapp.generated.resources.status_delivery
+import com.vantechinformatics.easycargo.utils.shareText
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -125,6 +137,43 @@ fun RouteDetailsScreen(
                         navController.navigateUp()
                     }) {
                         Icon(Icons.Default.ArrowBack, null, tint = colors.contentPrimary)
+                    }
+                },
+                actions = {
+                    val deliveredLabel = stringResource(Res.string.label_status_delivered)
+                    val pendingLabel = stringResource(Res.string.label_status_pending)
+                    val nameLabel = stringResource(Res.string.detail_label_name)
+                    val phoneLabel = stringResource(Res.string.detail_label_phone)
+                    val cityLabel = stringResource(Res.string.city)
+                    val weightLabel = stringResource(Res.string.detail_label_weight)
+                    val piecesLabel = stringResource(Res.string.detail_label_pieces)
+                    val priceLabel = stringResource(Res.string.detail_label_price)
+                    val totalLabel = stringResource(Res.string.detail_label_total_pay)
+                    IconButton(onClick = {
+                        val stats = statsState.value
+                        val parcels = parcelsState.value
+                        val message = buildString {
+                            appendLine("EasyCargo - Route #$routeId")
+                            appendLine("${stats.deliveredParcels} / ${stats.totalParcels} | ${stats.totalMoney.format(2)} €")
+                            parcels.forEachIndexed { index, p ->
+                                appendLine()
+                                val routePart = p.displayId / 1000
+                                val parcelPart = (p.displayId % 1000).toString().padStart(3, '0')
+                                appendLine("${index + 1}. R$routePart-$parcelPart")
+                                appendLine("$nameLabel ${p.firstNameLastName}")
+                                if (p.phone.isNotEmpty()) appendLine("$phoneLabel ${p.phone}")
+                                if (p.city.isNotEmpty()) appendLine("$cityLabel: ${p.city}")
+                                appendLine("$weightLabel ${p.weight} kg")
+                                appendLine("$piecesLabel ${p.pieceCount}")
+                                appendLine("$priceLabel ${p.pricePerKg} €/kg")
+                                val total = p.weight * p.pricePerKg
+                                val status = if (p.isDelivered) deliveredLabel else pendingLabel
+                                appendLine("$totalLabel ${total.format(2)} € [$status]")
+                            }
+                        }
+                        shareText(message)
+                    }) {
+                        Icon(Icons.Default.Share, contentDescription = stringResource(Res.string.cd_share_route), tint = colors.contentPrimary)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

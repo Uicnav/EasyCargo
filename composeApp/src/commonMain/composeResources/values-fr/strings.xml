@@ -66,5 +66,6 @@
     <string name="cd_share_parcel">Partager les détails du colis</string>
     <string name="title_edit_parcel">Modifier le colis</string>
     <string name="btn_save_changes">ENREGISTRER</string>
+    <string name="cd_share_route">Partager l\'itinéraire</string>
 
 </resources>

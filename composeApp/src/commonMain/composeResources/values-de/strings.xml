@@ -66,5 +66,6 @@
     <string name="cd_share_parcel">Paketdetails teilen</string>
     <string name="title_edit_parcel">Paket bearbeiten</string>
     <string name="btn_save_changes">ÄNDERUNGEN SPEICHERN</string>
+    <string name="cd_share_route">Route teilen</string>
 
 </resources>

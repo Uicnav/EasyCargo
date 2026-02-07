@@ -69,5 +69,6 @@
     <string name="cd_share_parcel">Partajează detalii colet</string>
     <string name="title_edit_parcel">Editează Colet</string>
     <string name="btn_save_changes">SALVEAZĂ MODIFICĂRI</string>
+    <string name="cd_share_route">Partajează ruta</string>
 
 </resources>

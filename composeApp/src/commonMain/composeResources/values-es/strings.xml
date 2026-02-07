@@ -66,5 +66,6 @@
     <string name="cd_share_parcel">Compartir detalles del paquete</string>
     <string name="title_edit_parcel">Editar Paquete</string>
     <string name="btn_save_changes">GUARDAR CAMBIOS</string>
+    <string name="cd_share_route">Compartir ruta</string>
 
 </resources>
