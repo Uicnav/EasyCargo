@@ -81,6 +81,7 @@ import com.vantechinformatics.easycargo.utils.LocalNavHostController
 import com.vantechinformatics.easycargo.utils.LocalSnackbarHostState
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.app_name
+import easycargo.composeapp.generated.resources.cd_toggle_theme
 import easycargo.composeapp.generated.resources.background_app
 import easycargo.composeapp.generated.resources.cd_add_new_route
 import easycargo.composeapp.generated.resources.format_euro
@@ -222,7 +223,7 @@ fun HomeScreen(
                     IconButton(onClick = onToggleTheme) {
                         Icon(
                             imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
-                            contentDescription = "Toggle theme",
+                            contentDescription = stringResource(Res.string.cd_toggle_theme),
                             tint = colors.contentPrimary
                         )
                     }

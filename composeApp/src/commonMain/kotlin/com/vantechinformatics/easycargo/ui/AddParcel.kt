@@ -60,7 +60,10 @@ import easycargo.composeapp.generated.resources.btn_generate_ticket
 import easycargo.composeapp.generated.resources.detail_label_total_pay
 import easycargo.composeapp.generated.resources.error_validation_fields
 import easycargo.composeapp.generated.resources.label_full_name
+import easycargo.composeapp.generated.resources.label_package_count
 import easycargo.composeapp.generated.resources.label_phone
+import easycargo.composeapp.generated.resources.label_price_per_kg
+import easycargo.composeapp.generated.resources.label_weight
 import easycargo.composeapp.generated.resources.title_add_parcel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -226,7 +229,7 @@ fun AddParcelDialog(
                     OutlinedTextField(
                         value = weightInput,
                         onValueChange = { weightInput = it },
-                        label = { Text("Kg") },
+                        label = { Text(stringResource(Res.string.label_weight)) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
@@ -241,7 +244,7 @@ fun AddParcelDialog(
                     OutlinedTextField(
                         value = pricePerKgInput,
                         onValueChange = { pricePerKgInput = it },
-                        label = { Text("Preț/Kg (€)") },
+                        label = { Text(stringResource(Res.string.label_price_per_kg)) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
@@ -258,7 +261,7 @@ fun AddParcelDialog(
                 OutlinedTextField(
                     value = piecesInput,
                     onValueChange = { piecesInput = it },
-                    label = { Text("Nr. Pachete (Bucăți)") },
+                    label = { Text(stringResource(Res.string.label_package_count)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,

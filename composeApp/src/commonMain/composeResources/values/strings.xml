@@ -60,5 +60,9 @@
     <string name="city">Localitate</string>
 
     <string name="status_delivery">Status livrare</string>
+    <string name="cd_toggle_theme">Schimbă tema</string>
+    <string name="cd_clear">Șterge</string>
+    <string name="format_piece">colet</string>
+    <string name="format_pieces">colete</string>
 
 </resources>

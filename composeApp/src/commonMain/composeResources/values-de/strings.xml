@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name" translatable="false">EasyCargo</string>
+    <string name="format_kg" translatable="false">kg</string>
+    <string name="format_euro" translatable="false">€</string>
+
+    <string name="are_you_sure">Sind Sie sicher?</string>
+
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="confirm_delete">Löschen bestätigen</string>
+
+    <string name="cd_add_new_route">Neue Route hinzufügen</string>
+    <string name="label_created_at">Erstellt am</string>
+    <string name="label_empty_routes">Keine aktiven Routen vorhanden. Drücke +, um zu beginnen.</string>
+
+    <string name="dialog_route_title">Route Nummer</string>
+    <string name="label_route_name">Routenname</string>
+    <string name="hint_route_examples">Z.B.: Italien Tour 21.01 oder Moldawien Rückkehr</string>
+    <string name="action_cancel">Abbrechen</string>
+    <string name="action_create">Erstellen</string>
+    <string name="detail_label_total_pay">Gesamtbetrag:</string>
+    <string name="dialog_route_title_hint">Route</string>
+
+    <string name="search_placeholder">Name, Telefon oder Ticket suchen</string>
+    <string name="cd_search_icon">Suchen</string>
+    <string name="label_status_delivered">ZUGESTELLT</string>
+    <string name="label_status_pending">AUSSTEHEND</string>
+
+    <string name="stats_label_parcels">Pakete gesamt</string>
+    <string name="stats_label_money">Geld gesamt</string>
+    <string name="stats_label_delivered">Zugestellte Pakete</string>
+
+    <string name="title_add_parcel">Neues Paket hinzufügen</string>
+    <string name="label_full_name">Vollständiger Name</string>
+    <string name="label_phone">Telefon</string>
+
+    <string name="label_weight">Kg gesamt</string>
+    <string name="label_price_per_kg">Preis/Kg (€)</string>
+    <string name="label_package_count">Anzahl Pakete</string>
+
+    <string name="btn_generate_ticket">TICKET ERSTELLEN</string>
+    <string name="msg_parcel_added_success">Paket erfolgreich gespeichert!</string>
+    <string name="error_validation_fields">Bitte ausfüllen</string>
+
+    <string name="detail_label_name">Vollständiger Name:</string>
+    <string name="detail_label_phone">Telefon:</string>
+    <string name="detail_label_weight">Gewicht:</string>
+    <string name="detail_label_pieces">Stück:</string>
+    <string name="detail_label_price">Preis/Kg:</string>
+    <string name="btn_mark_delivered">ALS ZUGESTELLT MARKIEREN</string>
+    <string name="btn_mark_undelivered">ALS NICHT ZUGESTELLT MARKIEREN</string>
+    <string name="action_close">Schließen</string>
+    <string name="msg_empty_search">Keine Pakete gefunden. Überprüfe den Suchbegriff oder füge ein neues Paket hinzu, indem du die + Taste drückst.</string>
+
+    <string name="route_deleted">Route gelöscht</string>
+    <string name="undo">Rückgängig</string>
+    <string name="city_label">Ort / Stadt</string>
+    <string name="city">Ort</string>
+    <string name="status_delivery">Lieferstatus</string>
+    <string name="cd_toggle_theme">Design wechseln</string>
+    <string name="cd_clear">Löschen</string>
+    <string name="format_piece">Paket</string>
+    <string name="format_pieces">Pakete</string>
+
+</resources>

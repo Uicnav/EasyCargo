@@ -45,6 +45,7 @@ import androidx.compose.ui.zIndex
 import com.vantechinformatics.easycargo.data.HttpClientEngineFactory
 import com.vantechinformatics.easycargo.ui.theme.EasyCargoTheme
 import easycargo.composeapp.generated.resources.Res
+import easycargo.composeapp.generated.resources.cd_clear
 import easycargo.composeapp.generated.resources.city_label
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -159,7 +160,7 @@ fun CityAutocompleteField(
                         onCitySelected("")
                         expanded = false
                     }) {
-                        Icon(Icons.Default.Clear, contentDescription = "Șterge", tint = colors.textSecondary)
+                        Icon(Icons.Default.Clear, contentDescription = stringResource(Res.string.cd_clear), tint = colors.textSecondary)
                     }
                 }
             },

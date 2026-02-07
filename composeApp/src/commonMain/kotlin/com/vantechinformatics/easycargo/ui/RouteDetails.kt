@@ -75,6 +75,8 @@ import com.vantechinformatics.easycargo.utils.LocalSnackbarHostState
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.btn_mark_delivered
 import easycargo.composeapp.generated.resources.format_euro
+import easycargo.composeapp.generated.resources.format_piece
+import easycargo.composeapp.generated.resources.format_pieces
 import easycargo.composeapp.generated.resources.msg_empty_search
 import easycargo.composeapp.generated.resources.search_placeholder
 import easycargo.composeapp.generated.resources.stats_label_money
@@ -451,7 +453,7 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
                     color = colors.greenLight
                 )
                 Text(
-                    text = "${parcel.pieceCount} ${if (parcel.pieceCount == 1) "colet" else "colete"}",
+                    text = "${parcel.pieceCount} ${if (parcel.pieceCount == 1) stringResource(Res.string.format_piece) else stringResource(Res.string.format_pieces)}",
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.textMuted
                 )

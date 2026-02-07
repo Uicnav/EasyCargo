@@ -57,5 +57,9 @@
     <string name="city_label">City / Town</string>
     <string name="city">City</string>
     <string name="status_delivery">Delivery status</string>
+    <string name="cd_toggle_theme">Toggle theme</string>
+    <string name="cd_clear">Clear</string>
+    <string name="format_piece">parcel</string>
+    <string name="format_pieces">parcels</string>
 
 </resources>

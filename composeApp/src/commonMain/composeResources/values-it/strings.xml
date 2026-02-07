@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name" translatable="false">EasyCargo</string>
+    <string name="format_kg" translatable="false">kg</string>
+    <string name="format_euro" translatable="false">€</string>
+
+    <string name="are_you_sure">Sei sicuro?</string>
+
+    <string name="yes">Sì</string>
+    <string name="no">No</string>
+    <string name="confirm_delete">Conferma eliminazione</string>
+
+    <string name="cd_add_new_route">Aggiungi un nuovo percorso</string>
+    <string name="label_created_at">Creato il</string>
+    <string name="label_empty_routes">Non hai percorsi attivi. Premi + per iniziare.</string>
+
+    <string name="dialog_route_title">Percorso numero</string>
+    <string name="label_route_name">Nome Percorso</string>
+    <string name="hint_route_examples">Es: Tour Italia 21.01 o Ritorno Moldavia</string>
+    <string name="action_cancel">Annulla</string>
+    <string name="action_create">Crea</string>
+    <string name="detail_label_total_pay">Totale da pagare:</string>
+    <string name="dialog_route_title_hint">Percorso</string>
+
+    <string name="search_placeholder">Cerca Nome, Telefono o Biglietto</string>
+    <string name="cd_search_icon">Cerca</string>
+    <string name="label_status_delivered">CONSEGNATO</string>
+    <string name="label_status_pending">IN ATTESA</string>
+
+    <string name="stats_label_parcels">Totale Pacchi</string>
+    <string name="stats_label_money">Totale Denaro</string>
+    <string name="stats_label_delivered">Pacchi Consegnati</string>
+
+    <string name="title_add_parcel">Aggiungi Nuovo Pacco</string>
+    <string name="label_full_name">Nome e Cognome</string>
+    <string name="label_phone">Telefono</string>
+
+    <string name="label_weight">Kg Totali</string>
+    <string name="label_price_per_kg">Prezzo/Kg (€)</string>
+    <string name="label_package_count">Nr. Pacchi</string>
+
+    <string name="btn_generate_ticket">GENERA BIGLIETTO</string>
+    <string name="msg_parcel_added_success">Pacco salvato con successo!</string>
+    <string name="error_validation_fields">Per favore compila</string>
+
+    <string name="detail_label_name">Nome completo:</string>
+    <string name="detail_label_phone">Telefono:</string>
+    <string name="detail_label_weight">Peso:</string>
+    <string name="detail_label_pieces">Pezzi:</string>
+    <string name="detail_label_price">Prezzo/Kg:</string>
+    <string name="btn_mark_delivered">SEGNA COME CONSEGNATO</string>
+    <string name="btn_mark_undelivered">SEGNA COME NON CONSEGNATO</string>
+    <string name="action_close">Chiudi</string>
+    <string name="msg_empty_search">Nessun pacco trovato. Controlla il termine di ricerca o aggiungi un nuovo pacco premendo il pulsante +.</string>
+
+    <string name="route_deleted">Percorso eliminato</string>
+    <string name="undo">Annulla</string>
+    <string name="city_label">Località / Città</string>
+    <string name="city">Località</string>
+    <string name="status_delivery">Stato consegna</string>
+    <string name="cd_toggle_theme">Cambia tema</string>
+    <string name="cd_clear">Cancella</string>
+    <string name="format_piece">pacco</string>
+    <string name="format_pieces">pacchi</string>
+
+</resources>
