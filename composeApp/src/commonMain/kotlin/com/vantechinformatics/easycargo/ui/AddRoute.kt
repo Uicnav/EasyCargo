@@ -27,9 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.vantechinformatics.easycargo.ui.theme.GlassBorder
-import com.vantechinformatics.easycargo.ui.theme.GlassSurface
-import com.vantechinformatics.easycargo.ui.theme.TextSecondary
+import com.vantechinformatics.easycargo.ui.theme.EasyCargoTheme
 import com.vantechinformatics.easycargo.data.RouteUi
 import com.vantechinformatics.easycargo.ui.viewmodel.RouteViewModel
 import easycargo.composeapp.generated.resources.Res
@@ -53,6 +51,7 @@ fun AddRouteDialog(
     onDismiss: () -> Unit,
     onRouteCreated: (Long) -> Unit // Returnăm ID-ul ca să navigăm direct la ea
 ) {
+    val colors = EasyCargoTheme.colors
     val scope = rememberCoroutineScope()
     val prefix = stringResource(Res.string.dialog_route_title_hint)
 
@@ -70,8 +69,8 @@ fun AddRouteDialog(
         Box(
             modifier = Modifier.padding(16.dp).fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
-                .border(1.dp, GlassBorder, RoundedCornerShape(16.dp))
-                .background(GlassSurface)
+                .border(1.dp, colors.glassBorder, RoundedCornerShape(16.dp))
+                .background(colors.glassSurface)
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
@@ -86,10 +85,10 @@ fun AddRouteDialog(
                         text = stringResource(Res.string.cd_add_new_route),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = colors.contentPrimary
                     )
                     IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Close, contentDescription = null, tint = TextSecondary)
+                        Icon(Icons.Default.Close, contentDescription = null, tint = colors.textSecondary)
                     }
                 }
 
@@ -104,11 +103,11 @@ fun AddRouteDialog(
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = GlassBorder,
+                        unfocusedBorderColor = colors.glassBorder,
                         focusedLabelColor = MaterialTheme.colorScheme.primary,
-                        unfocusedLabelColor = TextSecondary,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
+                        unfocusedLabelColor = colors.textSecondary,
+                        focusedTextColor = colors.contentPrimary,
+                        unfocusedTextColor = colors.contentPrimary,
                         cursorColor = MaterialTheme.colorScheme.primary
                     )
                 )
@@ -116,7 +115,7 @@ fun AddRouteDialog(
                 Text(
                     text = stringResource(Res.string.hint_route_examples),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TextSecondary,
+                    color = colors.textSecondary,
                     modifier = Modifier.padding(top = 4.dp, bottom = 16.dp)
                 )
 

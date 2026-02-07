@@ -46,12 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.vantechinformatics.easycargo.data.ParcelUi
-import com.vantechinformatics.easycargo.ui.theme.GlassBorder
-import com.vantechinformatics.easycargo.ui.theme.GlassSurface
-import com.vantechinformatics.easycargo.ui.theme.GreenLight
-import com.vantechinformatics.easycargo.ui.theme.OrangeLight
-import com.vantechinformatics.easycargo.ui.theme.TextMuted
-import com.vantechinformatics.easycargo.ui.theme.TextSecondary
+import com.vantechinformatics.easycargo.ui.theme.EasyCargoTheme
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.btn_mark_delivered
@@ -74,6 +69,7 @@ import org.jetbrains.compose.resources.stringResource
 fun ParcelDetailsDialog(
     parcel: ParcelUi, viewModel: ParcelViewModel, onDismiss: () -> Unit
 ) {
+    val colors = EasyCargoTheme.colors
     val scope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
 
@@ -86,7 +82,7 @@ fun ParcelDetailsDialog(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(GlassSurface)
+                .background(colors.glassSurface)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
@@ -101,7 +97,7 @@ fun ParcelDetailsDialog(
                     ParcelIdDisplay(displayId = parcel.displayId)
                     Spacer(Modifier.weight(1f))
                     // Status chip
-                    val statusColor = if (isDelivered.value) GreenLight else OrangeLight
+                    val statusColor = if (isDelivered.value) colors.greenLight else colors.orangeLight
                     val statusText =
                         if (isDelivered.value) stringResource(Res.string.label_status_delivered)
                         else stringResource(Res.string.label_status_pending)
@@ -117,7 +113,7 @@ fun ParcelDetailsDialog(
                     )
                     Spacer(Modifier.width(4.dp))
                     IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Close, contentDescription = null, tint = TextSecondary)
+                        Icon(Icons.Default.Close, contentDescription = null, tint = colors.textSecondary)
                     }
                 }
 
@@ -137,20 +133,20 @@ fun ParcelDetailsDialog(
                         ) {
                             Text(
                                 text = stringResource(Res.string.detail_label_phone),
-                                color = TextSecondary,
+                                color = colors.textSecondary,
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.width(100.dp)
                             )
                             Text(
                                 text = parcel.phone,
                                 fontWeight = FontWeight.Medium,
-                                color = OrangeLight,
+                                color = colors.orangeLight,
                                 modifier = Modifier.weight(1f)
                             )
                             Icon(
                                 imageVector = Icons.Default.Phone,
                                 contentDescription = null,
-                                tint = OrangeLight,
+                                tint = colors.orangeLight,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -164,14 +160,14 @@ fun ParcelDetailsDialog(
                         ) {
                             Text(
                                 text = stringResource(Res.string.city),
-                                color = TextSecondary,
+                                color = colors.textSecondary,
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.width(100.dp)
                             )
                             Text(
                                 text = parcel.city,
                                 fontWeight = FontWeight.Medium,
-                                color = Color.White,
+                                color = colors.contentPrimary,
                                 modifier = Modifier.weight(1f)
                             )
                             IconButton(
@@ -183,14 +179,14 @@ fun ParcelDetailsDialog(
                                 Icon(
                                     imageVector = Icons.Default.LocationOn,
                                     contentDescription = null,
-                                    tint = OrangeLight
+                                    tint = colors.orangeLight
                                 )
                             }
                         }
                     }
 
                     HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 8.dp), color = GlassBorder
+                        modifier = Modifier.padding(vertical = 8.dp), color = colors.glassBorder
                     )
 
                     // Logistics details
@@ -214,7 +210,7 @@ fun ParcelDetailsDialog(
                     ) {
                         Text(
                             stringResource(Res.string.detail_label_total_pay),
-                            color = TextSecondary,
+                            color = colors.textSecondary,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.width(100.dp)
                         )
@@ -222,7 +218,7 @@ fun ParcelDetailsDialog(
                         Text(
                             text = "$totalToPay ${stringResource(Res.string.format_euro)}",
                             fontWeight = FontWeight.Bold,
-                            color = GreenLight
+                            color = colors.greenLight
                         )
                     }
 
@@ -241,8 +237,8 @@ fun ParcelDetailsDialog(
                                 }
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isDelivered.value) TextMuted
-                                else GreenLight, contentColor = Color.White
+                                containerColor = if (isDelivered.value) colors.textMuted
+                                else colors.greenLight, contentColor = Color.White
                             ),
                             modifier = Modifier.fillMaxWidth().height(50.dp),
                             shape = RoundedCornerShape(12.dp)
@@ -262,12 +258,13 @@ fun ParcelDetailsDialog(
 
 @Composable
 fun ParcelIdDisplay(displayId: Int, isDelivered: Boolean = false) {
+    val colors = EasyCargoTheme.colors
     val routePart = displayId / 1000
     val parcelPart = displayId % 1000
     val parcelString = parcelPart.toString().padStart(3, '0')
 
-    val prefixColor = if (isDelivered) TextMuted else OrangeLight
-    val numberColor = if (isDelivered) TextMuted else Color.White
+    val prefixColor = if (isDelivered) colors.textMuted else colors.orangeLight
+    val numberColor = if (isDelivered) colors.textMuted else colors.contentPrimary
 
     Text(
         text = buildAnnotatedString {
@@ -278,7 +275,7 @@ fun ParcelIdDisplay(displayId: Int, isDelivered: Boolean = false) {
             ) {
                 append("R$routePart")
             }
-            withStyle(style = SpanStyle(color = TextMuted, fontSize = 14.sp)) {
+            withStyle(style = SpanStyle(color = colors.textMuted, fontSize = 14.sp)) {
                 append("-")
             }
             withStyle(
@@ -293,10 +290,11 @@ fun ParcelIdDisplay(displayId: Int, isDelivered: Boolean = false) {
 
 @Composable
 fun DetailRow(label: String, value: String) {
+    val colors = EasyCargoTheme.colors
     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
         Text(
             label,
-            color = TextSecondary,
+            color = colors.textSecondary,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.width(100.dp)
         )
@@ -304,7 +302,7 @@ fun DetailRow(label: String, value: String) {
             value,
             fontWeight = FontWeight.Medium,
             style = MaterialTheme.typography.bodyMedium,
-            color = Color.White
+            color = colors.contentPrimary
         )
     }
 }

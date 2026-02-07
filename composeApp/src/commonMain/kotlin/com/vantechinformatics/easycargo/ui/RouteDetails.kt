@@ -67,14 +67,7 @@ import androidx.compose.ui.unit.dp
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.data.RouteStats
 import com.vantechinformatics.easycargo.format
-import com.vantechinformatics.easycargo.ui.theme.GlassBorder
-import com.vantechinformatics.easycargo.ui.theme.GlassCard
-import com.vantechinformatics.easycargo.ui.theme.GlassSurface
-import com.vantechinformatics.easycargo.ui.theme.GreenLight
-import com.vantechinformatics.easycargo.ui.theme.Green900
-import com.vantechinformatics.easycargo.ui.theme.OrangeLight
-import com.vantechinformatics.easycargo.ui.theme.TextMuted
-import com.vantechinformatics.easycargo.ui.theme.TextSecondary
+import com.vantechinformatics.easycargo.ui.theme.EasyCargoTheme
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import com.vantechinformatics.easycargo.undoDeleteRouteSnackbar
 import com.vantechinformatics.easycargo.utils.LocalNavHostController
@@ -95,6 +88,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun RouteDetailsScreen(
     routeId: Long, viewModel: ParcelViewModel, onBack: () -> Unit
 ) {
+    val colors = EasyCargoTheme.colors
     var searchQuery by remember { mutableStateOf("") }
 
     val parcelsState =
@@ -121,14 +115,14 @@ fun RouteDetailsScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("#$routeId", fontWeight = FontWeight.Bold, color = Color.White)
+                    Text("#$routeId", fontWeight = FontWeight.Bold, color = colors.contentPrimary)
                 },
                 navigationIcon = {
                     IconButton(onClick = {
                         onBack()
                         navController.navigateUp()
                     }) {
-                        Icon(Icons.Default.ArrowBack, null, tint = Color.White)
+                        Icon(Icons.Default.ArrowBack, null, tint = colors.contentPrimary)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -156,8 +150,8 @@ fun RouteDetailsScreen(
             Box(
                 modifier = Modifier.fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .border(1.dp, GlassBorder, RoundedCornerShape(16.dp))
-                    .background(GlassSurface)
+                    .border(1.dp, colors.glassBorder, RoundedCornerShape(16.dp))
+                    .background(colors.glassSurface)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     // Delivery count + money row
@@ -170,13 +164,13 @@ fun RouteDetailsScreen(
                             Text(
                                 text = stringResource(Res.string.status_delivery),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TextSecondary
+                                color = colors.textSecondary
                             )
                             Text(
                                 text = "${statsState.value.deliveredParcels} / ${statsState.value.totalParcels}",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = colors.contentPrimary
                             )
 
                         }
@@ -184,13 +178,13 @@ fun RouteDetailsScreen(
                             Text(
                                 text = stringResource(Res.string.stats_label_money),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TextSecondary
+                                color = colors.textSecondary
                             )
                             Text(
                                 text = "${statsState.value.totalMoney.format(2)} ${stringResource(Res.string.format_euro)}",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = GreenLight
+                                color = colors.greenLight
                             )
                         }
                     }
@@ -213,17 +207,17 @@ fun RouteDetailsScreen(
                             Text(
                                 stringResource(Res.string.search_placeholder),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TextMuted
+                                color = colors.textMuted
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
                         leadingIcon = {
-                            Icon(Icons.Default.Search, null, tint = TextSecondary)
+                            Icon(Icons.Default.Search, null, tint = colors.textSecondary)
                         },
                         trailingIcon = {
                             if (searchQuery.isNotEmpty()) {
                                 IconButton(onClick = { searchQuery = "" }) {
-                                    Icon(Icons.Default.Close, null, tint = TextSecondary)
+                                    Icon(Icons.Default.Close, null, tint = colors.textSecondary)
                                 }
                             }
                         },
@@ -231,9 +225,9 @@ fun RouteDetailsScreen(
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = GlassBorder,
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
+                            unfocusedBorderColor = colors.glassBorder,
+                            focusedTextColor = colors.contentPrimary,
+                            unfocusedTextColor = colors.contentPrimary,
                             cursorColor = MaterialTheme.colorScheme.primary
                         ),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -285,6 +279,7 @@ fun RouteDetailsScreen(
 fun DeliveryProgressBar(
     deliveredCount: Int, totalCount: Int, modifier: Modifier = Modifier
 ) {
+    val colors = EasyCargoTheme.colors
     val progressTarget = if (totalCount > 0) {
         deliveredCount.toFloat() / totalCount.toFloat()
     } else 0f
@@ -301,14 +296,14 @@ fun DeliveryProgressBar(
             progress = { animatedProgress },
             modifier = Modifier.weight(1f).height(7.dp)
                 .clip(RoundedCornerShape(4.dp)),
-            color = if (progressTarget >= 1f) GreenLight else MaterialTheme.colorScheme.primary,
-            trackColor = Color.White.copy(alpha = 0.15f),
+            color = if (progressTarget >= 1f) colors.greenLight else MaterialTheme.colorScheme.primary,
+            trackColor = colors.progressTrack,
         )
         Text(
             text = "${(progressTarget * 100).toInt()}%",
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
-            color = if (progressTarget >= 1f) GreenLight else OrangeLight,
+            color = if (progressTarget >= 1f) colors.greenLight else colors.orangeLight,
             modifier = Modifier.padding(start = 8.dp)
         )
     }
@@ -316,18 +311,19 @@ fun DeliveryProgressBar(
 
 @Composable
 fun EmptyResultMessage(text: String) {
+    val colors = EasyCargoTheme.colors
     Box(
         modifier = Modifier.padding(16.dp).fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .border(1.dp, GlassBorder, RoundedCornerShape(16.dp))
-            .background(GlassCard)
+            .border(1.dp, colors.glassBorder, RoundedCornerShape(16.dp))
+            .background(colors.glassCard)
     ) {
         Text(
             text = text,
             modifier = Modifier.padding(24.dp).fillMaxWidth(),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium,
-            color = TextSecondary
+            color = colors.textSecondary
         )
     }
 }
@@ -335,6 +331,7 @@ fun EmptyResultMessage(text: String) {
 @Preview
 @Composable
 fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
+    val colors = EasyCargoTheme.colors
     val cardAlpha = if (parcel.isDelivered) 0.65f else 1f
 
     Box(
@@ -342,8 +339,8 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
             .padding(horizontal = 4.dp, vertical = 4.dp)
             .alpha(cardAlpha)
             .clip(RoundedCornerShape(12.dp))
-            .border(1.dp, GlassBorder, RoundedCornerShape(12.dp))
-            .background(GlassCard)
+            .border(1.dp, colors.glassBorder, RoundedCornerShape(12.dp))
+            .background(colors.glassCard)
             .clickable { onClick() }
     ) {
         Column {
@@ -357,7 +354,7 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
                         .clip(RoundedCornerShape(8.dp))
                         .background(
                             if (parcel.isDelivered)
-                                Color.White.copy(alpha = 0.1f)
+                                colors.contentPrimary.copy(alpha = 0.1f)
                             else
                                 MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                         )
@@ -378,7 +375,7 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
                         text = parcel.firstNameLastName,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.White
+                        color = colors.contentPrimary
                     )
 
                     if (parcel.city.isNotEmpty()) {
@@ -388,13 +385,13 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
                                 imageVector = Icons.Default.LocationOn,
                                 contentDescription = null,
                                 modifier = Modifier.size(12.dp),
-                                tint = OrangeLight
+                                tint = colors.orangeLight
                             )
                             Spacer(Modifier.width(4.dp))
                             Text(
                                 text = parcel.city,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TextSecondary
+                                color = colors.textSecondary
                             )
                         }
                     }
@@ -409,13 +406,13 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
                             Icon(
                                 Icons.Default.Phone, null,
                                 modifier = Modifier.size(12.dp),
-                                tint = OrangeLight
+                                tint = colors.orangeLight
                             )
                             Spacer(Modifier.width(4.dp))
                             Text(
                                 text = parcel.phone,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = OrangeLight
+                                color = colors.orangeLight
                             )
                         }
                     }
@@ -424,13 +421,13 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
                 // Delivered checkmark
                 if (parcel.isDelivered) {
                     Surface(
-                        color = GreenLight.copy(alpha = 0.2f),
+                        color = colors.greenLight.copy(alpha = 0.2f),
                         shape = CircleShape
                     ) {
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
                             contentDescription = null,
-                            tint = GreenLight,
+                            tint = colors.greenLight,
                             modifier = Modifier.size(28.dp).padding(2.dp)
                         )
                     }
@@ -440,7 +437,7 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
             // Divider + price/pieces row
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 12.dp),
-                color = GlassBorder
+                color = colors.glassBorder
             )
             Row(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
@@ -451,12 +448,12 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
                     text = "${parcel.totalSum.format(2)} ${stringResource(Res.string.format_euro)}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    color = GreenLight
+                    color = colors.greenLight
                 )
                 Text(
                     text = "${parcel.pieceCount} ${if (parcel.pieceCount == 1) "colet" else "colete"}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TextMuted
+                    color = colors.textMuted
                 )
             }
         }

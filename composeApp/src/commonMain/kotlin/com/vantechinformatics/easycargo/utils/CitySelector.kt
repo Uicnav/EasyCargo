@@ -34,6 +34,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -42,9 +43,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.vantechinformatics.easycargo.data.HttpClientEngineFactory
-import com.vantechinformatics.easycargo.ui.theme.GlassBorder
-import com.vantechinformatics.easycargo.ui.theme.GlassSurface
-import com.vantechinformatics.easycargo.ui.theme.TextSecondary
+import com.vantechinformatics.easycargo.ui.theme.EasyCargoTheme
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.city_label
 import io.ktor.client.HttpClient
@@ -105,6 +104,7 @@ fun CityAutocompleteField(
     focusRequester: FocusRequester = remember { FocusRequester() },
     onNext: (() -> Unit)? = null
 ) {
+    val colors = EasyCargoTheme.colors
     var query by remember { mutableStateOf(selectedCity) }
     var suggestions by remember { mutableStateOf(emptyList<String>()) }
     var expanded by remember { mutableStateOf(false) }
@@ -150,7 +150,7 @@ fun CityAutocompleteField(
                         color = MaterialTheme.colorScheme.primary
                     )
                 } else {
-                    Icon(Icons.Default.LocationOn, contentDescription = null, tint = TextSecondary)
+                    Icon(Icons.Default.LocationOn, contentDescription = null, tint = colors.textSecondary)
                 }
             }, trailingIcon = {
                 if (query.isNotEmpty()) {
@@ -159,7 +159,7 @@ fun CityAutocompleteField(
                         onCitySelected("")
                         expanded = false
                     }) {
-                        Icon(Icons.Default.Clear, contentDescription = "Șterge", tint = TextSecondary)
+                        Icon(Icons.Default.Clear, contentDescription = "Șterge", tint = colors.textSecondary)
                     }
                 }
             },
@@ -170,35 +170,35 @@ fun CityAutocompleteField(
                 keyboardActions = KeyboardActions(onNext = { onNext?.invoke() }),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = GlassBorder,
+                    unfocusedBorderColor = colors.glassBorder,
                     focusedLabelColor = MaterialTheme.colorScheme.primary,
-                    unfocusedLabelColor = TextSecondary,
-                    focusedTextColor = androidx.compose.ui.graphics.Color.White,
-                    unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                    unfocusedLabelColor = colors.textSecondary,
+                    focusedTextColor = colors.contentPrimary,
+                    unfocusedTextColor = colors.contentPrimary,
                     cursorColor = MaterialTheme.colorScheme.primary
                 ),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp)
             )
 
             if (expanded) {
                 ElevatedCard(
                     modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp).padding(top = 4.dp),
                     elevation = CardDefaults.elevatedCardElevation(6.dp),
-                    colors = CardDefaults.cardColors(containerColor = GlassSurface)
+                    colors = CardDefaults.cardColors(containerColor = colors.glassSurface)
                 ) {
                     LazyColumn {
                         items(suggestions) { city ->
                             ListItem(
                                 headlineContent = {
-                                    Text(city, color = androidx.compose.ui.graphics.Color.White)
+                                    Text(city, color = colors.contentPrimary)
                                 },
                                 modifier = Modifier.clickable {
                                         query = city
                                         onCitySelected(city)
                                         expanded = false
                                         focusManager.clearFocus()
-                                    }.background(GlassSurface))
-                            HorizontalDivider(color = GlassBorder)
+                                    }.background(colors.glassSurface))
+                            HorizontalDivider(color = colors.glassBorder)
                         }
                     }
                 }

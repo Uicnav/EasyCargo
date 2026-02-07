@@ -39,10 +39,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.vantechinformatics.easycargo.ui.theme.GlassBorder
-import com.vantechinformatics.easycargo.ui.theme.GlassSurface
-import com.vantechinformatics.easycargo.ui.theme.Red700
-import com.vantechinformatics.easycargo.ui.theme.TextSecondary
+import com.vantechinformatics.easycargo.ui.theme.EasyCargoTheme
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.are_you_sure
 import easycargo.composeapp.generated.resources.confirm_delete
@@ -64,6 +61,7 @@ fun GameCard(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
+    val colors = EasyCargoTheme.colors
     var showDialog by remember { mutableStateOf(false) }
     val offsetX = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
@@ -80,7 +78,7 @@ fun GameCard(
     Box(modifier = modifier.fillMaxWidth().padding(top = 8.dp)) {
         Box(
             modifier = Modifier.matchParentSize().clip(shape = CardDefaults.shape)
-                .background(Red700).padding(end = 16.dp), contentAlignment = Alignment.CenterEnd
+                .background(colors.red700).padding(end = 16.dp), contentAlignment = Alignment.CenterEnd
         ) {
             Image(
                 painter = painterResource(Res.drawable.ic_delete_white),
@@ -136,25 +134,26 @@ fun GameCard(
 
 @Composable
 fun ConfirmDeleteDialog(onConfirm: () -> Unit, onDismiss: () -> Unit, isHome: Boolean) {
+    val colors = EasyCargoTheme.colors
     AlertDialog(
         onDismissRequest = {},
         title = {
             Text(
                 stringResource(Res.string.confirm_delete),
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = colors.contentPrimary
             )
         },
         text = {
             Text(
                 stringResource(Res.string.are_you_sure),
-                color = TextSecondary
+                color = colors.textSecondary
             )
         },
         confirmButton = {
             Button(
                 onClick = onConfirm,
-                colors = ButtonDefaults.buttonColors(containerColor = Red700),
+                colors = ButtonDefaults.buttonColors(containerColor = colors.red700),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
@@ -171,12 +170,12 @@ fun ConfirmDeleteDialog(onConfirm: () -> Unit, onDismiss: () -> Unit, isHome: Bo
             ) {
                 Text(
                     stringResource(Res.string.no),
-                    color = TextSecondary
+                    color = colors.textSecondary
                 )
             }
         },
         shape = RoundedCornerShape(16.dp),
-        containerColor = GlassSurface,
+        containerColor = colors.glassSurface,
         tonalElevation = 0.dp
     )
 }

@@ -40,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -53,10 +52,7 @@ import androidx.datastore.preferences.core.edit
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.format
 import com.vantechinformatics.easycargo.utils.LocalDataStore
-import com.vantechinformatics.easycargo.ui.theme.GlassBorder
-import com.vantechinformatics.easycargo.ui.theme.GlassSurface
-import com.vantechinformatics.easycargo.ui.theme.GreenLight
-import com.vantechinformatics.easycargo.ui.theme.TextSecondary
+import com.vantechinformatics.easycargo.ui.theme.EasyCargoTheme
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import com.vantechinformatics.easycargo.utils.CityAutocompleteField
 import easycargo.composeapp.generated.resources.Res
@@ -77,6 +73,7 @@ fun AddParcelDialog(
     onDismiss: () -> Unit,
     onParcelAdded: (ParcelUi) -> Unit
 ) {
+    val colors = EasyCargoTheme.colors
     val scope = rememberCoroutineScope()
     val dataStore = LocalDataStore.current
     val pricePerKgKey = remember { doublePreferencesKey("price_per_kg") }
@@ -108,11 +105,11 @@ fun AddParcelDialog(
 
     val textFieldColors = OutlinedTextFieldDefaults.colors(
         focusedBorderColor = MaterialTheme.colorScheme.primary,
-        unfocusedBorderColor = GlassBorder,
+        unfocusedBorderColor = colors.glassBorder,
         focusedLabelColor = MaterialTheme.colorScheme.primary,
-        unfocusedLabelColor = TextSecondary,
-        focusedTextColor = Color.White,
-        unfocusedTextColor = Color.White,
+        unfocusedLabelColor = colors.textSecondary,
+        focusedTextColor = colors.contentPrimary,
+        unfocusedTextColor = colors.contentPrimary,
         cursorColor = MaterialTheme.colorScheme.primary
     )
 
@@ -132,8 +129,8 @@ fun AddParcelDialog(
                 .padding(horizontal = 24.dp, vertical = 16.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
-                .border(1.dp, GlassBorder, RoundedCornerShape(16.dp))
-                .background(GlassSurface)
+                .border(1.dp, colors.glassBorder, RoundedCornerShape(16.dp))
+                .background(colors.glassSurface)
         ) {
             Column(
                 modifier = Modifier
@@ -149,10 +146,10 @@ fun AddParcelDialog(
                         stringResource(Res.string.title_add_parcel),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = colors.contentPrimary
                     )
                     IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Close, contentDescription = null, tint = TextSecondary)
+                        Icon(Icons.Default.Close, contentDescription = null, tint = colors.textSecondary)
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -221,7 +218,7 @@ fun AddParcelDialog(
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
-                HorizontalDivider(color = GlassBorder)
+                HorizontalDivider(color = colors.glassBorder)
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // 4. Kg + Price row
@@ -279,7 +276,7 @@ fun AddParcelDialog(
                 Box(
                     modifier = Modifier.fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
-                        .border(1.dp, GlassBorder, RoundedCornerShape(12.dp))
+                        .border(1.dp, colors.glassBorder, RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
                 ) {
                     Row(
@@ -290,12 +287,12 @@ fun AddParcelDialog(
                         Text(
                             stringResource(Res.string.detail_label_total_pay),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TextSecondary
+                            color = colors.textSecondary
                         )
                         Text(
                             text = "${calculatedTotal.format(2)} €",
                             style = MaterialTheme.typography.titleMedium,
-                            color = GreenLight,
+                            color = colors.greenLight,
                             fontWeight = FontWeight.Bold
                         )
                     }

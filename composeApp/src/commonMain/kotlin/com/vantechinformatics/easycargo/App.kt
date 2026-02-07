@@ -20,12 +20,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -59,6 +62,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import com.vantechinformatics.easycargo.data.AppDatabase
 import com.vantechinformatics.easycargo.data.RouteStats
 import com.vantechinformatics.easycargo.data.RouteUi
@@ -67,11 +71,8 @@ import com.vantechinformatics.easycargo.ui.EmptyResultMessage
 import com.vantechinformatics.easycargo.ui.GameCard
 import com.vantechinformatics.easycargo.ui.RouteDetailsScreen
 import com.vantechinformatics.easycargo.ui.theme.EasyCargoTheme
-import com.vantechinformatics.easycargo.ui.theme.GlassBorder
-import com.vantechinformatics.easycargo.ui.theme.GlassCard
-import com.vantechinformatics.easycargo.ui.theme.GreenLight
-import com.vantechinformatics.easycargo.ui.theme.OrangeLight
-import com.vantechinformatics.easycargo.ui.theme.TextSecondary
+import com.vantechinformatics.easycargo.ui.theme.THEME_MODE_KEY
+import com.vantechinformatics.easycargo.ui.theme.ThemeMode
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import com.vantechinformatics.easycargo.ui.viewmodel.RouteUiState
 import com.vantechinformatics.easycargo.ui.viewmodel.RouteViewModel
@@ -90,6 +91,7 @@ import easycargo.composeapp.generated.resources.stats_label_delivered
 import easycargo.composeapp.generated.resources.stats_label_money
 import easycargo.composeapp.generated.resources.stats_label_parcels
 import easycargo.composeapp.generated.resources.undo
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.getString
@@ -106,9 +108,20 @@ data class RouteDetailsScreenDest(val idRoute: Long)
 @Composable
 @Preview
 fun App(appDatabase: AppDatabase, dataStore: DataStore<Preferences>) {
-    EasyCargoTheme {
+    val themeMode by dataStore.data.map { prefs ->
+        when (prefs[THEME_MODE_KEY]) {
+            ThemeMode.LIGHT.name -> ThemeMode.LIGHT
+            else -> ThemeMode.DARK
+        }
+    }.collectAsState(initial = ThemeMode.DARK)
+
+    val isDark = themeMode == ThemeMode.DARK
+
+    EasyCargoTheme(darkTheme = isDark) {
+        val colors = EasyCargoTheme.colors
         val snackbarHostState = remember { SnackbarHostState() }
         val navController = rememberNavController()
+        val scope = rememberCoroutineScope()
 
         CompositionLocalProvider(
             LocalNavHostController provides navController,
@@ -123,15 +136,15 @@ fun App(appDatabase: AppDatabase, dataStore: DataStore<Preferences>) {
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
-                // Dark gradient overlay for readability
+                // Gradient overlay for readability
                 Box(
                     modifier = Modifier.fillMaxSize()
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
-                                    Color(0xAA0D1B2A),
-                                    Color(0xDD0D1B2A),
-                                    Color(0xEE0D1B2A)
+                                    colors.overlayGradientTop,
+                                    colors.overlayGradientMid,
+                                    colors.overlayGradientBottom
                                 )
                             )
                         )
@@ -144,7 +157,17 @@ fun App(appDatabase: AppDatabase, dataStore: DataStore<Preferences>) {
                 ) {
                     composable<HomeDest> {
                         val viewModel = viewModel { RouteViewModel(appDatabase.routeDao(), appDatabase.parcelDao()) }
-                        HomeScreen(viewModel) {
+                        HomeScreen(
+                            viewModel = viewModel,
+                            isDarkTheme = isDark,
+                            onToggleTheme = {
+                                scope.launch {
+                                    dataStore.edit { prefs ->
+                                        prefs[THEME_MODE_KEY] = if (isDark) ThemeMode.LIGHT.name else ThemeMode.DARK.name
+                                    }
+                                }
+                            }
+                        ) {
                             navController.navigate(RouteDetailsScreenDest(it))
                         }
                     }
@@ -172,8 +195,12 @@ fun CenteredCircularProgressIndicator(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: RouteViewModel, onNavigateToRoute: (Long) -> Unit
+    viewModel: RouteViewModel,
+    isDarkTheme: Boolean,
+    onToggleTheme: () -> Unit,
+    onNavigateToRoute: (Long) -> Unit
 ) {
+    val colors = EasyCargoTheme.colors
     var showAddDialog by remember { mutableStateOf(false) }
     val routesState = viewModel.uiState.collectAsState()
     var isLoading by remember { mutableStateOf(false) }
@@ -188,8 +215,17 @@ fun HomeScreen(
                     Text(
                         stringResource(Res.string.app_name),
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = colors.contentPrimary
                     )
+                },
+                actions = {
+                    IconButton(onClick = onToggleTheme) {
+                        Icon(
+                            imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                            contentDescription = "Toggle theme",
+                            tint = colors.contentPrimary
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
@@ -272,14 +308,15 @@ fun HomeScreen(
 
 @Composable
 fun RouteCard(route: RouteUi, stats: RouteStats?, onClick: () -> Unit) {
+    val colors = EasyCargoTheme.colors
     if (route.isVisible) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 6.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .border(1.dp, GlassBorder, RoundedCornerShape(16.dp))
-                .background(GlassCard)
+                .border(1.dp, colors.glassBorder, RoundedCornerShape(16.dp))
+                .background(colors.glassCard)
                 .clickable { onClick() }
         ) {
             Row {
@@ -296,13 +333,13 @@ fun RouteCard(route: RouteUi, stats: RouteStats?, onClick: () -> Unit) {
                         route.name,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = colors.contentPrimary
                     )
                     // Route ID + date
                     Text(
                         "#${route.routeId} · ${stringResource(Res.string.label_created_at)} ${route.createdAt.getFormattedDate()}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary
+                        color = colors.textSecondary
                     )
 
                     if (stats != null) {
@@ -316,19 +353,19 @@ fun RouteCard(route: RouteUi, stats: RouteStats?, onClick: () -> Unit) {
                             StatChip(
                                 value = "${stats.deliveredParcels}",
                                 label = stringResource(Res.string.stats_label_delivered),
-                                color = GreenLight,
+                                color = colors.greenLight,
                                 modifier = Modifier.weight(1f)
                             )
                             StatChip(
                                 value = "${stats.totalParcels}",
                                 label = stringResource(Res.string.stats_label_parcels),
-                                color = OrangeLight,
+                                color = colors.orangeLight,
                                 modifier = Modifier.weight(1f)
                             )
                             StatChip(
                                 value = "${stats.totalMoney.format(0)}${stringResource(Res.string.format_euro)}",
                                 label = stringResource(Res.string.stats_label_money),
-                                color = GreenLight,
+                                color = colors.greenLight,
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -350,13 +387,13 @@ fun RouteCard(route: RouteUi, stats: RouteStats?, onClick: () -> Unit) {
                                 progress = { animatedProgress },
                                 modifier = Modifier.weight(1f).height(5.dp)
                                     .clip(RoundedCornerShape(3.dp)),
-                                color = if (progressTarget >= 1f) GreenLight else MaterialTheme.colorScheme.primary,
-                                trackColor = Color.White.copy(alpha = 0.15f),
+                                color = if (progressTarget >= 1f) colors.greenLight else MaterialTheme.colorScheme.primary,
+                                trackColor = colors.progressTrack,
                             )
                             Text(
                                 text = "${(progressTarget * 100).toInt()}%",
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TextSecondary,
+                                color = colors.textSecondary,
                                 modifier = Modifier.padding(start = 8.dp)
                             )
                         }
