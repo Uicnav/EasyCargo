@@ -2,6 +2,7 @@ package com.vantechinformatics.easycargo.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -117,7 +119,34 @@ fun ParcelDetailsDialog(
                 Column(modifier = Modifier.padding(20.dp)) {
                     // Customer info
                     DetailRow(stringResource(Res.string.detail_label_name), parcel.firstNameLastName)
-                    DetailRow(stringResource(Res.string.detail_label_phone), parcel.phone)
+
+                    // Phone with call action
+                    if (parcel.phone.isNotEmpty()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                                .clickable { uriHandler.openUri("tel:${parcel.phone}") },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.detail_label_phone),
+                                color = TextSecondary,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.width(100.dp)
+                            )
+                            Text(
+                                text = parcel.phone,
+                                fontWeight = FontWeight.Medium,
+                                color = OrangeLight,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Icon(
+                                imageVector = Icons.Default.Phone,
+                                contentDescription = null,
+                                tint = OrangeLight,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
 
                     // City with navigation
                     if (parcel.city.isNotEmpty()) {

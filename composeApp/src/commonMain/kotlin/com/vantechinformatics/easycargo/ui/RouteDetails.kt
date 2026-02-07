@@ -58,6 +58,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -397,20 +398,25 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
                         }
                     }
 
-                    Spacer(Modifier.height(2.dp))
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            Icons.Default.Phone, null,
-                            modifier = Modifier.size(12.dp),
-                            tint = TextMuted
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Text(
-                            text = parcel.phone,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = TextMuted
-                        )
+                    if (parcel.phone.isNotEmpty()) {
+                        Spacer(Modifier.height(2.dp))
+                        val uriHandler = LocalUriHandler.current
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable { uriHandler.openUri("tel:${parcel.phone}") }
+                        ) {
+                            Icon(
+                                Icons.Default.Phone, null,
+                                modifier = Modifier.size(12.dp),
+                                tint = OrangeLight
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                text = parcel.phone,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = OrangeLight
+                            )
+                        }
                     }
                 }
 
