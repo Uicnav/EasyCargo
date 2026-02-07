@@ -60,7 +60,7 @@ fun GameCard(
     onDelete: () -> Unit,
     onTap: () -> Unit = {},
     isTable: Boolean = false,
-    isSwipe: Boolean = true,
+    isSwipe: Boolean = false,
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
