@@ -67,5 +67,7 @@
     <string name="language_selector_title">Selectează limba</string>
     <string name="language_system_default">Implicit sistem</string>
     <string name="cd_share_parcel">Partajează detalii colet</string>
+    <string name="title_edit_parcel">Editează Colet</string>
+    <string name="btn_save_changes">SALVEAZĂ MODIFICĂRI</string>
 
 </resources>

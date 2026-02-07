@@ -55,6 +55,20 @@ class ParcelViewModel(private val dao: ParcelDao) : ViewModel() {
             .toUiModel()
     }
 
+    suspend fun updateParcel(parcel: ParcelUi) {
+        val totalSum = parcel.weight * parcel.pricePerKg
+        dao.updateParcel(
+            id = parcel.id,
+            name = parcel.firstNameLastName,
+            phone = parcel.phone,
+            city = parcel.city,
+            weight = parcel.weight,
+            pricePerKg = parcel.pricePerKg,
+            totalSum = totalSum,
+            pieceCount = parcel.pieceCount
+        )
+    }
+
     fun updateParcelStatus(parcelId: Long, isDelivered: Boolean, isVisible: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             dao.updateParcelStatus(parcelId, isDelivered, isVisible)

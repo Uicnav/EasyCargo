@@ -64,5 +64,7 @@
     <string name="language_selector_title">Seleziona lingua</string>
     <string name="language_system_default">Predefinito di sistema</string>
     <string name="cd_share_parcel">Condividi dettagli pacco</string>
+    <string name="title_edit_parcel">Modifica Pacco</string>
+    <string name="btn_save_changes">SALVA MODIFICHE</string>
 
 </resources>

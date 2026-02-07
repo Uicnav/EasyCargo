@@ -58,6 +58,7 @@ import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import com.vantechinformatics.easycargo.utils.CityAutocompleteField
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.btn_generate_ticket
+import easycargo.composeapp.generated.resources.btn_save_changes
 import easycargo.composeapp.generated.resources.detail_label_total_pay
 import easycargo.composeapp.generated.resources.error_validation_fields
 import easycargo.composeapp.generated.resources.label_full_name
@@ -66,6 +67,7 @@ import easycargo.composeapp.generated.resources.label_phone
 import easycargo.composeapp.generated.resources.label_price_per_kg
 import easycargo.composeapp.generated.resources.label_weight
 import easycargo.composeapp.generated.resources.title_add_parcel
+import easycargo.composeapp.generated.resources.title_edit_parcel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -75,8 +77,10 @@ fun AddParcelDialog(
     routeId: Long,
     viewModel: ParcelViewModel,
     onDismiss: () -> Unit,
-    onParcelAdded: (ParcelUi) -> Unit
+    onParcelAdded: (ParcelUi) -> Unit,
+    parcelToEdit: ParcelUi? = null
 ) {
+    val isEditMode = parcelToEdit != null
     val colors = EasyCargoTheme.colors
     val scope = rememberCoroutineScope()
     val dataStore = LocalDataStore.current
@@ -86,14 +90,16 @@ fun AddParcelDialog(
     }.collectAsState(initial = 1.5)
 
     // Variabile de stare (Input-uri)
-    var firstNameLastName by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var city by remember { mutableStateOf("") }
+    var firstNameLastName by remember { mutableStateOf(parcelToEdit?.firstNameLastName ?: "") }
+    var phone by remember { mutableStateOf(parcelToEdit?.phone ?: "") }
+    var city by remember { mutableStateOf(parcelToEdit?.city ?: "") }
 
     // Valori numerice
-    var weightInput by remember { mutableStateOf("") }
-    var pricePerKgInput by remember(savedPricePerKg) { mutableStateOf(savedPricePerKg.toString()) }
-    var piecesInput by remember { mutableStateOf("1") }
+    var weightInput by remember { mutableStateOf(parcelToEdit?.weight?.toString() ?: "") }
+    var pricePerKgInput by remember(savedPricePerKg) {
+        mutableStateOf(parcelToEdit?.pricePerKg?.toString() ?: savedPricePerKg.toString())
+    }
+    var piecesInput by remember { mutableStateOf(parcelToEdit?.pieceCount?.toString() ?: "1") }
 
     // --- LOGICA DE CALCUL AUTOMAT ---
     // Calculăm suma doar pentru afișare (read-only)
@@ -148,7 +154,7 @@ fun AddParcelDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        stringResource(Res.string.title_add_parcel),
+                        stringResource(if (isEditMode) Res.string.title_edit_parcel else Res.string.title_add_parcel),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = colors.contentPrimary
@@ -315,18 +321,32 @@ fun AddParcelDialog(
                         if (nameValid && cityValid) {
                             scope.launch {
                                 val priceKg = pricePerKgInput.toDoubleOrNull() ?: 0.0
-                                val parcel = viewModel.addParcel(
-                                    id = routeId,
-                                    firstNameLastName = firstNameLastName,
-                                    phone = phone,
-                                    weight = weightInput.toDoubleOrNull() ?: 0.0,
-                                    priceKg = priceKg,
-                                    pieces = piecesInput.toIntOrNull() ?: 1,
-                                    city = city
-                                )
-                                dataStore.edit { prefs -> prefs[pricePerKgKey] = priceKg }
-                                onParcelAdded(parcel.apply { showOnlyInfo = true })
-                                onDismiss()
+                                if (isEditMode) {
+                                    val updated = parcelToEdit!!.copy(
+                                        firstNameLastName = firstNameLastName,
+                                        phone = phone,
+                                        city = city,
+                                        weight = weightInput.toDoubleOrNull() ?: 0.0,
+                                        pricePerKg = priceKg,
+                                        pieceCount = piecesInput.toIntOrNull() ?: 1
+                                    )
+                                    viewModel.updateParcel(updated)
+                                    dataStore.edit { prefs -> prefs[pricePerKgKey] = priceKg }
+                                    onDismiss()
+                                } else {
+                                    val parcel = viewModel.addParcel(
+                                        id = routeId,
+                                        firstNameLastName = firstNameLastName,
+                                        phone = phone,
+                                        weight = weightInput.toDoubleOrNull() ?: 0.0,
+                                        priceKg = priceKg,
+                                        pieces = piecesInput.toIntOrNull() ?: 1,
+                                        city = city
+                                    )
+                                    dataStore.edit { prefs -> prefs[pricePerKgKey] = priceKg }
+                                    onParcelAdded(parcel.apply { showOnlyInfo = true })
+                                    onDismiss()
+                                }
                             }
                         }
                     },
@@ -338,7 +358,7 @@ fun AddParcelDialog(
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        text = stringResource(Res.string.btn_generate_ticket),
+                        text = stringResource(if (isEditMode) Res.string.btn_save_changes else Res.string.btn_generate_ticket),
                         fontWeight = FontWeight.Bold
                     )
                 }

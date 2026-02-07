@@ -64,5 +64,7 @@
     <string name="language_selector_title">Select Language</string>
     <string name="language_system_default">System Default</string>
     <string name="cd_share_parcel">Share parcel details</string>
+    <string name="title_edit_parcel">Edit Parcel</string>
+    <string name="btn_save_changes">SAVE CHANGES</string>
 
 </resources>

@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -30,9 +31,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -77,6 +80,7 @@ fun ParcelDetailsDialog(
     val uriHandler = LocalUriHandler.current
 
     val isDelivered = remember { mutableStateOf(parcel.isDelivered) }
+    var showEditDialog by remember { mutableStateOf(false) }
 
     Dialog(
         onDismissRequest = {},
@@ -116,6 +120,11 @@ fun ParcelDetailsDialog(
                             ).padding(horizontal = 12.dp, vertical = 4.dp)
                     )
                     Spacer(Modifier.width(4.dp))
+                    if (!parcel.showOnlyInfo) {
+                        IconButton(onClick = { showEditDialog = true }, modifier = Modifier.size(32.dp)) {
+                            Icon(Icons.Default.Edit, contentDescription = null, tint = Color.White)
+                        }
+                    }
                     IconButton(onClick = {
                         val routePart = parcel.displayId / 1000
                         val parcelPart = (parcel.displayId % 1000).toString().padStart(3, '0')
@@ -275,6 +284,19 @@ fun ParcelDetailsDialog(
                     }
                 }
             }
+        }
+
+        if (showEditDialog) {
+            AddParcelDialog(
+                routeId = parcel.routeId,
+                viewModel = viewModel,
+                onDismiss = {
+                    showEditDialog = false
+                    onDismiss()
+                },
+                onParcelAdded = {},
+                parcelToEdit = parcel
+            )
         }
     }
 }
