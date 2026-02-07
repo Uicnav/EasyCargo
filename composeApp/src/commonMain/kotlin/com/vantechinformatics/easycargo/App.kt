@@ -57,6 +57,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.vantechinformatics.easycargo.data.AppDatabase
 import com.vantechinformatics.easycargo.data.RouteStats
 import com.vantechinformatics.easycargo.data.RouteUi
@@ -73,6 +75,7 @@ import com.vantechinformatics.easycargo.ui.theme.TextSecondary
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import com.vantechinformatics.easycargo.ui.viewmodel.RouteUiState
 import com.vantechinformatics.easycargo.ui.viewmodel.RouteViewModel
+import com.vantechinformatics.easycargo.utils.LocalDataStore
 import com.vantechinformatics.easycargo.utils.LocalNavHostController
 import com.vantechinformatics.easycargo.utils.LocalSnackbarHostState
 import easycargo.composeapp.generated.resources.Res
@@ -102,14 +105,15 @@ data class RouteDetailsScreenDest(val idRoute: Long)
 
 @Composable
 @Preview
-fun App(appDatabase: AppDatabase) {
+fun App(appDatabase: AppDatabase, dataStore: DataStore<Preferences>) {
     EasyCargoTheme {
         val snackbarHostState = remember { SnackbarHostState() }
         val navController = rememberNavController()
 
         CompositionLocalProvider(
             LocalNavHostController provides navController,
-            LocalSnackbarHostState provides snackbarHostState
+            LocalSnackbarHostState provides snackbarHostState,
+            LocalDataStore provides dataStore
         ) {
             // Background image behind everything
             Box(modifier = Modifier.fillMaxSize()) {

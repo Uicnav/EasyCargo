@@ -29,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,8 +48,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.datastore.preferences.core.doublePreferencesKey
+import androidx.datastore.preferences.core.edit
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.format
+import com.vantechinformatics.easycargo.utils.LocalDataStore
 import com.vantechinformatics.easycargo.ui.theme.GlassBorder
 import com.vantechinformatics.easycargo.ui.theme.GlassSurface
 import com.vantechinformatics.easycargo.ui.theme.GreenLight
@@ -62,6 +66,7 @@ import easycargo.composeapp.generated.resources.error_validation_fields
 import easycargo.composeapp.generated.resources.label_full_name
 import easycargo.composeapp.generated.resources.label_phone
 import easycargo.composeapp.generated.resources.title_add_parcel
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
@@ -73,15 +78,20 @@ fun AddParcelDialog(
     onParcelAdded: (ParcelUi) -> Unit
 ) {
     val scope = rememberCoroutineScope()
+    val dataStore = LocalDataStore.current
+    val pricePerKgKey = remember { doublePreferencesKey("price_per_kg") }
+    val savedPricePerKg by dataStore.data.map { prefs ->
+        prefs[pricePerKgKey] ?: 1.5
+    }.collectAsState(initial = 1.5)
 
     // Variabile de stare (Input-uri)
     var firstNameLastName by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
-    var city by remember { mutableStateOf("") } // <--- NOU: Variabila pentru Oraș
+    var city by remember { mutableStateOf("") }
 
     // Valori numerice
     var weightInput by remember { mutableStateOf("") }
-    var pricePerKgInput by remember { mutableStateOf("1.5") } // Default 1.5€/kg
+    var pricePerKgInput by remember(savedPricePerKg) { mutableStateOf(savedPricePerKg.toString()) }
     var piecesInput by remember { mutableStateOf("1") }
 
     // --- LOGICA DE CALCUL AUTOMAT ---
@@ -302,15 +312,17 @@ fun AddParcelDialog(
                         isCityError = !cityValid
                         if (nameValid && cityValid) {
                             scope.launch {
+                                val priceKg = pricePerKgInput.toDoubleOrNull() ?: 0.0
                                 val parcel = viewModel.addParcel(
                                     id = routeId,
                                     firstNameLastName = firstNameLastName,
                                     phone = phone,
                                     weight = weightInput.toDoubleOrNull() ?: 0.0,
-                                    priceKg = pricePerKgInput.toDoubleOrNull() ?: 0.0,
+                                    priceKg = priceKg,
                                     pieces = piecesInput.toIntOrNull() ?: 1,
                                     city = city
                                 )
+                                dataStore.edit { prefs -> prefs[pricePerKgKey] = priceKg }
                                 onParcelAdded(parcel.apply { showOnlyInfo = true })
                                 onDismiss()
                             }
