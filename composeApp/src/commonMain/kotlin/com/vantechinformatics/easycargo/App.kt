@@ -48,6 +48,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -133,6 +134,7 @@ fun App(appDatabase: AppDatabase, dataStore: DataStore<Preferences>) {
         prefs[LANGUAGE_KEY]
     }.collectAsState(initial = null)
 
+    key(currentLanguage) {
     EasyCargoTheme(darkTheme = isDark) {
         val colors = EasyCargoTheme.colors
         val snackbarHostState = remember { SnackbarHostState() }
@@ -208,6 +210,7 @@ fun App(appDatabase: AppDatabase, dataStore: DataStore<Preferences>) {
                 }
             }
         }
+    }
     }
 }
 
