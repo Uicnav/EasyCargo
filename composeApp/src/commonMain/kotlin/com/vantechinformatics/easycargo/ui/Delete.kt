@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
@@ -20,6 +21,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,8 +36,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.vantechinformatics.easycargo.ui.theme.GlassBorder
+import com.vantechinformatics.easycargo.ui.theme.GlassSurface
+import com.vantechinformatics.easycargo.ui.theme.Red700
+import com.vantechinformatics.easycargo.ui.theme.TextSecondary
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.are_you_sure
 import easycargo.composeapp.generated.resources.confirm_delete
@@ -72,7 +80,7 @@ fun GameCard(
     Box(modifier = modifier.fillMaxWidth().padding(top = 8.dp)) {
         Box(
             modifier = Modifier.matchParentSize().clip(shape = CardDefaults.shape)
-                .background(Color.Red).padding(end = 16.dp), contentAlignment = Alignment.CenterEnd
+                .background(Red700).padding(end = 16.dp), contentAlignment = Alignment.CenterEnd
         ) {
             Image(
                 painter = painterResource(Res.drawable.ic_delete_white),
@@ -128,32 +136,47 @@ fun GameCard(
 
 @Composable
 fun ConfirmDeleteDialog(onConfirm: () -> Unit, onDismiss: () -> Unit, isHome: Boolean) {
-    AlertDialog(onDismissRequest = onDismiss, title = {
-        Text(stringResource(Res.string.confirm_delete))
-    }, text = {
-        Text(
-            text = if (isHome) stringResource(Res.string.are_you_sure) else stringResource(
-                Res.string.are_you_sure
+    AlertDialog(
+        onDismissRequest = {},
+        title = {
+            Text(
+                stringResource(Res.string.confirm_delete),
+                fontWeight = FontWeight.Bold,
+                color = Color.White
             )
-        )
-    }, confirmButton = {
-        ConfirmYesButton(onConfirm = onConfirm)
-    }, dismissButton = {
-        Button(onClick = onDismiss) {
-            Text(stringResource(Res.string.no))
-        }
-    })
-}
-
-@Composable
-fun ConfirmYesButton(onConfirm: () -> Unit, modifier: Modifier = Modifier) {
-    Button(
-        modifier = modifier,
-        onClick = onConfirm,
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-    ) {
-        Text(
-            text = stringResource(Res.string.yes), color = Color.White
-        )
-    }
+        },
+        text = {
+            Text(
+                stringResource(Res.string.are_you_sure),
+                color = TextSecondary
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(containerColor = Red700),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    text = stringResource(Res.string.yes),
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        },
+        dismissButton = {
+            OutlinedButton(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    stringResource(Res.string.no),
+                    color = TextSecondary
+                )
+            }
+        },
+        shape = RoundedCornerShape(16.dp),
+        containerColor = GlassSurface,
+        tonalElevation = 0.dp
+    )
 }

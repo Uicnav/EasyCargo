@@ -1,20 +1,32 @@
 package com.vantechinformatics.easycargo.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,15 +36,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.format
+import com.vantechinformatics.easycargo.ui.theme.GlassBorder
+import com.vantechinformatics.easycargo.ui.theme.GlassSurface
+import com.vantechinformatics.easycargo.ui.theme.GreenLight
+import com.vantechinformatics.easycargo.ui.theme.TextSecondary
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
-import com.vantechinformatics.easycargo.utils.CityAutocompleteField // Asigură-te că importul e corect
+import com.vantechinformatics.easycargo.utils.CityAutocompleteField
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.btn_generate_ticket
 import easycargo.composeapp.generated.resources.detail_label_total_pay
@@ -72,17 +94,60 @@ fun AddParcelDialog(
 
     // Validare
     var isNameError by remember { mutableStateOf(false) }
+    var isCityError by remember { mutableStateOf(false) }
 
-    Dialog(onDismissRequest = onDismiss) {
-        Card(modifier = Modifier.padding(16.dp).fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    stringResource(Res.string.title_add_parcel),
-                    style = MaterialTheme.typography.titleMedium
-                )
+    val textFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
+        unfocusedBorderColor = GlassBorder,
+        focusedLabelColor = MaterialTheme.colorScheme.primary,
+        unfocusedLabelColor = TextSecondary,
+        focusedTextColor = Color.White,
+        unfocusedTextColor = Color.White,
+        cursorColor = MaterialTheme.colorScheme.primary
+    )
+
+    val focusManager = LocalFocusManager.current
+    val phoneFocus = remember { FocusRequester() }
+    val cityFocus = remember { FocusRequester() }
+    val weightFocus = remember { FocusRequester() }
+    val priceFocus = remember { FocusRequester() }
+    val piecesFocus = remember { FocusRequester() }
+
+    Dialog(
+        onDismissRequest = {},
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 24.dp, vertical = 16.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .border(1.dp, GlassBorder, RoundedCornerShape(16.dp))
+                .background(GlassSurface)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        stringResource(Res.string.title_add_parcel),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
+                        Icon(Icons.Default.Close, contentDescription = null, tint = TextSecondary)
+                    }
+                }
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // 1. Nume
+                // 1. Name
                 OutlinedTextField(
                     value = firstNameLastName,
                     onValueChange = {
@@ -91,7 +156,12 @@ fun AddParcelDialog(
                     },
                     label = { Text(stringResource(Res.string.label_full_name)) },
                     modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
                     isError = isNameError,
+                    colors = textFieldColors,
+                    shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(onNext = { phoneFocus.requestFocus() }),
                     supportingText = {
                         if (isNameError) {
                             Text(
@@ -102,59 +172,106 @@ fun AddParcelDialog(
                     }
                 )
 
-                // 2. Telefon
+                // 2. Phone
                 OutlinedTextField(
                     value = phone,
                     onValueChange = { phone = it },
                     label = { Text(stringResource(Res.string.label_phone)) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    modifier = Modifier.fillMaxWidth()
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Phone,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(onNext = { cityFocus.requestFocus() }),
+                    modifier = Modifier.fillMaxWidth().focusRequester(phoneFocus),
+                    colors = textFieldColors,
+                    shape = RoundedCornerShape(12.dp)
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // 3. Localitate (Autocomplete Offline/Online)
+                // 3. City autocomplete (mandatory)
                 CityAutocompleteField(
                     selectedCity = city,
-                    onCitySelected = { newCity -> city = newCity }
+                    onCitySelected = { newCity ->
+                        city = newCity
+                        if (isCityError && newCity.isNotBlank()) isCityError = false
+                    },
+                    isError = isCityError,
+                    focusRequester = cityFocus,
+                    onNext = { weightFocus.requestFocus() }
                 )
+                if (isCityError) {
+                    Text(
+                        text = stringResource(Res.string.error_validation_fields),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 16.dp, top = 2.dp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
-                HorizontalDivider()
+                HorizontalDivider(color = GlassBorder)
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // 4. Kg și Preț (Pe același rând)
+                // 4. Kg + Price row
                 Row {
                     OutlinedTextField(
                         value = weightInput,
                         onValueChange = { weightInput = it },
                         label = { Text("Kg") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f)
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(onNext = { priceFocus.requestFocus() }),
+                        modifier = Modifier.weight(1f).focusRequester(weightFocus),
+                        colors = textFieldColors,
+                        shape = RoundedCornerShape(12.dp)
                     )
                     Spacer(Modifier.width(8.dp))
                     OutlinedTextField(
                         value = pricePerKgInput,
                         onValueChange = { pricePerKgInput = it },
                         label = { Text("Preț/Kg (€)") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f)
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(onNext = { piecesFocus.requestFocus() }),
+                        modifier = Modifier.weight(1f).focusRequester(priceFocus),
+                        colors = textFieldColors,
+                        shape = RoundedCornerShape(12.dp)
                     )
                 }
 
-                // 5. Nr Bucăți
+                // 5. Pieces
                 OutlinedTextField(
                     value = piecesInput,
                     onValueChange = { piecesInput = it },
                     label = { Text("Nr. Pachete (Bucăți)") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth()
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                    modifier = Modifier.fillMaxWidth().focusRequester(piecesFocus),
+                    colors = textFieldColors,
+                    shape = RoundedCornerShape(12.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // --- AFISARE SUMĂ CALCULATĂ ---
-                Card {
+                // Total card - glass tinted
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .border(1.dp, GlassBorder, RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -162,26 +279,29 @@ fun AddParcelDialog(
                     ) {
                         Text(
                             stringResource(Res.string.detail_label_total_pay),
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = TextSecondary
                         )
                         Text(
                             text = "${calculatedTotal.format(2)} €",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color(0xFF1976D2), // Albastru
+                            style = MaterialTheme.typography.titleMedium,
+                            color = GreenLight,
                             fontWeight = FontWeight.Bold
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                // Buton Salvare
+                // Save button - orange
                 Button(
                     onClick = {
-                        if (firstNameLastName.isNotBlank()) {
-                            isNameError = false
+                        val nameValid = firstNameLastName.isNotBlank()
+                        val cityValid = city.isNotBlank()
+                        isNameError = !nameValid
+                        isCityError = !cityValid
+                        if (nameValid && cityValid) {
                             scope.launch {
-                                // Apelăm ViewModel-ul cu noul parametru CITY
                                 val parcel = viewModel.addParcel(
                                     id = routeId,
                                     firstNameLastName = firstNameLastName,
@@ -189,18 +309,24 @@ fun AddParcelDialog(
                                     weight = weightInput.toDoubleOrNull() ?: 0.0,
                                     priceKg = pricePerKgInput.toDoubleOrNull() ?: 0.0,
                                     pieces = piecesInput.toIntOrNull() ?: 1,
-                                    city = city // <--- Trimitem orașul selectat
+                                    city = city
                                 )
                                 onParcelAdded(parcel.apply { showOnlyInfo = true })
                                 onDismiss()
                             }
-                        } else {
-                            isNameError = true
                         }
                     },
-                    modifier = Modifier.fillMaxWidth().height(50.dp)
+                    modifier = Modifier.fillMaxWidth().height(50.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(text = stringResource(Res.string.btn_generate_ticket))
+                    Text(
+                        text = stringResource(Res.string.btn_generate_ticket),
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }

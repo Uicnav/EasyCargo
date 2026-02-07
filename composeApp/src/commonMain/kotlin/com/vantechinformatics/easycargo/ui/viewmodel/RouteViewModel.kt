@@ -2,16 +2,19 @@ package com.vantechinformatics.easycargo.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vantechinformatics.easycargo.data.RouteStats
 import com.vantechinformatics.easycargo.data.RouteUi
+import com.vantechinformatics.easycargo.data.dao.ParcelDao
 import com.vantechinformatics.easycargo.data.dao.RouteDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class RouteViewModel(private val dao: RouteDao) : ViewModel() {
+class RouteViewModel(private val dao: RouteDao, private val parcelDao: ParcelDao) : ViewModel() {
     // Backing property to avoid state updates from other classes
     private val _uiState = MutableStateFlow<RouteUiState>(RouteUiState.Loading)
 
@@ -90,7 +93,11 @@ class RouteViewModel(private val dao: RouteDao) : ViewModel() {
         routeToDelete = null
     }
 
-    suspend fun insertRoute(route: RouteUi): Long {/**/
+    fun getRouteStats(routeId: Long): Flow<RouteStats> {
+        return parcelDao.getRouteStats(routeId)
+    }
+
+    suspend fun insertRoute(route: RouteUi): Long {
         return dao.insertRoute(route.toEntity())
     }
 }

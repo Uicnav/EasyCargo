@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,11 +32,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.vantechinformatics.easycargo.data.HttpClientEngineFactory
+import com.vantechinformatics.easycargo.ui.theme.GlassBorder
+import com.vantechinformatics.easycargo.ui.theme.GlassSurface
+import com.vantechinformatics.easycargo.ui.theme.TextSecondary
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.city_label
 import io.ktor.client.HttpClient
@@ -90,7 +99,11 @@ suspend fun searchCityOnline(query: String): List<String> {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CityAutocompleteField(
-    selectedCity: String, onCitySelected: (String) -> Unit
+    selectedCity: String,
+    onCitySelected: (String) -> Unit,
+    isError: Boolean = false,
+    focusRequester: FocusRequester = remember { FocusRequester() },
+    onNext: (() -> Unit)? = null
 ) {
     var query by remember { mutableStateOf(selectedCity) }
     var suggestions by remember { mutableStateOf(emptyList<String>()) }
@@ -133,10 +146,11 @@ fun CityAutocompleteField(
                 if (isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 } else {
-                    Icon(Icons.Default.LocationOn, contentDescription = null)
+                    Icon(Icons.Default.LocationOn, contentDescription = null, tint = TextSecondary)
                 }
             }, trailingIcon = {
                 if (query.isNotEmpty()) {
@@ -145,29 +159,46 @@ fun CityAutocompleteField(
                         onCitySelected("")
                         expanded = false
                     }) {
-                        Icon(Icons.Default.Clear, contentDescription = "Șterge")
+                        Icon(Icons.Default.Clear, contentDescription = "Șterge", tint = TextSecondary)
                     }
                 }
-            }, modifier = Modifier.fillMaxWidth(), singleLine = true
+            },
+                modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
+                singleLine = true,
+                isError = isError,
+                keyboardOptions = KeyboardOptions(imeAction = if (onNext != null) ImeAction.Next else ImeAction.Default),
+                keyboardActions = KeyboardActions(onNext = { onNext?.invoke() }),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = GlassBorder,
+                    focusedLabelColor = MaterialTheme.colorScheme.primary,
+                    unfocusedLabelColor = TextSecondary,
+                    focusedTextColor = androidx.compose.ui.graphics.Color.White,
+                    unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                    cursorColor = MaterialTheme.colorScheme.primary
+                ),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
             )
 
             if (expanded) {
                 ElevatedCard(
                     modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp).padding(top = 4.dp),
                     elevation = CardDefaults.elevatedCardElevation(6.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    colors = CardDefaults.cardColors(containerColor = GlassSurface)
                 ) {
                     LazyColumn {
                         items(suggestions) { city ->
                             ListItem(
-                                headlineContent = { Text(city) },
+                                headlineContent = {
+                                    Text(city, color = androidx.compose.ui.graphics.Color.White)
+                                },
                                 modifier = Modifier.clickable {
                                         query = city
                                         onCitySelected(city)
                                         expanded = false
                                         focusManager.clearFocus()
-                                    }.background(MaterialTheme.colorScheme.surface))
-                            HorizontalDivider()
+                                    }.background(GlassSurface))
+                            HorizontalDivider(color = GlassBorder)
                         }
                     }
                 }

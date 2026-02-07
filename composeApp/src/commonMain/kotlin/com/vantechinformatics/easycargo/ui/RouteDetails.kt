@@ -2,6 +2,7 @@ package com.vantechinformatics.easycargo.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -29,14 +29,15 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
@@ -53,6 +54,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -60,185 +62,215 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.data.RouteStats
 import com.vantechinformatics.easycargo.format
+import com.vantechinformatics.easycargo.ui.theme.GlassBorder
+import com.vantechinformatics.easycargo.ui.theme.GlassCard
+import com.vantechinformatics.easycargo.ui.theme.GlassSurface
+import com.vantechinformatics.easycargo.ui.theme.GreenLight
+import com.vantechinformatics.easycargo.ui.theme.Green900
+import com.vantechinformatics.easycargo.ui.theme.OrangeLight
+import com.vantechinformatics.easycargo.ui.theme.TextMuted
+import com.vantechinformatics.easycargo.ui.theme.TextSecondary
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import com.vantechinformatics.easycargo.undoDeleteRouteSnackbar
 import com.vantechinformatics.easycargo.utils.LocalNavHostController
 import com.vantechinformatics.easycargo.utils.LocalSnackbarHostState
 import easycargo.composeapp.generated.resources.Res
+import easycargo.composeapp.generated.resources.btn_mark_delivered
 import easycargo.composeapp.generated.resources.format_euro
 import easycargo.composeapp.generated.resources.msg_empty_search
 import easycargo.composeapp.generated.resources.search_placeholder
 import easycargo.composeapp.generated.resources.stats_label_money
+import easycargo.composeapp.generated.resources.status_delivery
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-
-// Asigură-te că ai importat extensia .format(2)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RouteDetailsScreen(
     routeId: Long, viewModel: ParcelViewModel, onBack: () -> Unit
 ) {
-    // STATE PENTRU CĂUTARE
     var searchQuery by remember { mutableStateOf("") }
 
-    // Lista se actualizează automat când 'searchQuery' se schimbă
-    // Dacă searchQuery e gol (""), SQL-ul returnează tot (LIKE '%%')
     val parcelsState =
         viewModel.searchParcels(routeId, searchQuery).collectAsState(initial = emptyList())
 
-    // Statistici (rămân neschimbate)
     val statsState = viewModel.getRouteStats(routeId).collectAsState(
-        initial = RouteStats(
-            totalParcels = 0, deliveredParcels = 0, totalMoney = 0.0
-        )
+        initial = RouteStats(totalParcels = 0, deliveredParcels = 0, totalMoney = 0.0)
     )
 
     var selectedParcel by remember { mutableStateOf<ParcelUi?>(null) }
     var showAddDialog by remember { mutableStateOf(false) }
 
-    // Focus Manager ca să ascundem tastatura
     val focusManager = LocalFocusManager.current
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = LocalSnackbarHostState.current
 
     DisposableEffect(Unit) {
-        onDispose {
-            viewModel.deleteParcelToDelete()
-        }
+        onDispose { viewModel.deleteParcelToDelete() }
     }
-    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }, topBar = {
-        TopAppBar(
-            title = { Text("#${routeId}") }, navigationIcon = {
-            IconButton(onClick = {
-                onBack()
-                navController.navigateUp()
-            }) {
-                Icon(
-                    Icons.Default.ArrowBack, null
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text("#$routeId", fontWeight = FontWeight.Bold, color = Color.White)
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        onBack()
+                        navController.navigateUp()
+                    }) {
+                        Icon(Icons.Default.ArrowBack, null, tint = Color.White)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent
                 )
-            }
-        }, colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent, scrolledContainerColor = Color.Transparent
-        )
-        )
-    }, containerColor = Color.Transparent, floatingActionButton = {
-        FloatingActionButton(onClick = { showAddDialog = true }) {
-            Icon(
-                Icons.Default.Add, null
             )
-        }
-    }) { padding ->
-        Column(modifier = Modifier.padding(padding)) {
-
-            // --- HEADER STATISTICI (Totaluri) ---
-            Card(
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)
+        },
+        containerColor = Color.Transparent,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddDialog = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.White
             ) {
-                Column {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.padding(12.dp)
-                    ) {
+                Icon(Icons.Default.Add, null)
+            }
+        }
+    ) { padding ->
+        Column(modifier = Modifier.padding(padding).padding(horizontal = 12.dp)) {
 
-                        DeliveryProgressBar(
-                            deliveredCount = statsState.value.deliveredParcels,
-                            totalCount = statsState.value.totalParcels,
-                            modifier = Modifier.weight(1F)
-                        )
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(start = 8.dp)
-                        ) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // --- GLASS STATS HEADER ---
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .border(1.dp, GlassBorder, RoundedCornerShape(16.dp))
+                    .background(GlassSurface)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    // Delivery count + money row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
                             Text(
-                                stringResource(Res.string.stats_label_money),
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center
+                                text = stringResource(Res.string.status_delivery),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = TextSecondary
                             )
                             Text(
-                                "${statsState.value.totalMoney.format(2)} ${stringResource(Res.string.format_euro)}",
-                                style = MaterialTheme.typography.bodySmall,
+                                text = "${statsState.value.deliveredParcels} / ${statsState.value.totalParcels}",
+                                style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
+                                color = Color.White
+                            )
+
+                        }
+                        Column(horizontalAlignment = Alignment.End) {
+                            Text(
+                                text = stringResource(Res.string.stats_label_money),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = TextSecondary
+                            )
+                            Text(
+                                text = "${statsState.value.totalMoney.format(2)} ${stringResource(Res.string.format_euro)}",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = GreenLight
                             )
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Progress bar
+                    DeliveryProgressBar(
+                        deliveredCount = statsState.value.deliveredParcels,
+                        totalCount = statsState.value.totalParcels
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Search field - glass style
                     OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
-                        label = { Text(stringResource(Res.string.search_placeholder), fontSize = 12.sp) },
-                        modifier = Modifier.background(Color.Transparent).fillMaxWidth()
-                            .padding(8.dp),
-                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                        placeholder = {
+                            Text(
+                                stringResource(Res.string.search_placeholder),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = TextMuted
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        leadingIcon = {
+                            Icon(Icons.Default.Search, null, tint = TextSecondary)
+                        },
                         trailingIcon = {
                             if (searchQuery.isNotEmpty()) {
                                 IconButton(onClick = { searchQuery = "" }) {
-                                    Icon(Icons.Default.Close, contentDescription = "Șterge")
+                                    Icon(Icons.Default.Close, null, tint = TextSecondary)
                                 }
                             }
                         },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = GlassBorder,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            cursorColor = MaterialTheme.colorScheme.primary
+                        ),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                         keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() })
                     )
                 }
-
             }
 
+            Spacer(modifier = Modifier.height(12.dp))
 
-
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // --- LISTA DE COLETE ---
-            LazyColumn(
-                contentPadding = PaddingValues(bottom = 80.dp) // Spațiu jos pentru butonul flotant
-            ) {
+            // --- PARCEL LIST ---
+            LazyColumn(contentPadding = PaddingValues(bottom = 80.dp)) {
                 if (parcelsState.value.isEmpty()) {
                     item {
                         EmptyResultMessage(text = stringResource(Res.string.msg_empty_search))
                     }
                 } else {
-
                     items(parcelsState.value) { parcel ->
                         GameCard(onDelete = {
                             scope.launch {
                                 snackbarHostState.currentSnackbarData?.dismiss()
                                 viewModel.prepareDeleteParcel(parcel)
-                                snackbarHostState.undoDeleteRouteSnackbar(onActionPerformed = {
-                                    viewModel.undoDeleteParcel()
-
-                                }, onDismissed = {
-                                    viewModel.deleteParcelsById(parcel.id)
-                                })
+                                snackbarHostState.undoDeleteRouteSnackbar(
+                                    onActionPerformed = { viewModel.undoDeleteParcel() },
+                                    onDismissed = { viewModel.deleteParcelsById(parcel.id) }
+                                )
                             }
                         }) {
-                            ParcelListItem(
-                                parcel = parcel, onClick = { selectedParcel = parcel })
+                            ParcelListItem(parcel = parcel, onClick = { selectedParcel = parcel })
                         }
                     }
-
                 }
             }
         }
 
-        // Dialogurile (Adăugare și Detalii) rămân la fel
         if (showAddDialog) {
-            // Aici ar trebui să fie AddParcelScreen (dacă e ecran full) sau AddParcelDialog (dacă e pop-up)
-            // Pentru consistență cu exemplul anterior, folosim Dialog:
             AddParcelDialog(routeId, viewModel = viewModel, onDismiss = {
                 showAddDialog = false
-            }, onParcelAdded = {
-                selectedParcel = it
-            })
+            }, onParcelAdded = { selectedParcel = it })
         }
 
         selectedParcel?.let { parcel ->
@@ -251,151 +283,173 @@ fun RouteDetailsScreen(
 fun DeliveryProgressBar(
     deliveredCount: Int, totalCount: Int, modifier: Modifier = Modifier
 ) {
-    // 1. Calculăm procentul (evităm împărțirea la 0)
     val progressTarget = if (totalCount > 0) {
         deliveredCount.toFloat() / totalCount.toFloat()
-    } else {
-        0f
-    }
+    } else 0f
 
-    // 2. Adăugăm o animație fină la încărcare
     val animatedProgress by animateFloatAsState(
         targetValue = progressTarget, label = "ProgressAnimation"
     )
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier.fillMaxWidth()
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        // Rândul cu Text: "Progres: 5/20" și "25%"
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Progres Livrare:",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
-            )
-            Text(
-                text = "$deliveredCount / $totalCount",
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        // Bara propriu-zisă
         LinearProgressIndicator(
             progress = { animatedProgress },
-            modifier = Modifier.fillMaxWidth().height(10.dp) // O facem puțin mai groasă
-                .clip(RoundedCornerShape(5.dp)), // Colțuri rotunjite
-            color = if (progressTarget == 1f) Color(0xFF4CAF50) else MaterialTheme.colorScheme.primary, // Verde dacă e gata, Albastru altfel
-            trackColor = MaterialTheme.colorScheme.surfaceVariant, // Culoarea de fundal a barei
+            modifier = Modifier.weight(1f).height(7.dp)
+                .clip(RoundedCornerShape(4.dp)),
+            color = if (progressTarget >= 1f) GreenLight else MaterialTheme.colorScheme.primary,
+            trackColor = Color.White.copy(alpha = 0.15f),
+        )
+        Text(
+            text = "${(progressTarget * 100).toInt()}%",
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.Bold,
+            color = if (progressTarget >= 1f) GreenLight else OrangeLight,
+            modifier = Modifier.padding(start = 8.dp)
         )
     }
 }
 
 @Composable
 fun EmptyResultMessage(text: String) {
-    Card(
-        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+    Box(
+        modifier = Modifier.padding(16.dp).fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .border(1.dp, GlassBorder, RoundedCornerShape(16.dp))
+            .background(GlassCard)
     ) {
         Text(
-            text = text, modifier = Modifier.padding(16.dp), textAlign = TextAlign.Center
-
+            text = text,
+            modifier = Modifier.padding(24.dp).fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium,
+            color = TextSecondary
         )
     }
 }
+
 @Preview
 @Composable
 fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
+    val cardAlpha = if (parcel.isDelivered) 0.65f else 1f
+
+    Box(
+        modifier = Modifier.fillMaxWidth()
+            .padding(horizontal = 4.dp, vertical = 4.dp)
+            .alpha(cardAlpha)
+            .clip(RoundedCornerShape(12.dp))
+            .border(1.dp, GlassBorder, RoundedCornerShape(12.dp))
+            .background(GlassCard)
+            .clickable { onClick() }
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp).background(Color.Transparent),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // CERCUL CU ID-ul (#100)
-            Surface(
-                color = if (parcel.isDelivered) Color.Gray else Color.Yellow,
-                shape = CircleShape,
-                modifier = Modifier.wrapContentSize()
+        Column {
+            Row(
+                modifier = Modifier.padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(8.dp)) {
-                    ParcelIdDisplay(displayId = parcel.displayId)
+                // Parcel ID badge - orange glass
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(
+                            if (parcel.isDelivered)
+                                Color.White.copy(alpha = 0.1f)
+                            else
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ParcelIdDisplay(
+                        displayId = parcel.displayId,
+                        isDelivered = parcel.isDelivered
+                    )
                 }
-            }
 
-            Spacer(Modifier.width(16.dp))
+                Spacer(Modifier.width(12.dp))
 
-            // INFORMAȚII CENTRALE
-            Column(modifier = Modifier.weight(1f).background(Color.Transparent)) {
-                // 1. Numele Clientului
-                Text(
-                    text = parcel.firstNameLastName,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.SemiBold
-                )
+                // Central info
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = parcel.firstNameLastName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
 
-                // 2. LOCALITATEA (Dacă există) - NOU ADĂUGAT
-                if (parcel.city.isNotEmpty()) {
+                    if (parcel.city.isNotEmpty()) {
+                        Spacer(Modifier.height(2.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = null,
+                                modifier = Modifier.size(12.dp),
+                                tint = OrangeLight
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                text = parcel.city,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = TextSecondary
+                            )
+                        }
+                    }
+
                     Spacer(Modifier.height(2.dp))
+
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            imageVector = Icons.Default.LocationOn,
-                            contentDescription = "Locație",
+                            Icons.Default.Phone, null,
                             modifier = Modifier.size(12.dp),
-                            tint = Color(0xFF1976D2) // Albastru discret
+                            tint = TextMuted
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
-                            text = parcel.city,
+                            text = parcel.phone,
                             style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.DarkGray
+                            color = TextMuted
                         )
                     }
                 }
 
-                Spacer(Modifier.height(2.dp))
-
-                // 3. Telefonul
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        Icons.Default.Phone,
-                        null,
-                        modifier = Modifier.size(12.dp),
-                        tint = Color.Gray
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text(
-                        text = parcel.phone,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
-                    )
+                // Delivered checkmark
+                if (parcel.isDelivered) {
+                    Surface(
+                        color = GreenLight.copy(alpha = 0.2f),
+                        shape = CircleShape
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = GreenLight,
+                            modifier = Modifier.size(28.dp).padding(2.dp)
+                        )
+                    }
                 }
-
-                Spacer(Modifier.height(4.dp))
-
-                // 4. Prețul
-                Text(
-                    text = "${parcel.totalSum.format(2)} €",
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF2E7D32) // Verde închis pentru bani
-                )
             }
 
-            // ICONIȚA DE LIVRAT (Dreapta)
-            if (parcel.isDelivered) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = "Livrat",
-                    tint = Color(0xFF4CAF50),
-                    modifier = Modifier.size(28.dp)
+            // Divider + price/pieces row
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                color = GlassBorder
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${parcel.totalSum.format(2)} ${stringResource(Res.string.format_euro)}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = GreenLight
+                )
+                Text(
+                    text = "${parcel.pieceCount} ${if (parcel.pieceCount == 1) "colet" else "colete"}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextMuted
                 )
             }
         }

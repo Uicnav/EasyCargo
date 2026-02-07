@@ -59,4 +59,6 @@
     <string name="city_label">Localitate / Oraș</string>
     <string name="city">Localitate</string>
 
+    <string name="status_delivery">Status livrare</string>
+
 </resources>

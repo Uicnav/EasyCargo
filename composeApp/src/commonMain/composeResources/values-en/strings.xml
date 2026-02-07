@@ -56,5 +56,6 @@
     <string name="undo">Undo</string>
     <string name="city_label">City / Town</string>
     <string name="city">City</string>
+    <string name="status_delivery">Delivery status</string>
 
 </resources>
