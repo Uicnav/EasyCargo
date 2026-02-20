@@ -2,6 +2,7 @@ package com.vantechinformatics.easycargo.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,9 +19,12 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,6 +54,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.format
 import com.vantechinformatics.easycargo.utils.LocalDataStore
@@ -92,6 +97,41 @@ fun AddParcelDialog(
     // Variabile de stare (Input-uri)
     var firstNameLastName by remember { mutableStateOf(parcelToEdit?.firstNameLastName ?: "") }
     var phone by remember { mutableStateOf(parcelToEdit?.phone ?: "") }
+
+    val countryCodeKey = remember { stringPreferencesKey("country_code") }
+    val savedCountryCode by dataStore.data.map { prefs ->
+        prefs[countryCodeKey] ?: "+39"
+    }.collectAsState(initial = "+39")
+
+    // Parse existing phone for edit mode
+    val countryCodes = remember {
+        listOf(
+            "+40" to "RO", "+39" to "IT", "+49" to "DE", "+33" to "FR",
+            "+34" to "ES", "+44" to "UK", "+373" to "MD", "+380" to "UA",
+            "+7" to "RU", "+43" to "AT", "+41" to "CH", "+32" to "BE",
+            "+31" to "NL", "+48" to "PL", "+420" to "CZ", "+36" to "HU",
+            "+359" to "BG", "+30" to "GR", "+381" to "RS", "+385" to "HR"
+        )
+    }
+
+    var selectedCountryCode by remember(savedCountryCode) {
+        val existingPhone = parcelToEdit?.phone ?: ""
+        val matchedCode = countryCodes.map { it.first }
+            .sortedByDescending { it.length }
+            .firstOrNull { existingPhone.startsWith(it) }
+        mutableStateOf(matchedCode ?: savedCountryCode)
+    }
+
+    var localPhone by remember {
+        val existingPhone = parcelToEdit?.phone ?: ""
+        val matchedCode = countryCodes.map { it.first }
+            .sortedByDescending { it.length }
+            .firstOrNull { existingPhone.startsWith(it) }
+        mutableStateOf(if (matchedCode != null) existingPhone.removePrefix(matchedCode) else existingPhone)
+    }
+
+    var showCountryCodePicker by remember { mutableStateOf(false) }
+
     var city by remember { mutableStateOf(parcelToEdit?.city ?: "") }
 
     // Valori numerice
@@ -190,21 +230,69 @@ fun AddParcelDialog(
                     }
                 )
 
-                // 2. Phone
-                OutlinedTextField(
-                    value = phone,
-                    onValueChange = { phone = it },
-                    label = { Text(stringResource(Res.string.label_phone)) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Phone,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(onNext = { cityFocus.requestFocus() }),
-                    modifier = Modifier.fillMaxWidth().focusRequester(phoneFocus),
-                    colors = textFieldColors,
-                    shape = RoundedCornerShape(12.dp)
-                )
+                // 2. Phone with country code
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    // Country code dropdown
+                    Box {
+                        OutlinedTextField(
+                            value = "$selectedCountryCode ${countryCodes.firstOrNull { it.first == selectedCountryCode }?.second ?: ""}",
+                            onValueChange = {},
+                            readOnly = true,
+                            singleLine = true,
+                            modifier = Modifier.width(120.dp).clickable { showCountryCodePicker = true },
+                            colors = textFieldColors,
+                            shape = RoundedCornerShape(12.dp),
+                            trailingIcon = {
+                                Icon(
+                                    Icons.Default.ArrowDropDown,
+                                    contentDescription = null,
+                                    tint = colors.textSecondary,
+                                    modifier = Modifier.clickable { showCountryCodePicker = true }
+                                )
+                            }
+                        )
+                        DropdownMenu(
+                            expanded = showCountryCodePicker,
+                            onDismissRequest = { showCountryCodePicker = false }
+                        ) {
+                            countryCodes.forEach { (code, country) ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            "$code $country",
+                                            color = colors.contentPrimary
+                                        )
+                                    },
+                                    onClick = {
+                                        selectedCountryCode = code
+                                        showCountryCodePicker = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(Modifier.width(8.dp))
+
+                    // Local phone number
+                    OutlinedTextField(
+                        value = localPhone,
+                        onValueChange = { localPhone = it },
+                        label = { Text(stringResource(Res.string.label_phone)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Phone,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(onNext = { cityFocus.requestFocus() }),
+                        modifier = Modifier.weight(1f).focusRequester(phoneFocus),
+                        colors = textFieldColors,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -321,29 +409,36 @@ fun AddParcelDialog(
                         if (nameValid && cityValid) {
                             scope.launch {
                                 val priceKg = pricePerKgInput.toDoubleOrNull() ?: 0.0
+                                val combinedPhone = if (localPhone.isNotBlank()) "$selectedCountryCode$localPhone" else ""
                                 if (isEditMode) {
                                     val updated = parcelToEdit!!.copy(
                                         firstNameLastName = firstNameLastName,
-                                        phone = phone,
+                                        phone = combinedPhone,
                                         city = city,
                                         weight = weightInput.toDoubleOrNull() ?: 0.0,
                                         pricePerKg = priceKg,
                                         pieceCount = piecesInput.toIntOrNull() ?: 1
                                     )
                                     viewModel.updateParcel(updated)
-                                    dataStore.edit { prefs -> prefs[pricePerKgKey] = priceKg }
+                                    dataStore.edit { prefs ->
+                                        prefs[pricePerKgKey] = priceKg
+                                        prefs[countryCodeKey] = selectedCountryCode
+                                    }
                                     onDismiss()
                                 } else {
                                     val parcel = viewModel.addParcel(
                                         id = routeId,
                                         firstNameLastName = firstNameLastName,
-                                        phone = phone,
+                                        phone = combinedPhone,
                                         weight = weightInput.toDoubleOrNull() ?: 0.0,
                                         priceKg = priceKg,
                                         pieces = piecesInput.toIntOrNull() ?: 1,
                                         city = city
                                     )
-                                    dataStore.edit { prefs -> prefs[pricePerKgKey] = priceKg }
+                                    dataStore.edit { prefs ->
+                                        prefs[pricePerKgKey] = priceKg
+                                        prefs[countryCodeKey] = selectedCountryCode
+                                    }
                                     onParcelAdded(parcel.apply { showOnlyInfo = true })
                                     onDismiss()
                                 }

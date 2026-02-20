@@ -42,20 +42,22 @@ import androidx.compose.ui.window.DialogProperties
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.ui.theme.EasyCargoTheme
 import com.vantechinformatics.easycargo.utils.isWhatsAppInstalled
+import com.vantechinformatics.easycargo.utils.isViberInstalled
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.action_cancel
 import easycargo.composeapp.generated.resources.btn_send_all
-import easycargo.composeapp.generated.resources.label_channel_sms
+import easycargo.composeapp.generated.resources.label_channel_viber
 import easycargo.composeapp.generated.resources.label_channel_whatsapp
 import easycargo.composeapp.generated.resources.label_choose_channel
 import easycargo.composeapp.generated.resources.label_message_preview
 import easycargo.composeapp.generated.resources.msg_reminder_count
+import easycargo.composeapp.generated.resources.msg_viber_not_installed
 import easycargo.composeapp.generated.resources.msg_whatsapp_not_installed
 import easycargo.composeapp.generated.resources.reminder_template
 import easycargo.composeapp.generated.resources.title_send_reminders
 import org.jetbrains.compose.resources.stringResource
 
-enum class MessageChannel { SMS, WHATSAPP }
+enum class MessageChannel { WHATSAPP, VIBER }
 
 @Composable
 fun SendRemindersDialog(
@@ -64,10 +66,15 @@ fun SendRemindersDialog(
     onSend: (MessageChannel) -> Unit
 ) {
     val colors = EasyCargoTheme.colors
-    var selectedChannel by remember { mutableStateOf(MessageChannel.SMS) }
+    var selectedChannel by remember { mutableStateOf(MessageChannel.WHATSAPP) }
     val whatsAppInstalled = remember { isWhatsAppInstalled() }
+    val viberInstalled = remember { isViberInstalled() }
 
-    // Preview message using first parcel's data
+    // If default not available, switch
+    if (!whatsAppInstalled && viberInstalled) {
+        selectedChannel = MessageChannel.VIBER
+    }
+
     val firstParcel = eligibleParcels.firstOrNull()
     val previewMessage = if (firstParcel != null) {
         stringResource(
@@ -76,9 +83,7 @@ fun SendRemindersDialog(
             firstParcel.pieceCount,
             firstParcel.city
         )
-    } else {
-        ""
-    }
+    } else ""
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -98,7 +103,6 @@ fun SendRemindersDialog(
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                // Title row with close button
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -111,17 +115,12 @@ fun SendRemindersDialog(
                         color = colors.contentPrimary
                     )
                     IconButton(onClick = onDismiss) {
-                        Icon(
-                            Icons.Default.Close,
-                            contentDescription = null,
-                            tint = colors.contentPrimary
-                        )
+                        Icon(Icons.Default.Close, contentDescription = null, tint = colors.contentPrimary)
                     }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Info: count of eligible parcels
                 Text(
                     text = stringResource(Res.string.msg_reminder_count, eligibleParcels.size),
                     style = MaterialTheme.typography.bodyMedium,
@@ -132,7 +131,6 @@ fun SendRemindersDialog(
                 HorizontalDivider(color = colors.glassBorder)
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Channel selector label
                 Text(
                     text = stringResource(Res.string.label_choose_channel),
                     style = MaterialTheme.typography.bodySmall,
@@ -142,36 +140,40 @@ fun SendRemindersDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Channel chips row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     ChannelChip(
-                        label = stringResource(Res.string.label_channel_sms),
-                        isSelected = selectedChannel == MessageChannel.SMS,
-                        enabled = true,
-                        onClick = { selectedChannel = MessageChannel.SMS },
-                        modifier = Modifier.weight(1f)
-                    )
-                    ChannelChip(
                         label = stringResource(Res.string.label_channel_whatsapp),
                         isSelected = selectedChannel == MessageChannel.WHATSAPP,
                         enabled = whatsAppInstalled,
-                        onClick = {
-                            if (whatsAppInstalled) {
-                                selectedChannel = MessageChannel.WHATSAPP
-                            }
-                        },
+                        onClick = { if (whatsAppInstalled) selectedChannel = MessageChannel.WHATSAPP },
+                        modifier = Modifier.weight(1f)
+                    )
+                    ChannelChip(
+                        label = stringResource(Res.string.label_channel_viber),
+                        isSelected = selectedChannel == MessageChannel.VIBER,
+                        enabled = viberInstalled,
+                        onClick = { if (viberInstalled) selectedChannel = MessageChannel.VIBER },
                         modifier = Modifier.weight(1f)
                     )
                 }
 
-                // WhatsApp not installed warning
+                // Not installed warnings
                 if (!whatsAppInstalled) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = stringResource(Res.string.msg_whatsapp_not_installed),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colors.textMuted,
+                        fontStyle = FontStyle.Italic
+                    )
+                }
+                if (!viberInstalled) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = stringResource(Res.string.msg_viber_not_installed),
                         style = MaterialTheme.typography.bodySmall,
                         color = colors.textMuted,
                         fontStyle = FontStyle.Italic
@@ -182,7 +184,6 @@ fun SendRemindersDialog(
                 HorizontalDivider(color = colors.glassBorder)
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Message preview label
                 Text(
                     text = stringResource(Res.string.label_message_preview),
                     style = MaterialTheme.typography.bodySmall,
@@ -192,7 +193,6 @@ fun SendRemindersDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Message preview card
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -211,12 +211,10 @@ fun SendRemindersDialog(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Action buttons row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // Cancel button
                     TextButton(
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f).height(48.dp),
@@ -228,11 +226,11 @@ fun SendRemindersDialog(
                             fontWeight = FontWeight.SemiBold
                         )
                     }
-
-                    // Send All button
                     Button(
                         onClick = { onSend(selectedChannel) },
                         modifier = Modifier.weight(1f).height(48.dp),
+                        enabled = (selectedChannel == MessageChannel.WHATSAPP && whatsAppInstalled) ||
+                                  (selectedChannel == MessageChannel.VIBER && viberInstalled),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary
@@ -259,25 +257,21 @@ fun ChannelChip(
     modifier: Modifier = Modifier
 ) {
     val colors = EasyCargoTheme.colors
-
     val backgroundColor = when {
         !enabled -> colors.glassCard.copy(alpha = 0.3f)
         isSelected -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
         else -> colors.glassCard
     }
-
     val borderColor = when {
         !enabled -> colors.glassBorder.copy(alpha = 0.3f)
         isSelected -> MaterialTheme.colorScheme.primary
         else -> colors.glassBorder
     }
-
     val textColor = when {
         !enabled -> colors.textMuted.copy(alpha = 0.5f)
         isSelected -> MaterialTheme.colorScheme.primary
         else -> colors.contentPrimary
     }
-
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))

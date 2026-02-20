@@ -93,22 +93,15 @@ import easycargo.composeapp.generated.resources.search_placeholder
 import easycargo.composeapp.generated.resources.stats_label_money
 import easycargo.composeapp.generated.resources.status_delivery
 import com.vantechinformatics.easycargo.utils.shareText
-import com.vantechinformatics.easycargo.utils.sendBulkSms
 import com.vantechinformatics.easycargo.utils.openWhatsApp
-import com.vantechinformatics.easycargo.utils.hasSmsPermission
-import com.vantechinformatics.easycargo.utils.SmsRecipient
+import com.vantechinformatics.easycargo.utils.openViber
 import easycargo.composeapp.generated.resources.btn_send_reminders
-import easycargo.composeapp.generated.resources.label_channel_sms
 import easycargo.composeapp.generated.resources.msg_no_eligible_parcels
 import easycargo.composeapp.generated.resources.reminder_template
-import easycargo.composeapp.generated.resources.msg_sms_permission_required
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -378,8 +371,6 @@ fun RouteDetailsScreen(
         }
 
         if (showSendRemindersDialog) {
-            val smsPermissionMsg = stringResource(Res.string.msg_sms_permission_required)
-            val smsLabel = stringResource(Res.string.label_channel_sms)
             val messages = eligibleParcels.map { parcel ->
                 parcel to stringResource(
                     Res.string.reminder_template,
@@ -395,27 +386,14 @@ fun RouteDetailsScreen(
                     showSendRemindersDialog = false
                     scope.launch {
                         when (channel) {
-                            MessageChannel.SMS -> {
-                                if (!hasSmsPermission()) {
-                                    snackbarHostState.showSnackbar(smsPermissionMsg)
-                                } else {
-                                    val recipients = messages.map { (parcel, msg) ->
-                                        SmsRecipient(phone = parcel.phone, message = msg)
-                                    }
-                                    val result = withContext(Dispatchers.IO) {
-                                        sendBulkSms(recipients)
-                                    }
-                                    val snackMessage = if (result.failed == 0) {
-                                        "${result.sent} / $smsLabel"
-                                    } else {
-                                        "${result.sent} / $smsLabel (${result.failed} FAIL)"
-                                    }
-                                    snackbarHostState.showSnackbar(snackMessage)
-                                }
-                            }
                             MessageChannel.WHATSAPP -> {
                                 for ((parcel, msg) in messages) {
                                     openWhatsApp(parcel.phone, msg)
+                                }
+                            }
+                            MessageChannel.VIBER -> {
+                                for ((parcel, msg) in messages) {
+                                    openViber(parcel.phone, msg)
                                 }
                             }
                         }

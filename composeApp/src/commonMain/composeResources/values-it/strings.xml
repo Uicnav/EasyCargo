@@ -71,15 +71,13 @@
     <string name="btn_send_reminders">INVIA PROMEMORIA</string>
     <string name="title_send_reminders">Invia Promemoria di Consegna</string>
     <string name="msg_reminder_count">%1$d pacchi non consegnati con numero di telefono</string>
-    <string name="label_channel_sms">SMS</string>
     <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_channel_viber">Viber</string>
     <string name="label_message_preview">Anteprima messaggio:</string>
     <string name="btn_send_all">INVIA TUTTI</string>
-    <string name="msg_reminders_sent">%1$d promemoria inviati tramite %2$s</string>
-    <string name="msg_reminders_partial">%1$d inviati, %2$d falliti</string>
     <string name="msg_no_eligible_parcels">Nessun pacco da notificare</string>
-    <string name="msg_sms_permission_required">Il permesso SMS è necessario per inviare i promemoria</string>
     <string name="msg_whatsapp_not_installed">WhatsApp non è installato</string>
+    <string name="msg_viber_not_installed">Viber non è installato</string>
     <string name="reminder_template">Buongiorno %1$s, il suo pacco (%2$d pezzi) è pronto per la consegna a %3$s.</string>
     <string name="label_choose_channel">Scegli il canale di invio</string>
 
