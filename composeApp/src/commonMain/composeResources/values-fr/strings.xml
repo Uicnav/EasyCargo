@@ -68,4 +68,19 @@
     <string name="btn_save_changes">ENREGISTRER</string>
     <string name="cd_share_route">Partager l\'itinéraire</string>
 
+    <string name="btn_send_reminders">ENVOYER RAPPELS</string>
+    <string name="title_send_reminders">Envoyer des rappels de livraison</string>
+    <string name="msg_reminder_count">%1$d colis non livrés avec numéro de téléphone</string>
+    <string name="label_channel_sms">SMS</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_message_preview">Aperçu du message :</string>
+    <string name="btn_send_all">ENVOYER TOUT</string>
+    <string name="msg_reminders_sent">%1$d rappels envoyés par %2$s</string>
+    <string name="msg_reminders_partial">%1$d envoyés, %2$d échoués</string>
+    <string name="msg_no_eligible_parcels">Aucun colis à notifier</string>
+    <string name="msg_sms_permission_required">L\'autorisation SMS est requise pour envoyer des rappels</string>
+    <string name="msg_whatsapp_not_installed">WhatsApp n\'est pas installé</string>
+    <string name="reminder_template">Bonjour %1$s, votre colis (%2$d pièces) est prêt pour la livraison à %3$s.</string>
+    <string name="label_choose_channel">Choisir le canal d\'envoi</string>
+
 </resources>

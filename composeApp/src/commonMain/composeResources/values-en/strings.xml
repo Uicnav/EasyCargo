@@ -68,4 +68,19 @@
     <string name="btn_save_changes">SAVE CHANGES</string>
     <string name="cd_share_route">Share route</string>
 
+    <string name="btn_send_reminders">SEND REMINDERS</string>
+    <string name="title_send_reminders">Send Delivery Reminders</string>
+    <string name="msg_reminder_count">%1$d undelivered parcels with phone numbers</string>
+    <string name="label_channel_sms">SMS</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_message_preview">Message preview:</string>
+    <string name="btn_send_all">SEND ALL</string>
+    <string name="msg_reminders_sent">%1$d reminders sent via %2$s</string>
+    <string name="msg_reminders_partial">%1$d sent, %2$d failed</string>
+    <string name="msg_no_eligible_parcels">No parcels to notify</string>
+    <string name="msg_sms_permission_required">SMS permission is required to send reminders</string>
+    <string name="msg_whatsapp_not_installed">WhatsApp is not installed</string>
+    <string name="reminder_template">Hello %1$s, your parcel (%2$d pieces) is ready for delivery in %3$s.</string>
+    <string name="label_choose_channel">Choose sending channel</string>
+
 </resources>

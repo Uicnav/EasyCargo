@@ -68,4 +68,19 @@
     <string name="btn_save_changes">GUARDAR CAMBIOS</string>
     <string name="cd_share_route">Compartir ruta</string>
 
+    <string name="btn_send_reminders">ENVIAR RECORDATORIOS</string>
+    <string name="title_send_reminders">Enviar recordatorios de entrega</string>
+    <string name="msg_reminder_count">%1$d paquetes no entregados con número de teléfono</string>
+    <string name="label_channel_sms">SMS</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_message_preview">Vista previa del mensaje:</string>
+    <string name="btn_send_all">ENVIAR TODOS</string>
+    <string name="msg_reminders_sent">%1$d recordatorios enviados por %2$s</string>
+    <string name="msg_reminders_partial">%1$d enviados, %2$d fallidos</string>
+    <string name="msg_no_eligible_parcels">No hay paquetes para notificar</string>
+    <string name="msg_sms_permission_required">Se requiere permiso de SMS para enviar recordatorios</string>
+    <string name="msg_whatsapp_not_installed">WhatsApp no está instalado</string>
+    <string name="reminder_template">Hola %1$s, su paquete (%2$d piezas) está listo para la entrega en %3$s.</string>
+    <string name="label_choose_channel">Elegir canal de envío</string>
+
 </resources>

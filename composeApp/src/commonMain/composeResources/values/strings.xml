@@ -71,4 +71,19 @@
     <string name="btn_save_changes">SALVEAZĂ MODIFICĂRI</string>
     <string name="cd_share_route">Partajează ruta</string>
 
+    <string name="btn_send_reminders">TRIMITE NOTIFICĂRI</string>
+    <string name="title_send_reminders">Trimite Notificări de Livrare</string>
+    <string name="msg_reminder_count">%1$d colete nelivrate cu număr de telefon</string>
+    <string name="label_channel_sms">SMS</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_message_preview">Previzualizare mesaj:</string>
+    <string name="btn_send_all">TRIMITE TOATE</string>
+    <string name="msg_reminders_sent">%1$d notificări trimise prin %2$s</string>
+    <string name="msg_reminders_partial">%1$d trimise, %2$d eșuate</string>
+    <string name="msg_no_eligible_parcels">Nu există colete de notificat</string>
+    <string name="msg_sms_permission_required">Permisiunea SMS este necesară pentru trimiterea notificărilor</string>
+    <string name="msg_whatsapp_not_installed">WhatsApp nu este instalat</string>
+    <string name="reminder_template">Bună ziua %1$s, coletul dvs. (%2$d bucăți) este gata de livrare în %3$s.</string>
+    <string name="label_choose_channel">Alege canalul de trimitere</string>
+
 </resources>

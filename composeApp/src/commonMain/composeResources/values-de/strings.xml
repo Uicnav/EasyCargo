@@ -68,4 +68,19 @@
     <string name="btn_save_changes">ÄNDERUNGEN SPEICHERN</string>
     <string name="cd_share_route">Route teilen</string>
 
+    <string name="btn_send_reminders">ERINNERUNGEN SENDEN</string>
+    <string name="title_send_reminders">Liefererinnerungen senden</string>
+    <string name="msg_reminder_count">%1$d nicht zugestellte Pakete mit Telefonnummer</string>
+    <string name="label_channel_sms">SMS</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_message_preview">Nachrichtenvorschau:</string>
+    <string name="btn_send_all">ALLE SENDEN</string>
+    <string name="msg_reminders_sent">%1$d Erinnerungen per %2$s gesendet</string>
+    <string name="msg_reminders_partial">%1$d gesendet, %2$d fehlgeschlagen</string>
+    <string name="msg_no_eligible_parcels">Keine Pakete zu benachrichtigen</string>
+    <string name="msg_sms_permission_required">SMS-Berechtigung ist erforderlich, um Erinnerungen zu senden</string>
+    <string name="msg_whatsapp_not_installed">WhatsApp ist nicht installiert</string>
+    <string name="reminder_template">Guten Tag %1$s, Ihr Paket (%2$d Stück) ist zur Auslieferung in %3$s bereit.</string>
+    <string name="label_choose_channel">Sendekanal wählen</string>
+
 </resources>
