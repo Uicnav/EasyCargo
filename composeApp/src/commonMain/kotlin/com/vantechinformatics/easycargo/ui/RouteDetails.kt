@@ -93,11 +93,8 @@ import easycargo.composeapp.generated.resources.search_placeholder
 import easycargo.composeapp.generated.resources.stats_label_money
 import easycargo.composeapp.generated.resources.status_delivery
 import com.vantechinformatics.easycargo.utils.shareText
-import com.vantechinformatics.easycargo.utils.openWhatsApp
-import com.vantechinformatics.easycargo.utils.openViber
 import easycargo.composeapp.generated.resources.btn_send_reminders
 import easycargo.composeapp.generated.resources.msg_no_eligible_parcels
-import easycargo.composeapp.generated.resources.reminder_template
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -371,34 +368,9 @@ fun RouteDetailsScreen(
         }
 
         if (showSendRemindersDialog) {
-            val messages = eligibleParcels.map { parcel ->
-                parcel to stringResource(
-                    Res.string.reminder_template,
-                    parcel.firstNameLastName,
-                    parcel.pieceCount,
-                    parcel.city
-                )
-            }
             SendRemindersDialog(
                 eligibleParcels = eligibleParcels,
-                onDismiss = { showSendRemindersDialog = false },
-                onSend = { channel ->
-                    showSendRemindersDialog = false
-                    scope.launch {
-                        when (channel) {
-                            MessageChannel.WHATSAPP -> {
-                                for ((parcel, msg) in messages) {
-                                    openWhatsApp(parcel.phone, msg)
-                                }
-                            }
-                            MessageChannel.VIBER -> {
-                                for ((parcel, msg) in messages) {
-                                    openViber(parcel.phone, msg)
-                                }
-                            }
-                        }
-                    }
-                }
+                onDismiss = { showSendRemindersDialog = false }
             )
         }
     }

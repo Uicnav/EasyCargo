@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -24,9 +27,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -43,13 +47,13 @@ import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.ui.theme.EasyCargoTheme
 import com.vantechinformatics.easycargo.utils.isWhatsAppInstalled
 import com.vantechinformatics.easycargo.utils.isViberInstalled
+import com.vantechinformatics.easycargo.utils.openWhatsApp
+import com.vantechinformatics.easycargo.utils.openViber
 import easycargo.composeapp.generated.resources.Res
-import easycargo.composeapp.generated.resources.action_cancel
-import easycargo.composeapp.generated.resources.btn_send_all
+import easycargo.composeapp.generated.resources.action_close
 import easycargo.composeapp.generated.resources.label_channel_viber
 import easycargo.composeapp.generated.resources.label_channel_whatsapp
 import easycargo.composeapp.generated.resources.label_choose_channel
-import easycargo.composeapp.generated.resources.label_message_preview
 import easycargo.composeapp.generated.resources.msg_reminder_count
 import easycargo.composeapp.generated.resources.msg_viber_not_installed
 import easycargo.composeapp.generated.resources.msg_whatsapp_not_installed
@@ -62,28 +66,27 @@ enum class MessageChannel { WHATSAPP, VIBER }
 @Composable
 fun SendRemindersDialog(
     eligibleParcels: List<ParcelUi>,
-    onDismiss: () -> Unit,
-    onSend: (MessageChannel) -> Unit
+    onDismiss: () -> Unit
 ) {
     val colors = EasyCargoTheme.colors
     var selectedChannel by remember { mutableStateOf(MessageChannel.WHATSAPP) }
     val whatsAppInstalled = remember { isWhatsAppInstalled() }
     val viberInstalled = remember { isViberInstalled() }
+    val sentIds = remember { mutableStateListOf<Long>() }
 
-    // If default not available, switch
     if (!whatsAppInstalled && viberInstalled) {
         selectedChannel = MessageChannel.VIBER
     }
 
-    val firstParcel = eligibleParcels.firstOrNull()
-    val previewMessage = if (firstParcel != null) {
-        stringResource(
+    // Pre-build messages for each parcel
+    val parcelMessages = eligibleParcels.map { parcel ->
+        parcel to stringResource(
             Res.string.reminder_template,
-            firstParcel.firstNameLastName,
-            firstParcel.pieceCount,
-            firstParcel.city
+            parcel.firstNameLastName,
+            parcel.pieceCount,
+            parcel.city
         )
-    } else ""
+    }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -91,18 +94,15 @@ fun SendRemindersDialog(
     ) {
         Box(
             modifier = Modifier
-                .padding(horizontal = 24.dp, vertical = 16.dp)
+                .padding(horizontal = 16.dp, vertical = 32.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
                 .border(1.dp, colors.glassBorder, RoundedCornerShape(16.dp))
                 .background(Color.Black)
                 .background(colors.glassSurface)
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                // Title row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -119,18 +119,18 @@ fun SendRemindersDialog(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
+                // Count info
                 Text(
                     text = stringResource(Res.string.msg_reminder_count, eligibleParcels.size),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = colors.textSecondary
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 HorizontalDivider(color = colors.glassBorder)
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
+                // Channel selector
                 Text(
                     text = stringResource(Res.string.label_choose_channel),
                     style = MaterialTheme.typography.bodySmall,
@@ -160,7 +160,6 @@ fun SendRemindersDialog(
                     )
                 }
 
-                // Not installed warnings
                 if (!whatsAppInstalled) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
@@ -180,68 +179,123 @@ fun SendRemindersDialog(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 HorizontalDivider(color = colors.glassBorder)
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = stringResource(Res.string.label_message_preview),
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = colors.textSecondary
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .border(1.dp, colors.glassBorder, RoundedCornerShape(12.dp))
-                        .background(colors.glassCard)
+                // Recipient list — each row has a send button
+                LazyColumn(
+                    modifier = Modifier.weight(1f, fill = false),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        text = previewMessage,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = colors.contentPrimary,
-                        fontStyle = FontStyle.Italic,
-                        modifier = Modifier.padding(12.dp)
-                    )
+                    items(parcelMessages, key = { it.first.id }) { (parcel, message) ->
+                        val isSent = parcel.id in sentIds
+                        RecipientRow(
+                            name = parcel.firstNameLastName,
+                            phone = parcel.phone,
+                            city = parcel.city,
+                            isSent = isSent,
+                            enabled = (selectedChannel == MessageChannel.WHATSAPP && whatsAppInstalled) ||
+                                      (selectedChannel == MessageChannel.VIBER && viberInstalled),
+                            onSend = {
+                                when (selectedChannel) {
+                                    MessageChannel.WHATSAPP -> openWhatsApp(parcel.phone, message)
+                                    MessageChannel.VIBER -> openViber(parcel.phone, message)
+                                }
+                                sentIds.add(parcel.id)
+                            }
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                // Close button
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.glassCard,
+                        contentColor = colors.contentPrimary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    TextButton(
-                        onClick = onDismiss,
-                        modifier = Modifier.weight(1f).height(48.dp),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.action_cancel),
-                            color = colors.textSecondary,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                    Button(
-                        onClick = { onSend(selectedChannel) },
-                        modifier = Modifier.weight(1f).height(48.dp),
-                        enabled = (selectedChannel == MessageChannel.WHATSAPP && whatsAppInstalled) ||
-                                  (selectedChannel == MessageChannel.VIBER && viberInstalled),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.btn_send_all),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                    Text(
+                        text = stringResource(Res.string.action_close),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RecipientRow(
+    name: String,
+    phone: String,
+    city: String,
+    isSent: Boolean,
+    enabled: Boolean,
+    onSend: () -> Unit
+) {
+    val colors = EasyCargoTheme.colors
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .border(
+                1.dp,
+                if (isSent) colors.greenLight.copy(alpha = 0.4f) else colors.glassBorder,
+                RoundedCornerShape(12.dp)
+            )
+            .background(if (isSent) colors.greenLight.copy(alpha = 0.05f) else colors.glassCard)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Info
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.contentPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "$phone  •  $city",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colors.textSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // Send / Sent indicator
+            if (isSent) {
+                Icon(
+                    Icons.Default.CheckCircle,
+                    contentDescription = null,
+                    tint = colors.greenLight,
+                    modifier = Modifier.size(32.dp)
+                )
+            } else {
+                IconButton(
+                    onClick = onSend,
+                    enabled = enabled
+                ) {
+                    Icon(
+                        Icons.Default.Send,
+                        contentDescription = null,
+                        tint = if (enabled) MaterialTheme.colorScheme.primary else colors.textMuted,
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
             }
         }

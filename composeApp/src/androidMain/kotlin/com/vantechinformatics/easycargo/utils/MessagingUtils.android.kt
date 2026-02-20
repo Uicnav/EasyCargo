@@ -13,7 +13,7 @@ fun initMessagingContext(context: Context) {
 
 actual fun openWhatsApp(phone: String, message: String) {
     val ctx = messagingContext ?: return
-    val cleanPhone = phone.replace(Regex("[^+\\d]"), "")
+    val cleanPhone = phone.replace(Regex("[^\\d]"), "")
     val encodedMessage = Uri.encode(message)
     val uri = Uri.parse("https://wa.me/$cleanPhone?text=$encodedMessage")
     val intent = Intent(Intent.ACTION_VIEW, uri).apply {

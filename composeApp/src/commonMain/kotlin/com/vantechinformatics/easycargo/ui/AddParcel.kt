@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -21,10 +24,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +36,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +52,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -77,6 +81,200 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
+// Triple(dialCode, iso2, countryName)
+private val ALL_COUNTRY_CODES: List<Triple<String, String, String>> = listOf(
+    Triple("+93", "AF", "Afghanistan"),
+    Triple("+355", "AL", "Albania"),
+    Triple("+213", "DZ", "Algeria"),
+    Triple("+376", "AD", "Andorra"),
+    Triple("+244", "AO", "Angola"),
+    Triple("+1268", "AG", "Antigua and Barbuda"),
+    Triple("+54", "AR", "Argentina"),
+    Triple("+374", "AM", "Armenia"),
+    Triple("+61", "AU", "Australia"),
+    Triple("+43", "AT", "Austria"),
+    Triple("+994", "AZ", "Azerbaijan"),
+    Triple("+1242", "BS", "Bahamas"),
+    Triple("+973", "BH", "Bahrain"),
+    Triple("+880", "BD", "Bangladesh"),
+    Triple("+1246", "BB", "Barbados"),
+    Triple("+375", "BY", "Belarus"),
+    Triple("+32", "BE", "Belgium"),
+    Triple("+501", "BZ", "Belize"),
+    Triple("+229", "BJ", "Benin"),
+    Triple("+975", "BT", "Bhutan"),
+    Triple("+591", "BO", "Bolivia"),
+    Triple("+387", "BA", "Bosnia and Herzegovina"),
+    Triple("+267", "BW", "Botswana"),
+    Triple("+55", "BR", "Brazil"),
+    Triple("+673", "BN", "Brunei"),
+    Triple("+359", "BG", "Bulgaria"),
+    Triple("+226", "BF", "Burkina Faso"),
+    Triple("+257", "BI", "Burundi"),
+    Triple("+855", "KH", "Cambodia"),
+    Triple("+237", "CM", "Cameroon"),
+    Triple("+1", "CA", "Canada"),
+    Triple("+238", "CV", "Cape Verde"),
+    Triple("+236", "CF", "Central African Republic"),
+    Triple("+235", "TD", "Chad"),
+    Triple("+56", "CL", "Chile"),
+    Triple("+86", "CN", "China"),
+    Triple("+57", "CO", "Colombia"),
+    Triple("+269", "KM", "Comoros"),
+    Triple("+242", "CG", "Congo"),
+    Triple("+243", "CD", "Congo DR"),
+    Triple("+506", "CR", "Costa Rica"),
+    Triple("+225", "CI", "Ivory Coast"),
+    Triple("+385", "HR", "Croatia"),
+    Triple("+53", "CU", "Cuba"),
+    Triple("+357", "CY", "Cyprus"),
+    Triple("+420", "CZ", "Czech Republic"),
+    Triple("+45", "DK", "Denmark"),
+    Triple("+253", "DJ", "Djibouti"),
+    Triple("+1767", "DM", "Dominica"),
+    Triple("+1809", "DO", "Dominican Republic"),
+    Triple("+593", "EC", "Ecuador"),
+    Triple("+20", "EG", "Egypt"),
+    Triple("+503", "SV", "El Salvador"),
+    Triple("+240", "GQ", "Equatorial Guinea"),
+    Triple("+291", "ER", "Eritrea"),
+    Triple("+372", "EE", "Estonia"),
+    Triple("+268", "SZ", "Eswatini"),
+    Triple("+251", "ET", "Ethiopia"),
+    Triple("+679", "FJ", "Fiji"),
+    Triple("+358", "FI", "Finland"),
+    Triple("+33", "FR", "France"),
+    Triple("+241", "GA", "Gabon"),
+    Triple("+220", "GM", "Gambia"),
+    Triple("+995", "GE", "Georgia"),
+    Triple("+49", "DE", "Germany"),
+    Triple("+233", "GH", "Ghana"),
+    Triple("+30", "GR", "Greece"),
+    Triple("+1473", "GD", "Grenada"),
+    Triple("+502", "GT", "Guatemala"),
+    Triple("+224", "GN", "Guinea"),
+    Triple("+245", "GW", "Guinea-Bissau"),
+    Triple("+592", "GY", "Guyana"),
+    Triple("+509", "HT", "Haiti"),
+    Triple("+504", "HN", "Honduras"),
+    Triple("+852", "HK", "Hong Kong"),
+    Triple("+36", "HU", "Hungary"),
+    Triple("+354", "IS", "Iceland"),
+    Triple("+91", "IN", "India"),
+    Triple("+62", "ID", "Indonesia"),
+    Triple("+98", "IR", "Iran"),
+    Triple("+964", "IQ", "Iraq"),
+    Triple("+353", "IE", "Ireland"),
+    Triple("+972", "IL", "Israel"),
+    Triple("+39", "IT", "Italy"),
+    Triple("+1876", "JM", "Jamaica"),
+    Triple("+81", "JP", "Japan"),
+    Triple("+962", "JO", "Jordan"),
+    Triple("+7", "KZ", "Kazakhstan"),
+    Triple("+254", "KE", "Kenya"),
+    Triple("+686", "KI", "Kiribati"),
+    Triple("+82", "KR", "South Korea"),
+    Triple("+965", "KW", "Kuwait"),
+    Triple("+996", "KG", "Kyrgyzstan"),
+    Triple("+856", "LA", "Laos"),
+    Triple("+371", "LV", "Latvia"),
+    Triple("+961", "LB", "Lebanon"),
+    Triple("+266", "LS", "Lesotho"),
+    Triple("+231", "LR", "Liberia"),
+    Triple("+218", "LY", "Libya"),
+    Triple("+423", "LI", "Liechtenstein"),
+    Triple("+370", "LT", "Lithuania"),
+    Triple("+352", "LU", "Luxembourg"),
+    Triple("+853", "MO", "Macau"),
+    Triple("+261", "MG", "Madagascar"),
+    Triple("+265", "MW", "Malawi"),
+    Triple("+60", "MY", "Malaysia"),
+    Triple("+960", "MV", "Maldives"),
+    Triple("+223", "ML", "Mali"),
+    Triple("+356", "MT", "Malta"),
+    Triple("+692", "MH", "Marshall Islands"),
+    Triple("+222", "MR", "Mauritania"),
+    Triple("+230", "MU", "Mauritius"),
+    Triple("+52", "MX", "Mexico"),
+    Triple("+691", "FM", "Micronesia"),
+    Triple("+373", "MD", "Moldova"),
+    Triple("+377", "MC", "Monaco"),
+    Triple("+976", "MN", "Mongolia"),
+    Triple("+382", "ME", "Montenegro"),
+    Triple("+212", "MA", "Morocco"),
+    Triple("+258", "MZ", "Mozambique"),
+    Triple("+95", "MM", "Myanmar"),
+    Triple("+264", "NA", "Namibia"),
+    Triple("+674", "NR", "Nauru"),
+    Triple("+977", "NP", "Nepal"),
+    Triple("+31", "NL", "Netherlands"),
+    Triple("+64", "NZ", "New Zealand"),
+    Triple("+505", "NI", "Nicaragua"),
+    Triple("+227", "NE", "Niger"),
+    Triple("+234", "NG", "Nigeria"),
+    Triple("+389", "MK", "North Macedonia"),
+    Triple("+47", "NO", "Norway"),
+    Triple("+968", "OM", "Oman"),
+    Triple("+92", "PK", "Pakistan"),
+    Triple("+680", "PW", "Palau"),
+    Triple("+970", "PS", "Palestine"),
+    Triple("+507", "PA", "Panama"),
+    Triple("+675", "PG", "Papua New Guinea"),
+    Triple("+595", "PY", "Paraguay"),
+    Triple("+51", "PE", "Peru"),
+    Triple("+63", "PH", "Philippines"),
+    Triple("+48", "PL", "Poland"),
+    Triple("+351", "PT", "Portugal"),
+    Triple("+974", "QA", "Qatar"),
+    Triple("+40", "RO", "Romania"),
+    Triple("+7", "RU", "Russia"),
+    Triple("+250", "RW", "Rwanda"),
+    Triple("+966", "SA", "Saudi Arabia"),
+    Triple("+221", "SN", "Senegal"),
+    Triple("+381", "RS", "Serbia"),
+    Triple("+248", "SC", "Seychelles"),
+    Triple("+232", "SL", "Sierra Leone"),
+    Triple("+65", "SG", "Singapore"),
+    Triple("+421", "SK", "Slovakia"),
+    Triple("+386", "SI", "Slovenia"),
+    Triple("+677", "SB", "Solomon Islands"),
+    Triple("+252", "SO", "Somalia"),
+    Triple("+27", "ZA", "South Africa"),
+    Triple("+211", "SS", "South Sudan"),
+    Triple("+34", "ES", "Spain"),
+    Triple("+94", "LK", "Sri Lanka"),
+    Triple("+249", "SD", "Sudan"),
+    Triple("+597", "SR", "Suriname"),
+    Triple("+46", "SE", "Sweden"),
+    Triple("+41", "CH", "Switzerland"),
+    Triple("+963", "SY", "Syria"),
+    Triple("+886", "TW", "Taiwan"),
+    Triple("+992", "TJ", "Tajikistan"),
+    Triple("+255", "TZ", "Tanzania"),
+    Triple("+66", "TH", "Thailand"),
+    Triple("+670", "TL", "Timor-Leste"),
+    Triple("+228", "TG", "Togo"),
+    Triple("+676", "TO", "Tonga"),
+    Triple("+1868", "TT", "Trinidad and Tobago"),
+    Triple("+216", "TN", "Tunisia"),
+    Triple("+90", "TR", "Turkey"),
+    Triple("+993", "TM", "Turkmenistan"),
+    Triple("+688", "TV", "Tuvalu"),
+    Triple("+256", "UG", "Uganda"),
+    Triple("+380", "UA", "Ukraine"),
+    Triple("+971", "AE", "United Arab Emirates"),
+    Triple("+44", "GB", "United Kingdom"),
+    Triple("+1", "US", "United States"),
+    Triple("+598", "UY", "Uruguay"),
+    Triple("+998", "UZ", "Uzbekistan"),
+    Triple("+678", "VU", "Vanuatu"),
+    Triple("+58", "VE", "Venezuela"),
+    Triple("+84", "VN", "Vietnam"),
+    Triple("+967", "YE", "Yemen"),
+    Triple("+260", "ZM", "Zambia"),
+    Triple("+263", "ZW", "Zimbabwe")
+)
+
 @Composable
 fun AddParcelDialog(
     routeId: Long,
@@ -103,20 +301,14 @@ fun AddParcelDialog(
         prefs[countryCodeKey] ?: "+39"
     }.collectAsState(initial = "+39")
 
-    // Parse existing phone for edit mode
-    val countryCodes = remember {
-        listOf(
-            "+40" to "RO", "+39" to "IT", "+49" to "DE", "+33" to "FR",
-            "+34" to "ES", "+44" to "UK", "+373" to "MD", "+380" to "UA",
-            "+7" to "RU", "+43" to "AT", "+41" to "CH", "+32" to "BE",
-            "+31" to "NL", "+48" to "PL", "+420" to "CZ", "+36" to "HU",
-            "+359" to "BG", "+30" to "GR", "+381" to "RS", "+385" to "HR"
-        )
-    }
+    val lastCityKey = remember { stringPreferencesKey("last_city") }
+    val savedCity by dataStore.data.map { prefs ->
+        prefs[lastCityKey] ?: ""
+    }.collectAsState(initial = "")
 
     var selectedCountryCode by remember(savedCountryCode) {
         val existingPhone = parcelToEdit?.phone ?: ""
-        val matchedCode = countryCodes.map { it.first }
+        val matchedCode = ALL_COUNTRY_CODES.map { it.first }
             .sortedByDescending { it.length }
             .firstOrNull { existingPhone.startsWith(it) }
         mutableStateOf(matchedCode ?: savedCountryCode)
@@ -124,7 +316,7 @@ fun AddParcelDialog(
 
     var localPhone by remember {
         val existingPhone = parcelToEdit?.phone ?: ""
-        val matchedCode = countryCodes.map { it.first }
+        val matchedCode = ALL_COUNTRY_CODES.map { it.first }
             .sortedByDescending { it.length }
             .firstOrNull { existingPhone.startsWith(it) }
         mutableStateOf(if (matchedCode != null) existingPhone.removePrefix(matchedCode) else existingPhone)
@@ -132,7 +324,7 @@ fun AddParcelDialog(
 
     var showCountryCodePicker by remember { mutableStateOf(false) }
 
-    var city by remember { mutableStateOf(parcelToEdit?.city ?: "") }
+    var city by remember(savedCity) { mutableStateOf(parcelToEdit?.city ?: savedCity) }
 
     // Valori numerice
     var weightInput by remember { mutableStateOf(parcelToEdit?.weight?.toString() ?: "") }
@@ -141,8 +333,6 @@ fun AddParcelDialog(
     }
     var piecesInput by remember { mutableStateOf(parcelToEdit?.pieceCount?.toString() ?: "1") }
 
-    // --- LOGICA DE CALCUL AUTOMAT ---
-    // Calculăm suma doar pentru afișare (read-only)
     val calculatedTotal = remember<Double>(weightInput, pricePerKgInput) {
         val w = weightInput.toDoubleOrNull() ?: 0.0
         val p = pricePerKgInput.toDoubleOrNull() ?: 0.0
@@ -230,69 +420,50 @@ fun AddParcelDialog(
                     }
                 )
 
-                // 2. Phone with country code
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.Top
-                ) {
-                    // Country code dropdown
-                    Box {
-                        OutlinedTextField(
-                            value = "$selectedCountryCode ${countryCodes.firstOrNull { it.first == selectedCountryCode }?.second ?: ""}",
-                            onValueChange = {},
-                            readOnly = true,
-                            singleLine = true,
-                            modifier = Modifier.width(120.dp).clickable { showCountryCodePicker = true },
-                            colors = textFieldColors,
-                            shape = RoundedCornerShape(12.dp),
-                            trailingIcon = {
-                                Icon(
-                                    Icons.Default.ArrowDropDown,
-                                    contentDescription = null,
-                                    tint = colors.textSecondary,
-                                    modifier = Modifier.clickable { showCountryCodePicker = true }
-                                )
-                            }
-                        )
-                        DropdownMenu(
-                            expanded = showCountryCodePicker,
-                            onDismissRequest = { showCountryCodePicker = false }
+                // 2. Phone with country code (unified field)
+                val countryIso = ALL_COUNTRY_CODES.firstOrNull { it.first == selectedCountryCode }?.second ?: "IT"
+                OutlinedTextField(
+                    value = localPhone,
+                    onValueChange = { localPhone = it.replace(Regex("[^\\d]"), "") },
+                    label = { Text(stringResource(Res.string.label_phone)) },
+                    singleLine = true,
+                    prefix = {
+                        Row(
+                            modifier = Modifier
+                                .clickable { showCountryCodePicker = true }
+                                .padding(end = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            countryCodes.forEach { (code, country) ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            "$code $country",
-                                            color = colors.contentPrimary
-                                        )
-                                    },
-                                    onClick = {
-                                        selectedCountryCode = code
-                                        showCountryCodePicker = false
-                                    }
-                                )
-                            }
+                            Text(flagEmoji(countryIso), style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                selectedCountryCode,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = colors.contentPrimary
+                            )
+                            Icon(
+                                Icons.Default.ArrowDropDown,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = colors.textSecondary
+                            )
+                            Box(
+                                Modifier
+                                    .width(1.dp)
+                                    .height(24.dp)
+                                    .background(colors.glassBorder)
+                            )
                         }
-                    }
-
-                    Spacer(Modifier.width(8.dp))
-
-                    // Local phone number
-                    OutlinedTextField(
-                        value = localPhone,
-                        onValueChange = { localPhone = it },
-                        label = { Text(stringResource(Res.string.label_phone)) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Phone,
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(onNext = { cityFocus.requestFocus() }),
-                        modifier = Modifier.weight(1f).focusRequester(phoneFocus),
-                        colors = textFieldColors,
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                }
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Phone,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(onNext = { cityFocus.requestFocus() }),
+                    modifier = Modifier.fillMaxWidth().focusRequester(phoneFocus),
+                    colors = textFieldColors,
+                    shape = RoundedCornerShape(12.dp)
+                )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -371,7 +542,7 @@ fun AddParcelDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Total card - glass tinted
+                // Total card
                 Box(
                     modifier = Modifier.fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
@@ -399,7 +570,7 @@ fun AddParcelDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Save button - orange
+                // Save button
                 Button(
                     onClick = {
                         val nameValid = firstNameLastName.isNotBlank()
@@ -409,7 +580,8 @@ fun AddParcelDialog(
                         if (nameValid && cityValid) {
                             scope.launch {
                                 val priceKg = pricePerKgInput.toDoubleOrNull() ?: 0.0
-                                val combinedPhone = if (localPhone.isNotBlank()) "$selectedCountryCode$localPhone" else ""
+                                val cleanLocal = localPhone.trimStart('0').replace(Regex("[^\\d]"), "")
+                                val combinedPhone = if (cleanLocal.isNotBlank()) "$selectedCountryCode$cleanLocal" else ""
                                 if (isEditMode) {
                                     val updated = parcelToEdit!!.copy(
                                         firstNameLastName = firstNameLastName,
@@ -423,6 +595,7 @@ fun AddParcelDialog(
                                     dataStore.edit { prefs ->
                                         prefs[pricePerKgKey] = priceKg
                                         prefs[countryCodeKey] = selectedCountryCode
+                                        prefs[lastCityKey] = city
                                     }
                                     onDismiss()
                                 } else {
@@ -438,6 +611,7 @@ fun AddParcelDialog(
                                     dataStore.edit { prefs ->
                                         prefs[pricePerKgKey] = priceKg
                                         prefs[countryCodeKey] = selectedCountryCode
+                                        prefs[lastCityKey] = city
                                     }
                                     onParcelAdded(parcel.apply { showOnlyInfo = true })
                                     onDismiss()
@@ -459,5 +633,134 @@ fun AddParcelDialog(
                 }
             }
         }
+    }
+
+    // Country code picker dialog
+    if (showCountryCodePicker) {
+        CountryCodePickerDialog(
+            onSelect = { code ->
+                selectedCountryCode = code
+                showCountryCodePicker = false
+            },
+            onDismiss = { showCountryCodePicker = false }
+        )
+    }
+}
+
+@Composable
+private fun CountryCodePickerDialog(
+    onSelect: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val colors = EasyCargoTheme.colors
+    var search by remember { mutableStateOf("") }
+    val filtered by remember {
+        derivedStateOf {
+            if (search.isBlank()) ALL_COUNTRY_CODES
+            else {
+                val q = search.lowercase()
+                ALL_COUNTRY_CODES.filter { (code, iso, name) ->
+                    name.lowercase().contains(q) || code.contains(q) || iso.lowercase().contains(q)
+                }
+            }
+        }
+    }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 24.dp, vertical = 48.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .border(1.dp, colors.glassBorder, RoundedCornerShape(16.dp))
+                .background(Color.Black)
+                .background(colors.glassSurface)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                // Title
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "Country Code",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.contentPrimary
+                    )
+                    IconButton(onClick = onDismiss) {
+                        Icon(Icons.Default.Close, contentDescription = null, tint = colors.contentPrimary)
+                    }
+                }
+
+                // Search field
+                OutlinedTextField(
+                    value = search,
+                    onValueChange = { search = it },
+                    singleLine = true,
+                    placeholder = { Text("Search...", color = colors.textMuted) },
+                    leadingIcon = {
+                        Icon(Icons.Default.Search, contentDescription = null, tint = colors.textSecondary)
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = colors.glassBorder,
+                        focusedTextColor = colors.contentPrimary,
+                        unfocusedTextColor = colors.contentPrimary,
+                        cursorColor = MaterialTheme.colorScheme.primary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // List
+                LazyColumn(
+                    modifier = Modifier.weight(1f, fill = false).heightIn(max = 400.dp)
+                ) {
+                    items(filtered, key = { "${it.first}_${it.second}" }) { (code, iso, name) ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onSelect(code) }
+                                .padding(vertical = 12.dp, horizontal = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(flagEmoji(iso), style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                name,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = colors.contentPrimary,
+                                modifier = Modifier.weight(1f),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                code,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = colors.textSecondary
+                            )
+                        }
+                        HorizontalDivider(color = colors.glassBorder.copy(alpha = 0.3f))
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun flagEmoji(iso: String): String = buildString {
+    for (c in iso.uppercase()) {
+        val codePoint = 0x1F1E6 + (c - 'A')
+        val high = ((codePoint - 0x10000) shr 10) + 0xD800
+        val low = ((codePoint - 0x10000) and 0x3FF) + 0xDC00
+        append(high.toChar())
+        append(low.toChar())
     }
 }
