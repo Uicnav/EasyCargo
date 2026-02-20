@@ -58,6 +58,16 @@ interface ParcelDao {
 """)
     fun searchParcels(routeId: Long, query: String): Flow<List<ParcelEntity>>
 
+    @Query("""
+        SELECT * FROM parcels
+        WHERE routeId = :routeId
+        AND isDelivered = 0
+        AND isVisible = 1
+        AND phone != ''
+        ORDER BY displayId DESC
+    """)
+    suspend fun getUndeliveredParcelsWithPhone(routeId: Long): List<ParcelEntity>
+
 
     @Transaction
     suspend fun addParcel(

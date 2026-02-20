@@ -69,6 +69,10 @@ class ParcelViewModel(private val dao: ParcelDao) : ViewModel() {
         )
     }
 
+    suspend fun getUndeliveredParcelsWithPhone(routeId: Long): List<ParcelUi> {
+        return dao.getUndeliveredParcelsWithPhone(routeId).map { it.toUiModel() }
+    }
+
     fun updateParcelStatus(parcelId: Long, isDelivered: Boolean, isVisible: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             dao.updateParcelStatus(parcelId, isDelivered, isVisible)
