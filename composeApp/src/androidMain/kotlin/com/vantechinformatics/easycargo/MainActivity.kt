@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.vantechinformatics.easycargo.data.createDataStore
 import com.vantechinformatics.easycargo.data.getDatabaseBuilder
 import com.vantechinformatics.easycargo.data.getRoomDatabase
+import com.vantechinformatics.easycargo.utils.initMessagingContext
 import com.vantechinformatics.easycargo.utils.initShareContext
 
 class MainActivity : AppCompatActivity() {
@@ -18,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         initShareContext(applicationContext)
+        initMessagingContext(applicationContext)
         val appDatabase = getRoomDatabase(getDatabaseBuilder(applicationContext))
         setContent {
             App(appDatabase, dataStore)
