@@ -93,6 +93,17 @@ import easycargo.composeapp.generated.resources.search_placeholder
 import easycargo.composeapp.generated.resources.stats_label_money
 import easycargo.composeapp.generated.resources.status_delivery
 import com.vantechinformatics.easycargo.utils.shareText
+import com.vantechinformatics.easycargo.utils.sendBulkSms
+import com.vantechinformatics.easycargo.utils.openWhatsApp
+import com.vantechinformatics.easycargo.utils.hasSmsPermission
+import com.vantechinformatics.easycargo.utils.SmsRecipient
+import easycargo.composeapp.generated.resources.btn_send_reminders
+import easycargo.composeapp.generated.resources.msg_no_eligible_parcels
+import easycargo.composeapp.generated.resources.reminder_template
+import easycargo.composeapp.generated.resources.msg_sms_permission_required
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -114,6 +125,8 @@ fun RouteDetailsScreen(
 
     var selectedParcel by remember { mutableStateOf<ParcelUi?>(null) }
     var showAddDialog by remember { mutableStateOf(false) }
+    var showSendRemindersDialog by remember { mutableStateOf(false) }
+    var eligibleParcels by remember { mutableStateOf<List<ParcelUi>>(emptyList()) }
 
     val focusManager = LocalFocusManager.current
     val navController = LocalNavHostController.current
@@ -250,6 +263,42 @@ fun RouteDetailsScreen(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
+                    // Send Reminders button
+                    val noEligibleMsg = stringResource(Res.string.msg_no_eligible_parcels)
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                val parcels = viewModel.getUndeliveredParcelsWithPhone(routeId)
+                                if (parcels.isEmpty()) {
+                                    snackbarHostState.showSnackbar(noEligibleMsg)
+                                } else {
+                                    eligibleParcels = parcels
+                                    showSendRemindersDialog = true
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().height(44.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                            contentColor = MaterialTheme.colorScheme.primary
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Email,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(Res.string.btn_send_reminders),
+                            fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
                     // Search field - glass style
                     OutlinedTextField(
                         value = searchQuery,
@@ -322,6 +371,50 @@ fun RouteDetailsScreen(
 
         selectedParcel?.let { parcel ->
             ParcelDetailsDialog(parcel, viewModel) { selectedParcel = null }
+        }
+
+        if (showSendRemindersDialog) {
+            val smsPermissionMsg = stringResource(Res.string.msg_sms_permission_required)
+            val messages = eligibleParcels.map { parcel ->
+                parcel to stringResource(
+                    Res.string.reminder_template,
+                    parcel.firstNameLastName,
+                    parcel.pieceCount,
+                    parcel.city
+                )
+            }
+            SendRemindersDialog(
+                eligibleParcels = eligibleParcels,
+                onDismiss = { showSendRemindersDialog = false },
+                onSend = { channel ->
+                    showSendRemindersDialog = false
+                    scope.launch {
+                        when (channel) {
+                            MessageChannel.SMS -> {
+                                if (!hasSmsPermission()) {
+                                    snackbarHostState.showSnackbar(smsPermissionMsg)
+                                } else {
+                                    val recipients = messages.map { (parcel, msg) ->
+                                        SmsRecipient(phone = parcel.phone, message = msg)
+                                    }
+                                    val result = sendBulkSms(recipients)
+                                    val snackMessage = if (result.failed == 0) {
+                                        "${result.sent} / SMS"
+                                    } else {
+                                        "${result.sent} OK, ${result.failed} FAIL"
+                                    }
+                                    snackbarHostState.showSnackbar(snackMessage)
+                                }
+                            }
+                            MessageChannel.WHATSAPP -> {
+                                for ((parcel, msg) in messages) {
+                                    openWhatsApp(parcel.phone, msg)
+                                }
+                            }
+                        }
+                    }
+                }
+            )
         }
     }
 }
