@@ -341,6 +341,7 @@ fun AddParcelDialog(
 
     // Validare
     var isNameError by remember { mutableStateOf(false) }
+    var isPhoneError by remember { mutableStateOf(false) }
     var isCityError by remember { mutableStateOf(false) }
 
     val textFieldColors = OutlinedTextFieldDefaults.colors(
@@ -424,9 +425,13 @@ fun AddParcelDialog(
                 val countryIso = ALL_COUNTRY_CODES.firstOrNull { it.first == selectedCountryCode }?.second ?: "IT"
                 OutlinedTextField(
                     value = localPhone,
-                    onValueChange = { localPhone = it.replace(Regex("[^\\d]"), "") },
+                    onValueChange = {
+                        localPhone = it.replace(Regex("[^\\d]"), "")
+                        if (isPhoneError && it.isNotBlank()) isPhoneError = false
+                    },
                     label = { Text(stringResource(Res.string.label_phone)) },
                     singleLine = true,
+                    isError = isPhoneError,
                     prefix = {
                         Row(
                             modifier = Modifier
@@ -462,7 +467,15 @@ fun AddParcelDialog(
                     keyboardActions = KeyboardActions(onNext = { cityFocus.requestFocus() }),
                     modifier = Modifier.fillMaxWidth().focusRequester(phoneFocus),
                     colors = textFieldColors,
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    supportingText = {
+                        if (isPhoneError) {
+                            Text(
+                                text = stringResource(Res.string.error_validation_fields),
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -574,10 +587,12 @@ fun AddParcelDialog(
                 Button(
                     onClick = {
                         val nameValid = firstNameLastName.isNotBlank()
+                        val phoneValid = localPhone.isNotBlank()
                         val cityValid = city.isNotBlank()
                         isNameError = !nameValid
+                        isPhoneError = !phoneValid
                         isCityError = !cityValid
-                        if (nameValid && cityValid) {
+                        if (nameValid && phoneValid && cityValid) {
                             scope.launch {
                                 val priceKg = pricePerKgInput.toDoubleOrNull() ?: 0.0
                                 val cleanLocal = localPhone.trimStart('0').replace(Regex("[^\\d]"), "")

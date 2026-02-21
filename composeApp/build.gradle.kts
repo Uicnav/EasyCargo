@@ -104,8 +104,8 @@ android {
         applicationId = "com.vantechinformatics.easycargo"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 171
-        versionName = "1.7.1"
+        versionCode = 180
+        versionName = "1.8.0"
     }
     buildFeatures {
         buildConfig = true
