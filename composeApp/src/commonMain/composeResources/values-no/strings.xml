@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name" translatable="false">EasyCargo</string>
+    <string name="format_kg" translatable="false">kg</string>
+    <string name="format_euro" translatable="false">€</string>
+
+    <string name="are_you_sure">Er du sikker?</string>
+
+    <string name="yes">Ja</string>
+    <string name="no">Nei</string>
+    <string name="confirm_delete">Bekreft sletting</string>
+
+    <string name="cd_add_new_route">Legg til ny rute</string>
+    <string name="label_created_at">Opprettet</string>
+    <string name="label_empty_routes">Ingen aktive ruter. Trykk + for å starte.</string>
+
+    <string name="dialog_route_title">Rutenummer</string>
+    <string name="label_route_name">Rutenavn</string>
+    <string name="hint_route_examples">F.eks.: Italia tur 21.01 eller Retur Moldova</string>
+    <string name="action_cancel">Avbryt</string>
+    <string name="action_create">Opprett</string>
+    <string name="detail_label_total_pay">Totalt å betale:</string>
+    <string name="dialog_route_title_hint">Rute</string>
+
+    <string name="search_placeholder">Søk navn, telefon eller billett</string>
+    <string name="cd_search_icon">Søk</string>
+    <string name="label_status_delivered">LEVERT</string>
+    <string name="label_status_pending">VENTER</string>
+
+    <string name="stats_label_parcels">Totalt antall pakker</string>
+    <string name="stats_label_money">Totalt beløp</string>
+    <string name="stats_label_delivered">Leverte pakker</string>
+
+    <string name="title_add_parcel">Legg til ny pakke</string>
+    <string name="label_full_name">Fullt navn</string>
+    <string name="label_phone">Telefon</string>
+
+    <string name="label_weight">Totalt kg</string>
+    <string name="label_price_per_kg">Pris/kg</string>
+    <string name="label_package_count">Antall pakker</string>
+
+    <string name="btn_generate_ticket">GENERER BILLETT</string>
+    <string name="msg_parcel_added_success">Pakken er lagret!</string>
+    <string name="error_validation_fields">Vennligst fyll ut</string>
+
+    <string name="detail_label_name">Fullt navn:</string>
+    <string name="detail_label_phone">Telefon:</string>
+    <string name="detail_label_weight">Vekt:</string>
+    <string name="detail_label_pieces">Stk:</string>
+    <string name="detail_label_price">Pris/kg:</string>
+    <string name="btn_mark_delivered">MERK SOM LEVERT</string>
+    <string name="btn_mark_undelivered">MERK SOM IKKE LEVERT</string>
+    <string name="action_close">Lukk</string>
+    <string name="msg_empty_search">Ingen pakker funnet. Sjekk søket eller legg til en ny pakke med +.</string>
+
+    <string name="route_deleted">Rute slettet</string>
+    <string name="undo">Angre</string>
+    <string name="city_label">Sted / By</string>
+    <string name="city">By</string>
+    <string name="status_delivery">Leveringsstatus</string>
+    <string name="cd_toggle_theme">Bytt tema</string>
+    <string name="cd_clear">Tøm</string>
+    <string name="format_piece">pakke</string>
+    <string name="format_pieces">pakker</string>
+    <string name="language_selector_title">Velg språk</string>
+    <string name="language_system_default">Systemstandard</string>
+    <string name="cd_share_parcel">Del pakkedetaljer</string>
+    <string name="title_edit_parcel">Rediger pakke</string>
+    <string name="btn_save_changes">LAGRE ENDRINGER</string>
+    <string name="cd_share_route">Del rute</string>
+
+    <string name="btn_send_reminders">SEND PÅMINNELSER</string>
+    <string name="title_send_reminders">Send leveringspåminnelser</string>
+    <string name="msg_reminder_count">%1$d ikke leverte pakker med telefonnummer</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_channel_viber">Viber</string>
+    <string name="label_message_preview">Forhåndsvis melding:</string>
+    <string name="btn_send_all">SEND ALLE</string>
+    <string name="msg_no_eligible_parcels">Ingen pakker å varsle</string>
+    <string name="msg_whatsapp_not_installed">WhatsApp er ikke installert</string>
+    <string name="msg_viber_not_installed">Viber er ikke installert</string>
+    <string name="reminder_template">Hei %1$s, pakken din (%2$d stk) er klar for levering i %3$s.</string>
+    <string name="label_choose_channel">Velg sendekanal</string>
+
+    <string name="label_parcel_type">Type</string>
+    <string name="parcel_type_box">Eske</string>
+    <string name="parcel_type_suitcase">Koffert</string>
+    <string name="parcel_type_bag">Veske</string>
+    <string name="parcel_type_furniture">Møbel</string>
+    <string name="parcel_type_envelope">Konvolutt</string>
+    <string name="parcel_type_documents">Dokumenter</string>
+    <string name="parcel_type_other">Annet</string>
+    <string name="label_total_pieces">Totalt antall pakker</string>
+</resources>

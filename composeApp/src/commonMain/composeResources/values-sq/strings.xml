@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name" translatable="false">EasyCargo</string>
+    <string name="format_kg" translatable="false">kg</string>
+    <string name="format_euro" translatable="false">€</string>
+
+    <string name="are_you_sure">A jeni i sigurt?</string>
+
+    <string name="yes">Po</string>
+    <string name="no">Jo</string>
+    <string name="confirm_delete">Konfirmoni fshirjen</string>
+
+    <string name="cd_add_new_route">Shto një rrugë të re</string>
+    <string name="label_created_at">Krijuar më</string>
+    <string name="label_empty_routes">Asnjë rrugë aktive. Shtypni + për të filluar.</string>
+
+    <string name="dialog_route_title">Numri i rrugës</string>
+    <string name="label_route_name">Emri i rrugës</string>
+    <string name="hint_route_examples">P.sh.: Tour Italia 21.01 ose Kthim Moldavi</string>
+    <string name="action_cancel">Anulo</string>
+    <string name="action_create">Krijo</string>
+    <string name="detail_label_total_pay">Totali për t\'u paguar:</string>
+    <string name="dialog_route_title_hint">Rruga</string>
+
+    <string name="search_placeholder">Kërko emër, telefon ose biletë</string>
+    <string name="cd_search_icon">Kërko</string>
+    <string name="label_status_delivered">DORËZUAR</string>
+    <string name="label_status_pending">NË PRITJE</string>
+
+    <string name="stats_label_parcels">Total paketa</string>
+    <string name="stats_label_money">Total para</string>
+    <string name="stats_label_delivered">Paketat e dorëzuara</string>
+
+    <string name="title_add_parcel">Shto paketë të re</string>
+    <string name="label_full_name">Emër i plotë</string>
+    <string name="label_phone">Telefon</string>
+
+    <string name="label_weight">Total kg</string>
+    <string name="label_price_per_kg">Çmimi/kg</string>
+    <string name="label_package_count">Nr. i paketave</string>
+
+    <string name="btn_generate_ticket">GJENERO BILETË</string>
+    <string name="msg_parcel_added_success">Paketa u ruajt!</string>
+    <string name="error_validation_fields">Ju lutemi plotësoni</string>
+
+    <string name="detail_label_name">Emër i plotë:</string>
+    <string name="detail_label_phone">Telefon:</string>
+    <string name="detail_label_weight">Pesha:</string>
+    <string name="detail_label_pieces">Copë:</string>
+    <string name="detail_label_price">Çmimi/kg:</string>
+    <string name="btn_mark_delivered">SHËNO SI TË DORËZUAR</string>
+    <string name="btn_mark_undelivered">SHËNO SI TË PADORËZUAR</string>
+    <string name="action_close">Mbyll</string>
+    <string name="msg_empty_search">Asnjë paketë e gjetur. Kontrolloni kërkimin ose shtoni një paketë të re duke shtypur +.</string>
+
+    <string name="route_deleted">Rruga u fshi</string>
+    <string name="undo">Zhbëj</string>
+    <string name="city_label">Vendndodhja / Qyteti</string>
+    <string name="city">Qyteti</string>
+    <string name="status_delivery">Statusi i dorëzimit</string>
+    <string name="cd_toggle_theme">Ndrysho temën</string>
+    <string name="cd_clear">Pastro</string>
+    <string name="format_piece">paketë</string>
+    <string name="format_pieces">paketa</string>
+    <string name="language_selector_title">Zgjidhni gjuhën</string>
+    <string name="language_system_default">Parazgjedhja e sistemit</string>
+    <string name="cd_share_parcel">Ndaj detajet e paketës</string>
+    <string name="title_edit_parcel">Modifiko paketën</string>
+    <string name="btn_save_changes">RUAJ NDRYSHIMET</string>
+    <string name="cd_share_route">Ndaj rrugën</string>
+
+    <string name="btn_send_reminders">DËRGO KUJTESA</string>
+    <string name="title_send_reminders">Dërgo kujtesa dorëzimi</string>
+    <string name="msg_reminder_count">%1$d paketa të padorëzuara me numër telefoni</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_channel_viber">Viber</string>
+    <string name="label_message_preview">Pamja paraprake e mesazhit:</string>
+    <string name="btn_send_all">DËRGO TË GJITHA</string>
+    <string name="msg_no_eligible_parcels">Asnjë paketë për të njoftuar</string>
+    <string name="msg_whatsapp_not_installed">WhatsApp nuk është i instaluar</string>
+    <string name="msg_viber_not_installed">Viber nuk është i instaluar</string>
+    <string name="reminder_template">Përshëndetje %1$s, paketa juaj (%2$d copë) është gati për dorëzim në %3$s.</string>
+    <string name="label_choose_channel">Zgjidhni kanalin e dërgimit</string>
+
+    <string name="label_parcel_type">Lloji</string>
+    <string name="parcel_type_box">Kuti</string>
+    <string name="parcel_type_suitcase">Valixhe</string>
+    <string name="parcel_type_bag">Çantë</string>
+    <string name="parcel_type_furniture">Mobilje</string>
+    <string name="parcel_type_envelope">Zarf</string>
+    <string name="parcel_type_documents">Dokumente</string>
+    <string name="parcel_type_other">Tjetër</string>
+    <string name="label_total_pieces">Total paketa</string>
+</resources>

@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name" translatable="false">EasyCargo</string>
+    <string name="format_kg" translatable="false">kg</string>
+    <string name="format_euro" translatable="false">€</string>
+
+    <string name="are_you_sure">Är du säker?</string>
+
+    <string name="yes">Ja</string>
+    <string name="no">Nej</string>
+    <string name="confirm_delete">Bekräfta borttagning</string>
+
+    <string name="cd_add_new_route">Lägg till ny rutt</string>
+    <string name="label_created_at">Skapad</string>
+    <string name="label_empty_routes">Inga aktiva rutter. Tryck på + för att börja.</string>
+
+    <string name="dialog_route_title">Ruttnummer</string>
+    <string name="label_route_name">Ruttnamn</string>
+    <string name="hint_route_examples">T.ex.: Tour Italien 21.01 eller Retur Moldavien</string>
+    <string name="action_cancel">Avbryt</string>
+    <string name="action_create">Skapa</string>
+    <string name="detail_label_total_pay">Totalt att betala:</string>
+    <string name="dialog_route_title_hint">Rutt</string>
+
+    <string name="search_placeholder">Sök namn, telefon eller biljett</string>
+    <string name="cd_search_icon">Sök</string>
+    <string name="label_status_delivered">LEVERERAT</string>
+    <string name="label_status_pending">VÄNTAR</string>
+
+    <string name="stats_label_parcels">Totalt antal paket</string>
+    <string name="stats_label_money">Totalt belopp</string>
+    <string name="stats_label_delivered">Levererade paket</string>
+
+    <string name="title_add_parcel">Lägg till nytt paket</string>
+    <string name="label_full_name">Fullständigt namn</string>
+    <string name="label_phone">Telefon</string>
+
+    <string name="label_weight">Totalt kg</string>
+    <string name="label_price_per_kg">Pris/kg</string>
+    <string name="label_package_count">Antal paket</string>
+
+    <string name="btn_generate_ticket">SKAPA BILJETT</string>
+    <string name="msg_parcel_added_success">Paketet har sparats!</string>
+    <string name="error_validation_fields">Vänligen fyll i</string>
+
+    <string name="detail_label_name">Fullständigt namn:</string>
+    <string name="detail_label_phone">Telefon:</string>
+    <string name="detail_label_weight">Vikt:</string>
+    <string name="detail_label_pieces">Stycken:</string>
+    <string name="detail_label_price">Pris/kg:</string>
+    <string name="btn_mark_delivered">MARKERA SOM LEVERERAT</string>
+    <string name="btn_mark_undelivered">MARKERA SOM EJ LEVERERAT</string>
+    <string name="action_close">Stäng</string>
+    <string name="msg_empty_search">Inga paket hittades. Kontrollera sökningen eller lägg till ett nytt paket med +.</string>
+
+    <string name="route_deleted">Rutt borttagen</string>
+    <string name="undo">Ångra</string>
+    <string name="city_label">Ort / Stad</string>
+    <string name="city">Stad</string>
+    <string name="status_delivery">Leveransstatus</string>
+    <string name="cd_toggle_theme">Byt tema</string>
+    <string name="cd_clear">Rensa</string>
+    <string name="format_piece">paket</string>
+    <string name="format_pieces">paket</string>
+    <string name="language_selector_title">Välj språk</string>
+    <string name="language_system_default">Systemstandard</string>
+    <string name="cd_share_parcel">Dela paketdetaljer</string>
+    <string name="title_edit_parcel">Redigera paket</string>
+    <string name="btn_save_changes">SPARA ÄNDRINGAR</string>
+    <string name="cd_share_route">Dela rutt</string>
+
+    <string name="btn_send_reminders">SKICKA PÅMINNELSER</string>
+    <string name="title_send_reminders">Skicka leveranspåminnelser</string>
+    <string name="msg_reminder_count">%1$d ej levererade paket med telefonnummer</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_channel_viber">Viber</string>
+    <string name="label_message_preview">Förhandsgranska meddelande:</string>
+    <string name="btn_send_all">SKICKA ALLA</string>
+    <string name="msg_no_eligible_parcels">Inga paket att meddela</string>
+    <string name="msg_whatsapp_not_installed">WhatsApp är inte installerat</string>
+    <string name="msg_viber_not_installed">Viber är inte installerat</string>
+    <string name="reminder_template">Hej %1$s, ditt paket (%2$d st) är redo för leverans i %3$s.</string>
+    <string name="label_choose_channel">Välj sändningskanal</string>
+
+    <string name="label_parcel_type">Typ</string>
+    <string name="parcel_type_box">Låda</string>
+    <string name="parcel_type_suitcase">Resväska</string>
+    <string name="parcel_type_bag">Väska</string>
+    <string name="parcel_type_furniture">Möbel</string>
+    <string name="parcel_type_envelope">Kuvert</string>
+    <string name="parcel_type_documents">Dokument</string>
+    <string name="parcel_type_other">Annat</string>
+    <string name="label_total_pieces">Totalt antal paket</string>
+</resources>

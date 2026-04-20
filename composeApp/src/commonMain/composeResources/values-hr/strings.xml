@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name" translatable="false">EasyCargo</string>
+    <string name="format_kg" translatable="false">kg</string>
+    <string name="format_euro" translatable="false">€</string>
+
+    <string name="are_you_sure">Jeste li sigurni?</string>
+
+    <string name="yes">Da</string>
+    <string name="no">Ne</string>
+    <string name="confirm_delete">Potvrdi brisanje</string>
+
+    <string name="cd_add_new_route">Dodaj novu rutu</string>
+    <string name="label_created_at">Stvoreno</string>
+    <string name="label_empty_routes">Nema aktivnih ruta. Pritisnite + za početak.</string>
+
+    <string name="dialog_route_title">Broj rute</string>
+    <string name="label_route_name">Naziv rute</string>
+    <string name="hint_route_examples">Npr.: Tura Italija 21.01 ili Povratak Moldavija</string>
+    <string name="action_cancel">Odustani</string>
+    <string name="action_create">Stvori</string>
+    <string name="detail_label_total_pay">Ukupno za platiti:</string>
+    <string name="dialog_route_title_hint">Ruta</string>
+
+    <string name="search_placeholder">Traži po imenu, telefonu ili karti</string>
+    <string name="cd_search_icon">Traži</string>
+    <string name="label_status_delivered">DOSTAVLJENO</string>
+    <string name="label_status_pending">NA ČEKANJU</string>
+
+    <string name="stats_label_parcels">Ukupno paketa</string>
+    <string name="stats_label_money">Ukupno novca</string>
+    <string name="stats_label_delivered">Dostavljeni paketi</string>
+
+    <string name="title_add_parcel">Dodaj novi paket</string>
+    <string name="label_full_name">Ime i prezime</string>
+    <string name="label_phone">Telefon</string>
+
+    <string name="label_weight">Ukupno kg</string>
+    <string name="label_price_per_kg">Cijena/kg</string>
+    <string name="label_package_count">Broj paketa</string>
+
+    <string name="btn_generate_ticket">GENERIRAJ KARTU</string>
+    <string name="msg_parcel_added_success">Paket je spremljen!</string>
+    <string name="error_validation_fields">Molimo ispunite</string>
+
+    <string name="detail_label_name">Puno ime:</string>
+    <string name="detail_label_phone">Telefon:</string>
+    <string name="detail_label_weight">Težina:</string>
+    <string name="detail_label_pieces">Komada:</string>
+    <string name="detail_label_price">Cijena/kg:</string>
+    <string name="btn_mark_delivered">OZNAČI KAO DOSTAVLJENO</string>
+    <string name="btn_mark_undelivered">OZNAČI KAO NEDOSTAVLJENO</string>
+    <string name="action_close">Zatvori</string>
+    <string name="msg_empty_search">Nema pronađenih paketa. Provjerite pretragu ili dodajte novi paket pritiskom +.</string>
+
+    <string name="route_deleted">Ruta obrisana</string>
+    <string name="undo">Poništi</string>
+    <string name="city_label">Naselje / Grad</string>
+    <string name="city">Grad</string>
+    <string name="status_delivery">Status dostave</string>
+    <string name="cd_toggle_theme">Promijeni temu</string>
+    <string name="cd_clear">Obriši</string>
+    <string name="format_piece">paket</string>
+    <string name="format_pieces">paketa</string>
+    <string name="language_selector_title">Odaberi jezik</string>
+    <string name="language_system_default">Zadano sustava</string>
+    <string name="cd_share_parcel">Podijeli detalje paketa</string>
+    <string name="title_edit_parcel">Uredi paket</string>
+    <string name="btn_save_changes">SPREMI PROMJENE</string>
+    <string name="cd_share_route">Podijeli rutu</string>
+
+    <string name="btn_send_reminders">POŠALJI PODSJETNIKE</string>
+    <string name="title_send_reminders">Pošalji podsjetnike za dostavu</string>
+    <string name="msg_reminder_count">%1$d nedostavljenih paketa s telefonskim brojem</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_channel_viber">Viber</string>
+    <string name="label_message_preview">Pregled poruke:</string>
+    <string name="btn_send_all">POŠALJI SVE</string>
+    <string name="msg_no_eligible_parcels">Nema paketa za obavijestiti</string>
+    <string name="msg_whatsapp_not_installed">WhatsApp nije instaliran</string>
+    <string name="msg_viber_not_installed">Viber nije instaliran</string>
+    <string name="reminder_template">Dobar dan %1$s, vaš paket (%2$d kom) spreman je za dostavu u %3$s.</string>
+    <string name="label_choose_channel">Odaberite kanal slanja</string>
+
+    <string name="label_parcel_type">Tip</string>
+    <string name="parcel_type_box">Kutija</string>
+    <string name="parcel_type_suitcase">Kovčeg</string>
+    <string name="parcel_type_bag">Torba</string>
+    <string name="parcel_type_furniture">Namještaj</string>
+    <string name="parcel_type_envelope">Omotnica</string>
+    <string name="parcel_type_documents">Dokumenti</string>
+    <string name="parcel_type_other">Ostalo</string>
+    <string name="label_total_pieces">Ukupno paketa</string>
+</resources>

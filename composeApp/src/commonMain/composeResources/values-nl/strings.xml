@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name" translatable="false">EasyCargo</string>
+    <string name="format_kg" translatable="false">kg</string>
+    <string name="format_euro" translatable="false">€</string>
+
+    <string name="are_you_sure">Weet u het zeker?</string>
+
+    <string name="yes">Ja</string>
+    <string name="no">Nee</string>
+    <string name="confirm_delete">Verwijderen bevestigen</string>
+
+    <string name="cd_add_new_route">Nieuwe route toevoegen</string>
+    <string name="label_created_at">Aangemaakt op</string>
+    <string name="label_empty_routes">Geen actieve routes. Druk op + om te beginnen.</string>
+
+    <string name="dialog_route_title">Routenummer</string>
+    <string name="label_route_name">Routenaam</string>
+    <string name="hint_route_examples">Bv: Tour Italië 21.01 of Retour Moldavië</string>
+    <string name="action_cancel">Annuleren</string>
+    <string name="action_create">Aanmaken</string>
+    <string name="detail_label_total_pay">Totaal te betalen:</string>
+    <string name="dialog_route_title_hint">Route</string>
+
+    <string name="search_placeholder">Zoek naam, telefoon of ticket</string>
+    <string name="cd_search_icon">Zoeken</string>
+    <string name="label_status_delivered">BEZORGD</string>
+    <string name="label_status_pending">IN AFWACHTING</string>
+
+    <string name="stats_label_parcels">Totaal pakketten</string>
+    <string name="stats_label_money">Totaal geld</string>
+    <string name="stats_label_delivered">Bezorgde pakketten</string>
+
+    <string name="title_add_parcel">Nieuw pakket toevoegen</string>
+    <string name="label_full_name">Volledige naam</string>
+    <string name="label_phone">Telefoon</string>
+
+    <string name="label_weight">Totaal kg</string>
+    <string name="label_price_per_kg">Prijs/kg</string>
+    <string name="label_package_count">Aantal pakketten</string>
+
+    <string name="btn_generate_ticket">TICKET GENEREREN</string>
+    <string name="msg_parcel_added_success">Pakket opgeslagen!</string>
+    <string name="error_validation_fields">Gelieve in te vullen</string>
+
+    <string name="detail_label_name">Volledige naam:</string>
+    <string name="detail_label_phone">Telefoon:</string>
+    <string name="detail_label_weight">Gewicht:</string>
+    <string name="detail_label_pieces">Stuks:</string>
+    <string name="detail_label_price">Prijs/kg:</string>
+    <string name="btn_mark_delivered">MARKEREN ALS BEZORGD</string>
+    <string name="btn_mark_undelivered">MARKEREN ALS NIET BEZORGD</string>
+    <string name="action_close">Sluiten</string>
+    <string name="msg_empty_search">Geen pakketten gevonden. Controleer de zoekterm of voeg een nieuw pakket toe via +.</string>
+
+    <string name="route_deleted">Route verwijderd</string>
+    <string name="undo">Ongedaan maken</string>
+    <string name="city_label">Plaats / Stad</string>
+    <string name="city">Stad</string>
+    <string name="status_delivery">Bezorgstatus</string>
+    <string name="cd_toggle_theme">Thema wisselen</string>
+    <string name="cd_clear">Wissen</string>
+    <string name="format_piece">pakket</string>
+    <string name="format_pieces">pakketten</string>
+    <string name="language_selector_title">Taal selecteren</string>
+    <string name="language_system_default">Systeem standaard</string>
+    <string name="cd_share_parcel">Pakketdetails delen</string>
+    <string name="title_edit_parcel">Pakket bewerken</string>
+    <string name="btn_save_changes">WIJZIGINGEN OPSLAAN</string>
+    <string name="cd_share_route">Route delen</string>
+
+    <string name="btn_send_reminders">HERINNERINGEN VERSTUREN</string>
+    <string name="title_send_reminders">Bezorgherinneringen versturen</string>
+    <string name="msg_reminder_count">%1$d niet-bezorgde pakketten met telefoonnummer</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_channel_viber">Viber</string>
+    <string name="label_message_preview">Voorbeeldbericht:</string>
+    <string name="btn_send_all">ALLES VERSTUREN</string>
+    <string name="msg_no_eligible_parcels">Geen pakketten te melden</string>
+    <string name="msg_whatsapp_not_installed">WhatsApp is niet geïnstalleerd</string>
+    <string name="msg_viber_not_installed">Viber is niet geïnstalleerd</string>
+    <string name="reminder_template">Hallo %1$s, uw pakket (%2$d stuks) ligt klaar voor bezorging in %3$s.</string>
+    <string name="label_choose_channel">Kies verzendkanaal</string>
+
+    <string name="label_parcel_type">Type</string>
+    <string name="parcel_type_box">Doos</string>
+    <string name="parcel_type_suitcase">Koffer</string>
+    <string name="parcel_type_bag">Tas</string>
+    <string name="parcel_type_furniture">Meubel</string>
+    <string name="parcel_type_envelope">Envelop</string>
+    <string name="parcel_type_documents">Documenten</string>
+    <string name="parcel_type_other">Andere</string>
+    <string name="label_total_pieces">Totaal pakketten</string>
+</resources>
