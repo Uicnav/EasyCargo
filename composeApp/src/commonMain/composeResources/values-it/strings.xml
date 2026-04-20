@@ -81,4 +81,13 @@
     <string name="reminder_template">Buongiorno %1$s, il suo pacco (%2$d pezzi) è pronto per la consegna a %3$s.</string>
     <string name="label_choose_channel">Scegli il canale di invio</string>
 
+    <string name="label_parcel_type">Tipo</string>
+    <string name="parcel_type_box">Scatola</string>
+    <string name="parcel_type_suitcase">Valigia</string>
+    <string name="parcel_type_bag">Borsa</string>
+    <string name="parcel_type_furniture">Mobili</string>
+    <string name="parcel_type_envelope">Busta</string>
+    <string name="parcel_type_documents">Documenti</string>
+    <string name="parcel_type_other">Altro</string>
+    <string name="label_total_pieces">Totale colli</string>
 </resources>

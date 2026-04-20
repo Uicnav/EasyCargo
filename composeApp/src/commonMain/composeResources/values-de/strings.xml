@@ -81,4 +81,13 @@
     <string name="reminder_template">Guten Tag %1$s, Ihr Paket (%2$d Stück) ist zur Auslieferung in %3$s bereit.</string>
     <string name="label_choose_channel">Sendekanal wählen</string>
 
+    <string name="label_parcel_type">Typ</string>
+    <string name="parcel_type_box">Schachtel</string>
+    <string name="parcel_type_suitcase">Koffer</string>
+    <string name="parcel_type_bag">Tasche</string>
+    <string name="parcel_type_furniture">Möbel</string>
+    <string name="parcel_type_envelope">Umschlag</string>
+    <string name="parcel_type_documents">Dokumente</string>
+    <string name="parcel_type_other">Andere</string>
+    <string name="label_total_pieces">Pakete gesamt</string>
 </resources>

@@ -1,9 +1,26 @@
 package com.vantechinformatics.easycargo.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.vantechinformatics.easycargo.utils.getCurrentTime
+
+// Parcel kind. Stored as a stable string token in DB; UI maps to a localized label.
+enum class ParcelType(val token: String) {
+    BOX("box"),
+    SUITCASE("suitcase"),
+    BAG("bag"),
+    FURNITURE("furniture"),
+    ENVELOPE("envelope"),
+    DOCUMENTS("documents"),
+    OTHER("other");
+
+    companion object {
+        fun fromToken(token: String?): ParcelType =
+            entries.firstOrNull { it.token == token } ?: OTHER
+    }
+}
 
 @Entity(
     tableName = "parcels", foreignKeys = [ForeignKey(
@@ -27,7 +44,9 @@ data class ParcelEntity(
     val isDelivered: Boolean = false, // Status: Livrat sau Nu
     val isVisible: Boolean,
     val addedAt: Long = getCurrentTime(),
-    val city: String
+    val city: String,
+    @ColumnInfo(defaultValue = "")
+    val type: String = ""        // Token din ParcelType (gol = nesetat)
 ) {
     // Corrected toUiModel function
     fun toUiModel(): ParcelUi {
@@ -45,7 +64,8 @@ data class ParcelEntity(
             addedAt = addedAt,
             isVisible = isVisible,
             showOnlyInfo = false,
-            city = city
+            city = city,
+            type = type
         )
     }
 }
@@ -57,7 +77,8 @@ data class ParcelUi(
 
     val weight: Double, val pricePerKg: Double, val totalSum: Double, val pieceCount: Int,
 
-    val isDelivered: Boolean, val addedAt: Long, var showOnlyInfo: Boolean = false, var isVisible: Boolean = true,val city: String
+    val isDelivered: Boolean, val addedAt: Long, var showOnlyInfo: Boolean = false, var isVisible: Boolean = true, val city: String,
+    val type: String = ""
 ) {
     // Completed toEntity function to map all fields
     fun toEntity(): ParcelEntity {
@@ -74,7 +95,8 @@ data class ParcelUi(
             isDelivered = isDelivered,
             addedAt = addedAt,
             isVisible = isVisible,
-            city = city
+            city = city,
+            type = type
         )
     }
 }

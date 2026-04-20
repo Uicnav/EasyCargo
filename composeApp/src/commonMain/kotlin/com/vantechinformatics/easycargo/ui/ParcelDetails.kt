@@ -52,6 +52,8 @@ import androidx.compose.ui.window.DialogProperties
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.ui.theme.EasyCargoTheme
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
+import com.vantechinformatics.easycargo.utils.getCurrencySymbol
+import com.vantechinformatics.easycargo.utils.parcelTypeLabel
 import com.vantechinformatics.easycargo.utils.shareText
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.cd_share_parcel
@@ -63,8 +65,8 @@ import easycargo.composeapp.generated.resources.detail_label_phone
 import easycargo.composeapp.generated.resources.detail_label_pieces
 import easycargo.composeapp.generated.resources.detail_label_total_pay
 import easycargo.composeapp.generated.resources.detail_label_weight
-import easycargo.composeapp.generated.resources.format_euro
 import easycargo.composeapp.generated.resources.format_kg
+import easycargo.composeapp.generated.resources.label_parcel_type
 import easycargo.composeapp.generated.resources.label_price_per_kg
 import easycargo.composeapp.generated.resources.label_status_delivered
 import easycargo.composeapp.generated.resources.label_status_pending
@@ -125,6 +127,8 @@ fun ParcelDetailsDialog(
                             Icon(Icons.Default.Edit, contentDescription = null, tint = Color.White)
                         }
                     }
+                    val currency = getCurrencySymbol()
+                    val typeLabelForShare = if (parcel.type.isNotBlank()) parcelTypeLabel(parcel.type) else null
                     IconButton(onClick = {
                         val routePart = parcel.displayId / 1000
                         val parcelPart = (parcel.displayId % 1000).toString().padStart(3, '0')
@@ -132,11 +136,12 @@ fun ParcelDetailsDialog(
                         val status = if (isDelivered.value) statusText else statusText
                         val shareMessage = buildString {
                             appendLine("EasyCargo - R$routePart-$parcelPart")
-                            appendLine("${parcel.firstNameLastName}")
+                            appendLine(parcel.firstNameLastName)
                             if (parcel.phone.isNotEmpty()) appendLine(parcel.phone)
                             if (parcel.city.isNotEmpty()) appendLine(parcel.city)
+                            if (typeLabelForShare != null) appendLine(typeLabelForShare)
                             appendLine("${parcel.weight} kg | ${parcel.pieceCount} pcs")
-                            appendLine("${parcel.pricePerKg} €/kg = $total €")
+                            appendLine("${parcel.pricePerKg} $currency/kg = $total $currency")
                             append(status)
                         }
                         shareText(shareMessage)
@@ -221,6 +226,14 @@ fun ParcelDetailsDialog(
                         modifier = Modifier.padding(vertical = 8.dp), color = colors.glassBorder
                     )
 
+                    // Type (only if set)
+                    if (parcel.type.isNotBlank()) {
+                        DetailRow(
+                            stringResource(Res.string.label_parcel_type) + ":",
+                            parcelTypeLabel(parcel.type)
+                        )
+                    }
+
                     // Logistics details
                     DetailRow(
                         stringResource(Res.string.detail_label_weight),
@@ -230,9 +243,10 @@ fun ParcelDetailsDialog(
                         stringResource(Res.string.detail_label_pieces),
                         "${parcel.pieceCount}"
                     )
+                    val currency = getCurrencySymbol()
                     DetailRow(
                         stringResource(Res.string.label_price_per_kg),
-                        parcel.pricePerKg.toString() + " " + stringResource(Res.string.format_euro)
+                        "${parcel.pricePerKg} $currency"
                     )
 
                     // Total
@@ -248,7 +262,7 @@ fun ParcelDetailsDialog(
                         )
                         val totalToPay = parcel.weight * parcel.pricePerKg
                         Text(
-                            text = "$totalToPay ${stringResource(Res.string.format_euro)}",
+                            text = "$totalToPay $currency",
                             fontWeight = FontWeight.Bold,
                             color = colors.greenLight
                         )

@@ -75,7 +75,6 @@ import com.vantechinformatics.easycargo.utils.LocalNavHostController
 import com.vantechinformatics.easycargo.utils.LocalSnackbarHostState
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.btn_mark_delivered
-import easycargo.composeapp.generated.resources.format_euro
 import easycargo.composeapp.generated.resources.format_piece
 import easycargo.composeapp.generated.resources.format_pieces
 import easycargo.composeapp.generated.resources.msg_empty_search
@@ -87,11 +86,16 @@ import easycargo.composeapp.generated.resources.detail_label_pieces
 import easycargo.composeapp.generated.resources.detail_label_price
 import easycargo.composeapp.generated.resources.detail_label_total_pay
 import easycargo.composeapp.generated.resources.detail_label_weight
+import easycargo.composeapp.generated.resources.label_parcel_type
 import easycargo.composeapp.generated.resources.label_status_delivered
 import easycargo.composeapp.generated.resources.label_status_pending
+import easycargo.composeapp.generated.resources.label_total_pieces
 import easycargo.composeapp.generated.resources.search_placeholder
 import easycargo.composeapp.generated.resources.stats_label_money
+import easycargo.composeapp.generated.resources.stats_label_parcels
 import easycargo.composeapp.generated.resources.status_delivery
+import com.vantechinformatics.easycargo.utils.getCurrencySymbol
+import com.vantechinformatics.easycargo.utils.parcelTypeLabel
 import com.vantechinformatics.easycargo.utils.shareText
 import easycargo.composeapp.generated.resources.btn_send_reminders
 import easycargo.composeapp.generated.resources.msg_no_eligible_parcels
@@ -156,12 +160,22 @@ fun RouteDetailsScreen(
                     val piecesLabel = stringResource(Res.string.detail_label_pieces)
                     val priceLabel = stringResource(Res.string.detail_label_price)
                     val totalLabel = stringResource(Res.string.detail_label_total_pay)
+                    val typeLabel = stringResource(Res.string.label_parcel_type)
+                    val totalPiecesLabel = stringResource(Res.string.label_total_pieces)
+                    val positionsLabel = stringResource(Res.string.stats_label_parcels)
+                    val currency = getCurrencySymbol()
+                    // Build per-parcel type labels at composition time (stringResource needs @Composable)
+                    val typeLabelByParcel = parcelsState.value.associate { p ->
+                        p.id to (if (p.type.isNotBlank()) parcelTypeLabel(p.type) else null)
+                    }
                     IconButton(onClick = {
                         val stats = statsState.value
                         val parcels = parcelsState.value
+                        val totalPieces = parcels.sumOf { it.pieceCount }
                         val message = buildString {
                             appendLine("EasyCargo - Route #$routeId")
-                            appendLine("${stats.deliveredParcels} / ${stats.totalParcels} | ${stats.totalMoney.format(2)} €")
+                            appendLine("${stats.deliveredParcels} / ${stats.totalParcels} | ${stats.totalMoney.format(2)} $currency")
+                            appendLine("$positionsLabel: ${stats.totalParcels} • $totalPiecesLabel: $totalPieces")
                             parcels.forEachIndexed { index, p ->
                                 appendLine()
                                 val routePart = p.displayId / 1000
@@ -170,12 +184,13 @@ fun RouteDetailsScreen(
                                 appendLine("$nameLabel ${p.firstNameLastName}")
                                 if (p.phone.isNotEmpty()) appendLine("$phoneLabel ${p.phone}")
                                 if (p.city.isNotEmpty()) appendLine("$cityLabel: ${p.city}")
+                                typeLabelByParcel[p.id]?.let { appendLine("$typeLabel: $it") }
                                 appendLine("$weightLabel ${p.weight} kg")
                                 appendLine("$piecesLabel ${p.pieceCount}")
-                                appendLine("$priceLabel ${p.pricePerKg} €/kg")
+                                appendLine("$priceLabel ${p.pricePerKg} $currency/kg")
                                 val total = p.weight * p.pricePerKg
                                 val status = if (p.isDelivered) deliveredLabel else pendingLabel
-                                appendLine("$totalLabel ${total.format(2)} € [$status]")
+                                appendLine("$totalLabel ${total.format(2)} $currency [$status]")
                             }
                         }
                         shareText(message)
@@ -239,12 +254,23 @@ fun RouteDetailsScreen(
                                 color = colors.textSecondary
                             )
                             Text(
-                                text = "${statsState.value.totalMoney.format(2)} ${stringResource(Res.string.format_euro)}",
+                                text = "${statsState.value.totalMoney.format(2)} ${getCurrencySymbol()}",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = colors.greenLight
                             )
                         }
+                    }
+
+                    // Total parcel count (sum of pieces) — distinct from positions count above.
+                    val totalPiecesAll = parcelsState.value.sumOf { it.pieceCount }
+                    if (totalPiecesAll > 0) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "${stringResource(Res.string.label_total_pieces)}: $totalPiecesAll",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = colors.textSecondary
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -546,7 +572,7 @@ fun ParcelListItem(parcel: ParcelUi, onClick: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${parcel.totalSum.format(2)} ${stringResource(Res.string.format_euro)}",
+                    text = "${parcel.totalSum.format(2)} ${getCurrencySymbol()}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = colors.greenLight

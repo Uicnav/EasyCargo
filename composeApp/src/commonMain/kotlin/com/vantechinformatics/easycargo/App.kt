@@ -94,7 +94,7 @@ import easycargo.composeapp.generated.resources.app_name
 import easycargo.composeapp.generated.resources.cd_toggle_theme
 import easycargo.composeapp.generated.resources.background_app
 import easycargo.composeapp.generated.resources.cd_add_new_route
-import easycargo.composeapp.generated.resources.format_euro
+import com.vantechinformatics.easycargo.utils.getCurrencySymbol
 import easycargo.composeapp.generated.resources.label_created_at
 import easycargo.composeapp.generated.resources.label_empty_routes
 import easycargo.composeapp.generated.resources.language_selector_title
@@ -493,7 +493,7 @@ fun RouteCard(route: RouteUi, stats: RouteStats?, onClick: () -> Unit) {
                                 modifier = Modifier.weight(1f)
                             )
                             StatChip(
-                                value = "${stats.totalMoney.format(0)}${stringResource(Res.string.format_euro)}",
+                                value = "${stats.totalMoney.format(0)}${getCurrencySymbol()}",
                                 label = stringResource(Res.string.stats_label_money),
                                 color = colors.greenLight,
                                 modifier = Modifier.weight(1f)

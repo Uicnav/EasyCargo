@@ -81,4 +81,13 @@
     <string name="reminder_template">Hello %1$s, your parcel (%2$d pieces) is ready for delivery in %3$s.</string>
     <string name="label_choose_channel">Choose sending channel</string>
 
+    <string name="label_parcel_type">Type</string>
+    <string name="parcel_type_box">Box</string>
+    <string name="parcel_type_suitcase">Suitcase</string>
+    <string name="parcel_type_bag">Bag</string>
+    <string name="parcel_type_furniture">Furniture</string>
+    <string name="parcel_type_envelope">Envelope</string>
+    <string name="parcel_type_documents">Documents</string>
+    <string name="parcel_type_other">Other</string>
+    <string name="label_total_pieces">Total parcels</string>
 </resources>
