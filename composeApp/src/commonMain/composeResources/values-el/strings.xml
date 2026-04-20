@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name" translatable="false">EasyCargo</string>
+    <string name="format_kg" translatable="false">κιλά</string>
+    <string name="format_euro" translatable="false">€</string>
+
+    <string name="are_you_sure">Είστε βέβαιοι;</string>
+
+    <string name="yes">Ναι</string>
+    <string name="no">Όχι</string>
+    <string name="confirm_delete">Επιβεβαίωση διαγραφής</string>
+
+    <string name="cd_add_new_route">Προσθήκη νέας διαδρομής</string>
+    <string name="label_created_at">Δημιουργήθηκε στις</string>
+    <string name="label_empty_routes">Δεν υπάρχουν ενεργές διαδρομές. Πατήστε + για να ξεκινήσετε.</string>
+
+    <string name="dialog_route_title">Αριθμός διαδρομής</string>
+    <string name="label_route_name">Όνομα διαδρομής</string>
+    <string name="hint_route_examples">Π.χ.: Tour Italia 21.01 ή Επιστροφή Μολδαβία</string>
+    <string name="action_cancel">Ακύρωση</string>
+    <string name="action_create">Δημιουργία</string>
+    <string name="detail_label_total_pay">Σύνολο πληρωμής:</string>
+    <string name="dialog_route_title_hint">Διαδρομή</string>
+
+    <string name="search_placeholder">Αναζήτηση ονόματος, τηλεφώνου ή εισιτηρίου</string>
+    <string name="cd_search_icon">Αναζήτηση</string>
+    <string name="label_status_delivered">ΠΑΡΑΔΟΘΗΚΕ</string>
+    <string name="label_status_pending">ΕΚΚΡΕΜΕΙ</string>
+
+    <string name="stats_label_parcels">Σύνολο δεμάτων</string>
+    <string name="stats_label_money">Σύνολο χρημάτων</string>
+    <string name="stats_label_delivered">Παραδομένα δέματα</string>
+
+    <string name="title_add_parcel">Προσθήκη νέου δέματος</string>
+    <string name="label_full_name">Ονοματεπώνυμο</string>
+    <string name="label_phone">Τηλέφωνο</string>
+
+    <string name="label_weight">Σύνολο κιλά</string>
+    <string name="label_price_per_kg">Τιμή/κιλό</string>
+    <string name="label_package_count">Αρ. πακέτων</string>
+
+    <string name="btn_generate_ticket">ΔΗΜΙΟΥΡΓΙΑ ΕΙΣΙΤΗΡΙΟΥ</string>
+    <string name="msg_parcel_added_success">Το δέμα αποθηκεύτηκε!</string>
+    <string name="error_validation_fields">Παρακαλώ συμπληρώστε</string>
+
+    <string name="detail_label_name">Ονοματεπώνυμο:</string>
+    <string name="detail_label_phone">Τηλέφωνο:</string>
+    <string name="detail_label_weight">Βάρος:</string>
+    <string name="detail_label_pieces">Τεμάχια:</string>
+    <string name="detail_label_price">Τιμή/κιλό:</string>
+    <string name="btn_mark_delivered">ΣΗΜΕΙΩΣΗ ΩΣ ΠΑΡΑΔΟΘΕΝ</string>
+    <string name="btn_mark_undelivered">ΣΗΜΕΙΩΣΗ ΩΣ ΜΗ ΠΑΡΑΔΟΘΕΝ</string>
+    <string name="action_close">Κλείσιμο</string>
+    <string name="msg_empty_search">Δεν βρέθηκαν δέματα. Ελέγξτε την αναζήτηση ή προσθέστε νέο δέμα με το +.</string>
+
+    <string name="route_deleted">Η διαδρομή διαγράφηκε</string>
+    <string name="undo">Αναίρεση</string>
+    <string name="city_label">Τοποθεσία / Πόλη</string>
+    <string name="city">Πόλη</string>
+    <string name="status_delivery">Κατάσταση παράδοσης</string>
+    <string name="cd_toggle_theme">Εναλλαγή θέματος</string>
+    <string name="cd_clear">Εκκαθάριση</string>
+    <string name="format_piece">δέμα</string>
+    <string name="format_pieces">δέματα</string>
+    <string name="language_selector_title">Επιλογή γλώσσας</string>
+    <string name="language_system_default">Προεπιλογή συστήματος</string>
+    <string name="cd_share_parcel">Κοινοποίηση λεπτομερειών δέματος</string>
+    <string name="title_edit_parcel">Επεξεργασία δέματος</string>
+    <string name="btn_save_changes">ΑΠΟΘΗΚΕΥΣΗ ΑΛΛΑΓΩΝ</string>
+    <string name="cd_share_route">Κοινοποίηση διαδρομής</string>
+
+    <string name="btn_send_reminders">ΑΠΟΣΤΟΛΗ ΥΠΕΝΘΥΜΙΣΕΩΝ</string>
+    <string name="title_send_reminders">Αποστολή υπενθυμίσεων παράδοσης</string>
+    <string name="msg_reminder_count">%1$d μη παραδομένα δέματα με αριθμό τηλεφώνου</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_channel_viber">Viber</string>
+    <string name="label_message_preview">Προεπισκόπηση μηνύματος:</string>
+    <string name="btn_send_all">ΑΠΟΣΤΟΛΗ ΟΛΩΝ</string>
+    <string name="msg_no_eligible_parcels">Δεν υπάρχουν δέματα προς ειδοποίηση</string>
+    <string name="msg_whatsapp_not_installed">Το WhatsApp δεν είναι εγκατεστημένο</string>
+    <string name="msg_viber_not_installed">Το Viber δεν είναι εγκατεστημένο</string>
+    <string name="reminder_template">Γεια σας %1$s, το δέμα σας (%2$d τεμάχια) είναι έτοιμο για παράδοση στην %3$s.</string>
+    <string name="label_choose_channel">Επιλέξτε κανάλι αποστολής</string>
+
+    <string name="label_parcel_type">Τύπος</string>
+    <string name="parcel_type_box">Κουτί</string>
+    <string name="parcel_type_suitcase">Βαλίτσα</string>
+    <string name="parcel_type_bag">Τσάντα</string>
+    <string name="parcel_type_furniture">Έπιπλο</string>
+    <string name="parcel_type_envelope">Φάκελος</string>
+    <string name="parcel_type_documents">Έγγραφα</string>
+    <string name="parcel_type_other">Άλλο</string>
+    <string name="label_total_pieces">Σύνολο δεμάτων</string>
+</resources>

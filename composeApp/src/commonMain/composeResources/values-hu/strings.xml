@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name" translatable="false">EasyCargo</string>
+    <string name="format_kg" translatable="false">kg</string>
+    <string name="format_euro" translatable="false">€</string>
+
+    <string name="are_you_sure">Biztos benne?</string>
+
+    <string name="yes">Igen</string>
+    <string name="no">Nem</string>
+    <string name="confirm_delete">Törlés megerősítése</string>
+
+    <string name="cd_add_new_route">Új útvonal hozzáadása</string>
+    <string name="label_created_at">Létrehozva</string>
+    <string name="label_empty_routes">Nincs aktív útvonal. A kezdéshez nyomja meg a + gombot.</string>
+
+    <string name="dialog_route_title">Útvonal száma</string>
+    <string name="label_route_name">Útvonal neve</string>
+    <string name="hint_route_examples">Pl.: Olasz Túra 21.01 vagy Moldova Vissza</string>
+    <string name="action_cancel">Mégse</string>
+    <string name="action_create">Létrehozás</string>
+    <string name="detail_label_total_pay">Fizetendő összesen:</string>
+    <string name="dialog_route_title_hint">Útvonal</string>
+
+    <string name="search_placeholder">Keresés név, telefon vagy jegy szerint</string>
+    <string name="cd_search_icon">Keresés</string>
+    <string name="label_status_delivered">KÉZBESÍTVE</string>
+    <string name="label_status_pending">FÜGGŐBEN</string>
+
+    <string name="stats_label_parcels">Csomagok összesen</string>
+    <string name="stats_label_money">Pénz összesen</string>
+    <string name="stats_label_delivered">Kézbesített csomagok</string>
+
+    <string name="title_add_parcel">Új csomag hozzáadása</string>
+    <string name="label_full_name">Teljes név</string>
+    <string name="label_phone">Telefon</string>
+
+    <string name="label_weight">Összes kg</string>
+    <string name="label_price_per_kg">Ár/kg</string>
+    <string name="label_package_count">Csomagok száma</string>
+
+    <string name="btn_generate_ticket">JEGY GENERÁLÁSA</string>
+    <string name="msg_parcel_added_success">A csomag elmentve!</string>
+    <string name="error_validation_fields">Kérjük, töltse ki</string>
+
+    <string name="detail_label_name">Teljes név:</string>
+    <string name="detail_label_phone">Telefon:</string>
+    <string name="detail_label_weight">Súly:</string>
+    <string name="detail_label_pieces">Darab:</string>
+    <string name="detail_label_price">Ár/kg:</string>
+    <string name="btn_mark_delivered">JELÖLÉS KÉZBESÍTETTKÉNT</string>
+    <string name="btn_mark_undelivered">JELÖLÉS NEM KÉZBESÍTETTKÉNT</string>
+    <string name="action_close">Bezárás</string>
+    <string name="msg_empty_search">Nincs találat. Ellenőrizze a keresést, vagy adjon hozzá új csomagot a + gombbal.</string>
+
+    <string name="route_deleted">Útvonal törölve</string>
+    <string name="undo">Visszavonás</string>
+    <string name="city_label">Település / Város</string>
+    <string name="city">Város</string>
+    <string name="status_delivery">Kézbesítési állapot</string>
+    <string name="cd_toggle_theme">Téma váltása</string>
+    <string name="cd_clear">Törlés</string>
+    <string name="format_piece">csomag</string>
+    <string name="format_pieces">csomag</string>
+    <string name="language_selector_title">Nyelv kiválasztása</string>
+    <string name="language_system_default">Rendszer alapértelmezett</string>
+    <string name="cd_share_parcel">Csomag adatainak megosztása</string>
+    <string name="title_edit_parcel">Csomag szerkesztése</string>
+    <string name="btn_save_changes">VÁLTOZÁSOK MENTÉSE</string>
+    <string name="cd_share_route">Útvonal megosztása</string>
+
+    <string name="btn_send_reminders">EMLÉKEZTETŐK KÜLDÉSE</string>
+    <string name="title_send_reminders">Kézbesítési emlékeztetők küldése</string>
+    <string name="msg_reminder_count">%1$d kézbesítetlen csomag telefonszámmal</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_channel_viber">Viber</string>
+    <string name="label_message_preview">Üzenet előnézete:</string>
+    <string name="btn_send_all">ÖSSZES KÜLDÉSE</string>
+    <string name="msg_no_eligible_parcels">Nincs értesítendő csomag</string>
+    <string name="msg_whatsapp_not_installed">A WhatsApp nincs telepítve</string>
+    <string name="msg_viber_not_installed">A Viber nincs telepítve</string>
+    <string name="reminder_template">Jó napot %1$s, az Ön csomagja (%2$d db) átvételre kész itt: %3$s.</string>
+    <string name="label_choose_channel">Válassza ki a küldési csatornát</string>
+
+    <string name="label_parcel_type">Típus</string>
+    <string name="parcel_type_box">Doboz</string>
+    <string name="parcel_type_suitcase">Bőrönd</string>
+    <string name="parcel_type_bag">Táska</string>
+    <string name="parcel_type_furniture">Bútor</string>
+    <string name="parcel_type_envelope">Boríték</string>
+    <string name="parcel_type_documents">Dokumentumok</string>
+    <string name="parcel_type_other">Egyéb</string>
+    <string name="label_total_pieces">Csomagok összesen</string>
+</resources>

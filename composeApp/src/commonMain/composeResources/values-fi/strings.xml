@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name" translatable="false">EasyCargo</string>
+    <string name="format_kg" translatable="false">kg</string>
+    <string name="format_euro" translatable="false">€</string>
+
+    <string name="are_you_sure">Oletko varma?</string>
+
+    <string name="yes">Kyllä</string>
+    <string name="no">Ei</string>
+    <string name="confirm_delete">Vahvista poisto</string>
+
+    <string name="cd_add_new_route">Lisää uusi reitti</string>
+    <string name="label_created_at">Luotu</string>
+    <string name="label_empty_routes">Ei aktiivisia reittejä. Aloita painamalla +.</string>
+
+    <string name="dialog_route_title">Reitin numero</string>
+    <string name="label_route_name">Reitin nimi</string>
+    <string name="hint_route_examples">Esim.: Italian kierros 21.01 tai Paluu Moldova</string>
+    <string name="action_cancel">Peruuta</string>
+    <string name="action_create">Luo</string>
+    <string name="detail_label_total_pay">Yhteensä maksettavaa:</string>
+    <string name="dialog_route_title_hint">Reitti</string>
+
+    <string name="search_placeholder">Hae nimi, puhelin tai lippu</string>
+    <string name="cd_search_icon">Haku</string>
+    <string name="label_status_delivered">TOIMITETTU</string>
+    <string name="label_status_pending">ODOTTAA</string>
+
+    <string name="stats_label_parcels">Paketteja yhteensä</string>
+    <string name="stats_label_money">Rahaa yhteensä</string>
+    <string name="stats_label_delivered">Toimitetut paketit</string>
+
+    <string name="title_add_parcel">Lisää uusi paketti</string>
+    <string name="label_full_name">Koko nimi</string>
+    <string name="label_phone">Puhelin</string>
+
+    <string name="label_weight">Yhteensä kg</string>
+    <string name="label_price_per_kg">Hinta/kg</string>
+    <string name="label_package_count">Pakettien määrä</string>
+
+    <string name="btn_generate_ticket">LUO LIPPU</string>
+    <string name="msg_parcel_added_success">Paketti tallennettu!</string>
+    <string name="error_validation_fields">Täytä kentät</string>
+
+    <string name="detail_label_name">Koko nimi:</string>
+    <string name="detail_label_phone">Puhelin:</string>
+    <string name="detail_label_weight">Paino:</string>
+    <string name="detail_label_pieces">Kpl:</string>
+    <string name="detail_label_price">Hinta/kg:</string>
+    <string name="btn_mark_delivered">MERKITSE TOIMITETUKSI</string>
+    <string name="btn_mark_undelivered">MERKITSE TOIMITTAMATTOMAKSI</string>
+    <string name="action_close">Sulje</string>
+    <string name="msg_empty_search">Paketteja ei löytynyt. Tarkista haku tai lisää uusi paketti +-painikkeella.</string>
+
+    <string name="route_deleted">Reitti poistettu</string>
+    <string name="undo">Kumoa</string>
+    <string name="city_label">Paikkakunta / Kaupunki</string>
+    <string name="city">Kaupunki</string>
+    <string name="status_delivery">Toimituksen tila</string>
+    <string name="cd_toggle_theme">Vaihda teema</string>
+    <string name="cd_clear">Tyhjennä</string>
+    <string name="format_piece">paketti</string>
+    <string name="format_pieces">pakettia</string>
+    <string name="language_selector_title">Valitse kieli</string>
+    <string name="language_system_default">Järjestelmän oletus</string>
+    <string name="cd_share_parcel">Jaa paketin tiedot</string>
+    <string name="title_edit_parcel">Muokkaa pakettia</string>
+    <string name="btn_save_changes">TALLENNA MUUTOKSET</string>
+    <string name="cd_share_route">Jaa reitti</string>
+
+    <string name="btn_send_reminders">LÄHETÄ MUISTUTUKSET</string>
+    <string name="title_send_reminders">Lähetä toimitusmuistutukset</string>
+    <string name="msg_reminder_count">%1$d toimittamatonta pakettia puhelinnumerolla</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_channel_viber">Viber</string>
+    <string name="label_message_preview">Viestin esikatselu:</string>
+    <string name="btn_send_all">LÄHETÄ KAIKKI</string>
+    <string name="msg_no_eligible_parcels">Ei ilmoitettavia paketteja</string>
+    <string name="msg_whatsapp_not_installed">WhatsApp ei ole asennettuna</string>
+    <string name="msg_viber_not_installed">Viber ei ole asennettuna</string>
+    <string name="reminder_template">Hei %1$s, pakettisi (%2$d kpl) on valmis noudettavaksi paikassa %3$s.</string>
+    <string name="label_choose_channel">Valitse lähetyskanava</string>
+
+    <string name="label_parcel_type">Tyyppi</string>
+    <string name="parcel_type_box">Laatikko</string>
+    <string name="parcel_type_suitcase">Matkalaukku</string>
+    <string name="parcel_type_bag">Laukku</string>
+    <string name="parcel_type_furniture">Huonekalu</string>
+    <string name="parcel_type_envelope">Kirjekuori</string>
+    <string name="parcel_type_documents">Asiakirjat</string>
+    <string name="parcel_type_other">Muu</string>
+    <string name="label_total_pieces">Paketteja yhteensä</string>
+</resources>

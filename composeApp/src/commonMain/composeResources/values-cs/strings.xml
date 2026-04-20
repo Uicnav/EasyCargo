@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name" translatable="false">EasyCargo</string>
+    <string name="format_kg" translatable="false">kg</string>
+    <string name="format_euro" translatable="false">€</string>
+
+    <string name="are_you_sure">Opravdu?</string>
+
+    <string name="yes">Ano</string>
+    <string name="no">Ne</string>
+    <string name="confirm_delete">Potvrďte smazání</string>
+
+    <string name="cd_add_new_route">Přidat novou trasu</string>
+    <string name="label_created_at">Vytvořeno</string>
+    <string name="label_empty_routes">Nemáte žádné aktivní trasy. Stiskněte +, abyste začali.</string>
+
+    <string name="dialog_route_title">Číslo trasy</string>
+    <string name="label_route_name">Název trasy</string>
+    <string name="hint_route_examples">Např.: Tour Itálie 21.01 nebo Návrat Moldavsko</string>
+    <string name="action_cancel">Zrušit</string>
+    <string name="action_create">Vytvořit</string>
+    <string name="detail_label_total_pay">Celkem k úhradě:</string>
+    <string name="dialog_route_title_hint">Trasa</string>
+
+    <string name="search_placeholder">Hledat jméno, telefon nebo lístek</string>
+    <string name="cd_search_icon">Hledat</string>
+    <string name="label_status_delivered">DORUČENO</string>
+    <string name="label_status_pending">ČEKÁ</string>
+
+    <string name="stats_label_parcels">Celkem balíků</string>
+    <string name="stats_label_money">Celkem peněz</string>
+    <string name="stats_label_delivered">Doručené balíky</string>
+
+    <string name="title_add_parcel">Přidat nový balík</string>
+    <string name="label_full_name">Celé jméno</string>
+    <string name="label_phone">Telefon</string>
+
+    <string name="label_weight">Celkem kg</string>
+    <string name="label_price_per_kg">Cena/kg</string>
+    <string name="label_package_count">Počet balíků</string>
+
+    <string name="btn_generate_ticket">VYGENEROVAT LÍSTEK</string>
+    <string name="msg_parcel_added_success">Balík byl uložen!</string>
+    <string name="error_validation_fields">Prosím vyplňte</string>
+
+    <string name="detail_label_name">Celé jméno:</string>
+    <string name="detail_label_phone">Telefon:</string>
+    <string name="detail_label_weight">Hmotnost:</string>
+    <string name="detail_label_pieces">Kusů:</string>
+    <string name="detail_label_price">Cena/kg:</string>
+    <string name="btn_mark_delivered">OZNAČIT JAKO DORUČENO</string>
+    <string name="btn_mark_undelivered">OZNAČIT JAKO NEDORUČENO</string>
+    <string name="action_close">Zavřít</string>
+    <string name="msg_empty_search">Žádné balíky nenalezeny. Zkontrolujte hledání nebo přidejte nový balík tlačítkem +.</string>
+
+    <string name="route_deleted">Trasa smazána</string>
+    <string name="undo">Zpět</string>
+    <string name="city_label">Obec / Město</string>
+    <string name="city">Město</string>
+    <string name="status_delivery">Stav doručení</string>
+    <string name="cd_toggle_theme">Změnit téma</string>
+    <string name="cd_clear">Vymazat</string>
+    <string name="format_piece">balík</string>
+    <string name="format_pieces">balíky</string>
+    <string name="language_selector_title">Vyberte jazyk</string>
+    <string name="language_system_default">Výchozí systém</string>
+    <string name="cd_share_parcel">Sdílet detaily balíku</string>
+    <string name="title_edit_parcel">Upravit balík</string>
+    <string name="btn_save_changes">ULOŽIT ZMĚNY</string>
+    <string name="cd_share_route">Sdílet trasu</string>
+
+    <string name="btn_send_reminders">ODESLAT PŘIPOMÍNKY</string>
+    <string name="title_send_reminders">Odeslat připomínky doručení</string>
+    <string name="msg_reminder_count">%1$d nedoručených balíků s telefonním číslem</string>
+    <string name="label_channel_whatsapp">WhatsApp</string>
+    <string name="label_channel_viber">Viber</string>
+    <string name="label_message_preview">Náhled zprávy:</string>
+    <string name="btn_send_all">ODESLAT VŠE</string>
+    <string name="msg_no_eligible_parcels">Žádné balíky k upozornění</string>
+    <string name="msg_whatsapp_not_installed">WhatsApp není nainstalován</string>
+    <string name="msg_viber_not_installed">Viber není nainstalován</string>
+    <string name="reminder_template">Dobrý den %1$s, váš balík (%2$d ks) je připraven k doručení v %3$s.</string>
+    <string name="label_choose_channel">Vyberte kanál odeslání</string>
+
+    <string name="label_parcel_type">Typ</string>
+    <string name="parcel_type_box">Krabice</string>
+    <string name="parcel_type_suitcase">Kufr</string>
+    <string name="parcel_type_bag">Taška</string>
+    <string name="parcel_type_furniture">Nábytek</string>
+    <string name="parcel_type_envelope">Obálka</string>
+    <string name="parcel_type_documents">Dokumenty</string>
+    <string name="parcel_type_other">Jiné</string>
+    <string name="label_total_pieces">Celkem balíků</string>
+</resources>
