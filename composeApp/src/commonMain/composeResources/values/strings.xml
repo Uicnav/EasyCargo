@@ -84,4 +84,15 @@
     <string name="reminder_template">Bună ziua %1$s, coletul dvs. (%2$d bucăți) este gata de livrare în %3$s.</string>
     <string name="label_choose_channel">Alege canalul de trimitere</string>
 
+    <string name="rate_the_app">Evaluează aplicația</string>
+
+    <string name="label_parcel_type">Tip</string>
+    <string name="parcel_type_box">Cutie</string>
+    <string name="parcel_type_suitcase">Valiză</string>
+    <string name="parcel_type_bag">Geantă</string>
+    <string name="parcel_type_furniture">Mobilă</string>
+    <string name="parcel_type_envelope">Plic</string>
+    <string name="parcel_type_documents">Documente</string>
+    <string name="parcel_type_other">Altul</string>
+    <string name="label_total_pieces">Total colete</string>
 </resources>

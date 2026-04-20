@@ -59,12 +59,15 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.vantechinformatics.easycargo.data.ParcelType
 import com.vantechinformatics.easycargo.data.ParcelUi
 import com.vantechinformatics.easycargo.format
 import com.vantechinformatics.easycargo.utils.LocalDataStore
 import com.vantechinformatics.easycargo.ui.theme.EasyCargoTheme
 import com.vantechinformatics.easycargo.ui.viewmodel.ParcelViewModel
 import com.vantechinformatics.easycargo.utils.CityAutocompleteField
+import com.vantechinformatics.easycargo.utils.getCurrencySymbol
+import com.vantechinformatics.easycargo.utils.parcelTypeLabel
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.btn_generate_ticket
 import easycargo.composeapp.generated.resources.btn_save_changes
@@ -72,11 +75,13 @@ import easycargo.composeapp.generated.resources.detail_label_total_pay
 import easycargo.composeapp.generated.resources.error_validation_fields
 import easycargo.composeapp.generated.resources.label_full_name
 import easycargo.composeapp.generated.resources.label_package_count
+import easycargo.composeapp.generated.resources.label_parcel_type
 import easycargo.composeapp.generated.resources.label_phone
 import easycargo.composeapp.generated.resources.label_price_per_kg
 import easycargo.composeapp.generated.resources.label_weight
 import easycargo.composeapp.generated.resources.title_add_parcel
 import easycargo.composeapp.generated.resources.title_edit_parcel
+import androidx.compose.foundation.horizontalScroll
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -326,6 +331,12 @@ fun AddParcelDialog(
 
     var city by remember(savedCity) { mutableStateOf(parcelToEdit?.city ?: savedCity) }
 
+    var selectedType by remember {
+        mutableStateOf(
+            parcelToEdit?.type?.takeIf { it.isNotBlank() }?.let { ParcelType.fromToken(it) }
+        )
+    }
+
     // Valori numerice
     var weightInput by remember { mutableStateOf(parcelToEdit?.weight?.toString() ?: "") }
     var pricePerKgInput by remember(savedPricePerKg) {
@@ -394,7 +405,35 @@ fun AddParcelDialog(
                         Icon(Icons.Default.Close, contentDescription = null, tint = colors.contentPrimary)
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // 0. Parcel type chips — at the top, always visible
+                Text(
+                    text = stringResource(Res.string.label_parcel_type),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.textSecondary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ParcelType.entries.forEach { type ->
+                        ParcelTypeChip(
+                            label = parcelTypeLabel(type),
+                            isSelected = selectedType == type,
+                            onClick = {
+                                selectedType = if (selectedType == type) null else type
+                            }
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                HorizontalDivider(color = colors.glassBorder)
+                Spacer(modifier = Modifier.height(12.dp))
 
                 // 1. Name
                 OutlinedTextField(
@@ -573,7 +612,7 @@ fun AddParcelDialog(
                             color = colors.textSecondary
                         )
                         Text(
-                            text = "${calculatedTotal.format(2)} €",
+                            text = "${calculatedTotal.format(2)} ${getCurrencySymbol()}",
                             style = MaterialTheme.typography.titleMedium,
                             color = colors.greenLight,
                             fontWeight = FontWeight.Bold
@@ -597,6 +636,7 @@ fun AddParcelDialog(
                                 val priceKg = pricePerKgInput.toDoubleOrNull() ?: 0.0
                                 val cleanLocal = localPhone.trimStart('0').replace(Regex("[^\\d]"), "")
                                 val combinedPhone = if (cleanLocal.isNotBlank()) "$selectedCountryCode$cleanLocal" else ""
+                                val typeToken = selectedType?.token ?: ""
                                 if (isEditMode) {
                                     val updated = parcelToEdit!!.copy(
                                         firstNameLastName = firstNameLastName,
@@ -604,7 +644,8 @@ fun AddParcelDialog(
                                         city = city,
                                         weight = weightInput.toDoubleOrNull() ?: 0.0,
                                         pricePerKg = priceKg,
-                                        pieceCount = piecesInput.toIntOrNull() ?: 1
+                                        pieceCount = piecesInput.toIntOrNull() ?: 1,
+                                        type = typeToken
                                     )
                                     viewModel.updateParcel(updated)
                                     dataStore.edit { prefs ->
@@ -621,7 +662,8 @@ fun AddParcelDialog(
                                         weight = weightInput.toDoubleOrNull() ?: 0.0,
                                         priceKg = priceKg,
                                         pieces = piecesInput.toIntOrNull() ?: 1,
-                                        city = city
+                                        city = city,
+                                        type = typeToken
                                     )
                                     dataStore.edit { prefs ->
                                         prefs[pricePerKgKey] = priceKg
@@ -777,5 +819,35 @@ private fun flagEmoji(iso: String): String = buildString {
         val low = ((codePoint - 0x10000) and 0x3FF) + 0xDC00
         append(high.toChar())
         append(low.toChar())
+    }
+}
+
+@Composable
+private fun ParcelTypeChip(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val colors = EasyCargoTheme.colors
+    val backgroundColor = if (isSelected)
+        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+    else colors.glassCard
+    val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else colors.glassBorder
+    val textColor = if (isSelected) MaterialTheme.colorScheme.primary else colors.contentPrimary
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .border(1.dp, borderColor, RoundedCornerShape(20.dp))
+            .background(backgroundColor)
+            .clickable { onClick() }
+            .padding(horizontal = 14.dp, vertical = 8.dp)
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+            color = textColor
+        )
     }
 }

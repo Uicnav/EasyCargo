@@ -4,7 +4,10 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
+import androidx.room.migration.Migration
+import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import androidx.sqlite.execSQL
 import com.vantechinformatics.easycargo.data.dao.ParcelDao
 import com.vantechinformatics.easycargo.data.dao.RouteDao
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +18,7 @@ import kotlinx.coroutines.IO
  */
 @Database(
     entities = [RouteEntity::class, ParcelEntity::class],
-    version = 102,
+    version = 103,
     exportSchema = false
 )
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -37,9 +40,22 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
     override fun initialize(): AppDatabase
 }
 
+// 102 → 103: adaugă coloana `type` (păstrează coletele existente).
+private val MIGRATION_102_103 = object : Migration(102, 103) {
+    override fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("ALTER TABLE parcels ADD COLUMN type TEXT NOT NULL DEFAULT ''")
+    }
+}
+
 fun getRoomDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase {
-    val database = builder.setDriver(BundledSQLiteDriver()).setQueryCoroutineContext(Dispatchers.IO)
-        .fallbackToDestructiveMigration(true).build()
+    val database = builder
+        .setDriver(BundledSQLiteDriver())
+        .setQueryCoroutineContext(Dispatchers.IO)
+        .addMigrations(MIGRATION_102_103)
+        // Fallback rămâne ON pentru downgrade-uri sau schimbări viitoare neașteptate,
+        // dar migrarea de mai sus e încercată mai întâi pentru 102→103.
+        .fallbackToDestructiveMigration(true)
+        .build()
     return database
 }
 

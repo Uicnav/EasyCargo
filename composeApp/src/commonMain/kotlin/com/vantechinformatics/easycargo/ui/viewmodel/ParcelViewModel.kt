@@ -48,10 +48,11 @@ class ParcelViewModel(private val dao: ParcelDao) : ViewModel() {
         weight: Double,
         priceKg: Double,
         pieces: Int,
-        city: String
+        city: String,
+        type: String
     ): ParcelUi {
 
-        return dao.addParcel(id, firstNameLastName, phone, weight, priceKg, pieces, city)
+        return dao.addParcel(id, firstNameLastName, phone, weight, priceKg, pieces, city, type)
             .toUiModel()
     }
 
@@ -65,7 +66,8 @@ class ParcelViewModel(private val dao: ParcelDao) : ViewModel() {
             weight = parcel.weight,
             pricePerKg = parcel.pricePerKg,
             totalSum = totalSum,
-            pieceCount = parcel.pieceCount
+            pieceCount = parcel.pieceCount,
+            type = parcel.type
         )
     }
 

@@ -81,4 +81,15 @@
     <string name="reminder_template">Bonjour %1$s, votre colis (%2$d pièces) est prêt pour la livraison à %3$s.</string>
     <string name="label_choose_channel">Choisir le canal d\'envoi</string>
 
+    <string name="rate_the_app">Évaluer l\'application</string>
+
+    <string name="label_parcel_type">Type</string>
+    <string name="parcel_type_box">Boîte</string>
+    <string name="parcel_type_suitcase">Valise</string>
+    <string name="parcel_type_bag">Sac</string>
+    <string name="parcel_type_furniture">Meuble</string>
+    <string name="parcel_type_envelope">Enveloppe</string>
+    <string name="parcel_type_documents">Documents</string>
+    <string name="parcel_type_other">Autre</string>
+    <string name="label_total_pieces">Total colis</string>
 </resources>

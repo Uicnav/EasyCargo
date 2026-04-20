@@ -34,8 +34,8 @@ interface ParcelDao {
     suspend fun updateParcelStatus(parcelId: Long, isDelivered: Boolean, isVisible: Boolean)
 
     // 3b. EDITARE COLET: Actualizează toate câmpurile editabile
-    @Query("UPDATE parcels SET firstNameLastName = :name, phone = :phone, city = :city, weight = :weight, pricePerKg = :pricePerKg, totalSum = :totalSum, pieceCount = :pieceCount WHERE id = :id")
-    suspend fun updateParcel(id: Long, name: String, phone: String, city: String, weight: Double, pricePerKg: Double, totalSum: Double, pieceCount: Int)
+    @Query("UPDATE parcels SET firstNameLastName = :name, phone = :phone, city = :city, weight = :weight, pricePerKg = :pricePerKg, totalSum = :totalSum, pieceCount = :pieceCount, type = :type WHERE id = :id")
+    suspend fun updateParcel(id: Long, name: String, phone: String, city: String, weight: Double, pricePerKg: Double, totalSum: Double, pieceCount: Int, type: String)
 
     // 4. INSERARE PROGRESIVĂ (100, 101...)
     @Query("SELECT MAX(displayId) FROM parcels WHERE routeId = :routeId")
@@ -77,7 +77,8 @@ interface ParcelDao {
         weight: Double,
         priceKg: Double,
         pieces: Int,
-        city: String
+        city: String,
+        type: String
     ): ParcelEntity {
         // 1. CALCULĂM "BAZA" (Prefixul)
         // Ruta 5  -> 5000
@@ -116,7 +117,8 @@ interface ParcelDao {
             pieceCount = pieces,
             isDelivered = false,
             isVisible = true,
-            city = city
+            city = city,
+            type = type
         )
 
         insertParcel(newParcel)

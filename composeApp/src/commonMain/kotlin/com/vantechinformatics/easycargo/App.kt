@@ -23,10 +23,14 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -46,6 +50,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -87,6 +92,8 @@ import com.vantechinformatics.easycargo.utils.LocalDataStore
 import com.vantechinformatics.easycargo.utils.LocalNavHostController
 import com.vantechinformatics.easycargo.utils.LocalSnackbarHostState
 import com.vantechinformatics.easycargo.utils.SUPPORTED_LANGUAGES
+import com.vantechinformatics.easycargo.utils.maybeRequestReview
+import com.vantechinformatics.easycargo.utils.getCurrencySymbol
 import com.vantechinformatics.easycargo.utils.setAppLocale
 import easycargo.composeapp.generated.resources.Res
 import easycargo.composeapp.generated.resources.action_close
@@ -94,7 +101,6 @@ import easycargo.composeapp.generated.resources.app_name
 import easycargo.composeapp.generated.resources.cd_toggle_theme
 import easycargo.composeapp.generated.resources.background_app
 import easycargo.composeapp.generated.resources.cd_add_new_route
-import easycargo.composeapp.generated.resources.format_euro
 import easycargo.composeapp.generated.resources.label_created_at
 import easycargo.composeapp.generated.resources.label_empty_routes
 import easycargo.composeapp.generated.resources.language_selector_title
@@ -129,6 +135,10 @@ fun App(appDatabase: AppDatabase, dataStore: DataStore<Preferences>) {
     }.collectAsState(initial = ThemeMode.DARK)
 
     val isDark = themeMode == ThemeMode.DARK
+
+    LaunchedEffect(Unit) {
+        maybeRequestReview(dataStore)
+    }
 
     val currentLanguage by dataStore.data.map { prefs ->
         prefs[LANGUAGE_KEY]
@@ -493,7 +503,7 @@ fun RouteCard(route: RouteUi, stats: RouteStats?, onClick: () -> Unit) {
                                 modifier = Modifier.weight(1f)
                             )
                             StatChip(
-                                value = "${stats.totalMoney.format(0)}${stringResource(Res.string.format_euro)}",
+                                value = "${stats.totalMoney.format(0)}${getCurrencySymbol()}",
                                 label = stringResource(Res.string.stats_label_money),
                                 color = colors.greenLight,
                                 modifier = Modifier.weight(1f)

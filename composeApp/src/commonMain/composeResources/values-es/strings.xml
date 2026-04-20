@@ -81,4 +81,15 @@
     <string name="reminder_template">Hola %1$s, su paquete (%2$d piezas) está listo para la entrega en %3$s.</string>
     <string name="label_choose_channel">Elegir canal de envío</string>
 
+    <string name="rate_the_app">Valorar la aplicación</string>
+
+    <string name="label_parcel_type">Tipo</string>
+    <string name="parcel_type_box">Caja</string>
+    <string name="parcel_type_suitcase">Maleta</string>
+    <string name="parcel_type_bag">Bolsa</string>
+    <string name="parcel_type_furniture">Mueble</string>
+    <string name="parcel_type_envelope">Sobre</string>
+    <string name="parcel_type_documents">Documentos</string>
+    <string name="parcel_type_other">Otro</string>
+    <string name="label_total_pieces">Total bultos</string>
 </resources>
